@@ -35,6 +35,45 @@
 </style>
 </head>
 <body>
+  <!-- Top Navigation -->
+  <nav style="position: fixed; top: 0; left: 0; right: 0; z-index: 101; background: rgba(10, 14, 22, 0.95); backdrop-filter: blur(8px); border-bottom: 1px solid rgba(35, 43, 59, 0.5); padding: 0;">
+    <div style="max-width: 1060px; margin: 0 auto; padding: 0 24px; display: flex; align-items: center; justify-content: space-between; height: 58px;">
+      <a href="index.html" style="display: flex; align-items: center; gap: 8px; text-decoration: none; color: #4f8cff; font-weight: 600; font-size: 14px; transition: all 0.2s ease;" onmouseover="this.style.color='#3ecf8e';" onmouseout="this.style.color='#4f8cff';">
+        <span style="font-size: 16px;">←</span>
+        <span>Back to Home</span>
+      </a>
+      <div style="color: #8c96ab; font-size: 14px; font-weight: 500;">AI Cloud TCO Model</div>
+    </div>
+  </nav>
+  
+  <div style="margin-top: 58px;">
+  <div style="position: fixed; top: 20px; left: 24px; z-index: 100;">
+    <a href="index.html" style="
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      padding: 10px 16px;
+      background: rgba(79, 140, 255, 0.1);
+      border: 1px solid rgba(79, 140, 255, 0.3);
+      border-radius: 8px;
+      color: #4f8cff;
+      text-decoration: none;
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+      font-size: 14px;
+      font-weight: 500;
+      transition: all 0.2s ease;
+    " onmouseover="this.style.background='rgba(79, 140, 255, 0.15)'; this.style.borderColor='rgba(79, 140, 255, 0.5)';" onmouseout="this.style.background='rgba(79, 140, 255, 0.1)'; this.style.borderColor='rgba(79, 140, 255, 0.3)';">
+      <span style="font-size: 16px;">←</span>
+      <span>Back to Home</span>
+    </a>
+  </div>
+
+  <nav style="background: #1F4788; padding: 1rem; position: sticky; top: 0; z-index: 50;">
+    <ul style="list-style: none; display: flex; gap: 2rem; margin: 0; padding: 0;">
+      <li style="margin-left: 100px;"><a href="index.html" style="color: white; text-decoration: none; font-weight: 500;">← Back to Home</a></li>
+    </ul>
+  </nav>
+  </div>
   <form class="card" id="gate" autocomplete="off">
     <div class="lock">🔒</div>
     <h1>AI Cloud TCO &amp; Returns Model</h1>
