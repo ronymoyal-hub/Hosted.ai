@@ -1,0 +1,2583 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>hosted·ai — Lead Economics Assessment</title>
+<style>
+  /* ── Tokens ──────────────────────────────────────────── */
+  :root {
+    --g:    #2C5F2D;
+    --g-l:  #EBF3EB;
+    --g-m:  #4A8C4B;
+    --g-d:  #1A3D1A;
+    --g-faint: #F4FAF4;
+    --ink:  #111111;
+    --muted:#6B6B6B;
+    --rule: #D8E8D8;
+    --bg:   #FFFFFF;
+    --card: #FAFCFA;
+    --amber:#FFF3CD;
+    --amber-b:#C87A00;
+    --red:  #FDECEA;
+    --red-b:#C0392B;
+    --correct:#E8F5E9;
+    --correct-b:#2C5F2D;
+    --wrong:#FDECEA;
+    --wrong-b:#C0392B;
+    --radius: 10px;
+    --shadow: 0 2px 12px rgba(44,95,45,0.09);
+  }
+
+  /* ── Reset ───────────────────────────────────────────── */
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+  html { scroll-behavior: smooth; }
+
+  body {
+    font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
+    background: var(--g-faint);
+    color: var(--ink);
+    min-height: 100vh;
+    line-height: 1.6;
+  }
+
+  /* ── Header ─────────────────────────────────────────── */
+  header {
+    background: var(--g-d);
+    padding: 0 32px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    height: 58px;
+    position: sticky;
+    top: 0;
+    z-index: 100;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.18);
+  }
+  .logo {
+    font-size: 1.15rem;
+    font-weight: 700;
+    color: #fff;
+    letter-spacing: -0.02em;
+  }
+  .logo span { color: #7BD47E; }
+  .header-tag {
+    font-size: 0.75rem;
+    color: rgba(255,255,255,0.55);
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+  }
+  .progress-bar-wrap {
+    width: 160px;
+    height: 5px;
+    background: rgba(255,255,255,0.15);
+    border-radius: 99px;
+    overflow: hidden;
+  }
+  .progress-bar-fill {
+    height: 100%;
+    background: #7BD47E;
+    border-radius: 99px;
+    transition: width 0.4s ease;
+    width: 0%;
+  }
+
+  /* ── Container ───────────────────────────────────────── */
+  .container {
+    max-width: 780px;
+    margin: 0 auto;
+    padding: 40px 20px 80px;
+  }
+
+  /* ── Screen panels ───────────────────────────────────── */
+  .screen { display: none; }
+  .screen.active { display: block; }
+
+  /* ── Cover ───────────────────────────────────────────── */
+  .cover-hero {
+    text-align: center;
+    padding: 48px 32px 40px;
+    background: var(--bg);
+    border-radius: var(--radius);
+    box-shadow: var(--shadow);
+    border-top: 4px solid var(--g);
+    margin-bottom: 24px;
+  }
+  .cover-logo-mark {
+    width: 56px;
+    height: 56px;
+    background: var(--g);
+    border-radius: 14px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    margin-bottom: 18px;
+  }
+  .cover-logo-mark svg { width: 32px; height: 32px; fill: #fff; }
+  .cover-hero h1 {
+    font-size: 1.75rem;
+    font-weight: 700;
+    color: var(--g-d);
+    letter-spacing: -0.02em;
+    margin-bottom: 8px;
+  }
+  .cover-hero p {
+    color: var(--muted);
+    font-size: 0.95rem;
+    max-width: 460px;
+    margin: 0 auto 28px;
+  }
+  .badge-row {
+    display: flex;
+    justify-content: center;
+    gap: 12px;
+    flex-wrap: wrap;
+    margin-bottom: 32px;
+  }
+  .badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    background: var(--g-l);
+    color: var(--g-d);
+    padding: 5px 14px;
+    border-radius: 99px;
+    font-size: 0.8rem;
+    font-weight: 600;
+  }
+  .badge svg { width: 13px; height: 13px; fill: var(--g); }
+
+  /* ── Form card ───────────────────────────────────────── */
+  .form-card {
+    background: var(--bg);
+    border-radius: var(--radius);
+    box-shadow: var(--shadow);
+    padding: 32px;
+  }
+  .form-card h2 {
+    font-size: 1rem;
+    font-weight: 700;
+    color: var(--g-d);
+    margin-bottom: 20px;
+    padding-bottom: 12px;
+    border-bottom: 1px solid var(--rule);
+  }
+  .field { margin-bottom: 18px; }
+  .field label {
+    display: block;
+    font-size: 0.82rem;
+    font-weight: 600;
+    color: var(--muted);
+    letter-spacing: 0.04em;
+    text-transform: uppercase;
+    margin-bottom: 6px;
+  }
+  .field input {
+    width: 100%;
+    padding: 10px 14px;
+    border: 1.5px solid var(--rule);
+    border-radius: 7px;
+    font-size: 0.95rem;
+    color: var(--ink);
+    background: var(--bg);
+    transition: border-color 0.2s;
+    outline: none;
+  }
+  .field input:focus { border-color: var(--g); box-shadow: 0 0 0 3px rgba(44,95,45,0.1); }
+  .field input.error { border-color: var(--red-b); }
+  .field-row { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
+
+  /* ── Buttons ─────────────────────────────────────────── */
+  .btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    padding: 11px 24px;
+    border-radius: 8px;
+    font-size: 0.92rem;
+    font-weight: 600;
+    cursor: pointer;
+    border: none;
+    transition: background 0.18s, transform 0.1s, box-shadow 0.18s;
+  }
+  .btn:active { transform: scale(0.98); }
+  .btn-primary {
+    background: var(--g);
+    color: #fff;
+    box-shadow: 0 2px 8px rgba(44,95,45,0.22);
+  }
+  .btn-primary:hover { background: var(--g-m); box-shadow: 0 4px 14px rgba(44,95,45,0.28); }
+  .btn-primary:disabled { background: #aaa; box-shadow: none; cursor: not-allowed; }
+  .btn-outline {
+    background: transparent;
+    color: var(--g);
+    border: 1.5px solid var(--g);
+  }
+  .btn-outline:hover { background: var(--g-l); }
+  .btn-lg { padding: 14px 32px; font-size: 1rem; }
+  .btn-full { width: 100%; justify-content: center; }
+  .btn svg { width: 16px; height: 16px; fill: currentColor; }
+
+  /* ── Quiz layout ─────────────────────────────────────── */
+  .quiz-meta {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    background: var(--bg);
+    border-radius: var(--radius);
+    box-shadow: var(--shadow);
+    padding: 14px 20px;
+    margin-bottom: 20px;
+    font-size: 0.85rem;
+  }
+  .quiz-meta-name { font-weight: 600; color: var(--g-d); }
+  .quiz-meta-count { color: var(--muted); }
+  .quiz-meta-timer {
+    font-weight: 700;
+    color: var(--g);
+    font-variant-numeric: tabular-nums;
+    font-size: 0.9rem;
+  }
+
+  .section-divider {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    margin: 28px 0 16px;
+  }
+  .section-divider span {
+    background: var(--g);
+    color: #fff;
+    font-size: 0.72rem;
+    font-weight: 700;
+    letter-spacing: 0.07em;
+    text-transform: uppercase;
+    padding: 3px 12px;
+    border-radius: 99px;
+    white-space: nowrap;
+  }
+  .section-divider hr { flex: 1; border: none; border-top: 1px solid var(--rule); }
+
+  /* ── Question card ───────────────────────────────────── */
+  .q-card {
+    background: var(--bg);
+    border-radius: var(--radius);
+    box-shadow: var(--shadow);
+    padding: 24px 28px;
+    margin-bottom: 14px;
+    border-left: 4px solid transparent;
+    transition: border-color 0.2s;
+  }
+  .q-card:hover { border-left-color: var(--g); }
+  .q-num {
+    font-size: 0.72rem;
+    font-weight: 700;
+    letter-spacing: 0.07em;
+    text-transform: uppercase;
+    color: var(--g);
+    margin-bottom: 8px;
+  }
+  .q-text {
+    font-size: 0.97rem;
+    font-weight: 500;
+    color: var(--ink);
+    margin-bottom: 16px;
+    line-height: 1.55;
+  }
+  .options { display: flex; flex-direction: column; gap: 8px; }
+  .option {
+    display: flex;
+    align-items: flex-start;
+    gap: 12px;
+    padding: 10px 14px;
+    border-radius: 7px;
+    border: 1.5px solid var(--rule);
+    cursor: pointer;
+    transition: all 0.18s;
+    background: var(--card);
+  }
+  .option:hover { border-color: var(--g); background: var(--g-l); }
+  .option.selected { border-color: var(--g); background: var(--g-l); }
+  .option-radio {
+    width: 18px;
+    height: 18px;
+    border-radius: 50%;
+    border: 2px solid var(--rule);
+    flex-shrink: 0;
+    margin-top: 1px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: all 0.18s;
+    background: var(--bg);
+  }
+  .option.selected .option-radio {
+    border-color: var(--g);
+    background: var(--g);
+  }
+  .option.selected .option-radio::after {
+    content: '';
+    width: 7px; height: 7px;
+    background: #fff;
+    border-radius: 50%;
+  }
+  .option-label { font-size: 0.9rem; color: var(--ink); line-height: 1.45; }
+  .option-key {
+    font-size: 0.72rem;
+    font-weight: 700;
+    color: var(--muted);
+    min-width: 16px;
+    margin-top: 1px;
+  }
+
+  /* ── Submit section ──────────────────────────────────── */
+  .submit-section {
+    background: var(--bg);
+    border-radius: var(--radius);
+    box-shadow: var(--shadow);
+    padding: 24px 28px;
+    text-align: center;
+    margin-top: 24px;
+  }
+  .unanswered-warning {
+    background: var(--amber);
+    border: 1px solid var(--amber-b);
+    border-radius: 7px;
+    padding: 10px 16px;
+    font-size: 0.85rem;
+    color: #5A3E00;
+    margin-bottom: 16px;
+    display: none;
+  }
+
+  /* ── Results ─────────────────────────────────────────── */
+  .result-hero {
+    background: var(--bg);
+    border-radius: var(--radius);
+    box-shadow: var(--shadow);
+    padding: 40px 32px;
+    text-align: center;
+    margin-bottom: 24px;
+    border-top: 4px solid var(--g);
+  }
+  .score-ring {
+    width: 130px;
+    height: 130px;
+    margin: 0 auto 20px;
+    position: relative;
+  }
+  .score-ring svg { transform: rotate(-90deg); }
+  .score-ring circle {
+    fill: none;
+    stroke-width: 10;
+    stroke-linecap: round;
+  }
+  .score-ring .track { stroke: var(--rule); }
+  .score-ring .fill { stroke: var(--g); stroke-dasharray: 340; stroke-dashoffset: 340; transition: stroke-dashoffset 1.2s ease; }
+  .score-label {
+    position: absolute;
+    top: 50%; left: 50%;
+    transform: translate(-50%, -50%);
+    text-align: center;
+  }
+  .score-pct { font-size: 2rem; font-weight: 800; color: var(--g-d); line-height: 1; }
+  .score-of { font-size: 0.72rem; color: var(--muted); letter-spacing: 0.04em; }
+  .result-grade {
+    font-size: 1.5rem;
+    font-weight: 800;
+    color: var(--g-d);
+    margin-bottom: 6px;
+  }
+  .result-msg { color: var(--muted); font-size: 0.92rem; margin-bottom: 20px; }
+  .result-stats {
+    display: grid;
+    grid-template-columns: repeat(3,1fr);
+    gap: 12px;
+    margin-bottom: 24px;
+  }
+  .stat-box {
+    background: var(--g-l);
+    border-radius: 8px;
+    padding: 14px;
+    text-align: center;
+  }
+  .stat-n { font-size: 1.4rem; font-weight: 800; color: var(--g-d); }
+  .stat-l { font-size: 0.72rem; color: var(--muted); letter-spacing: 0.04em; text-transform: uppercase; }
+
+  /* ── Answer review ───────────────────────────────────── */
+  .review-card {
+    background: var(--bg);
+    border-radius: var(--radius);
+    box-shadow: var(--shadow);
+    padding: 20px 24px;
+    margin-bottom: 12px;
+    border-left: 4px solid transparent;
+  }
+  .review-card.correct { border-left-color: var(--correct-b); background: var(--correct); }
+  .review-card.wrong   { border-left-color: var(--wrong-b); background: var(--wrong); }
+  .review-status {
+    font-size: 0.72rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.07em;
+    margin-bottom: 6px;
+  }
+  .correct .review-status { color: var(--correct-b); }
+  .wrong   .review-status { color: var(--wrong-b); }
+  .review-q { font-size: 0.9rem; font-weight: 500; margin-bottom: 8px; color: var(--ink); }
+  .review-chosen { font-size: 0.85rem; color: var(--red-b); }
+  .review-answer { font-size: 0.85rem; color: var(--g-d); font-weight: 600; }
+
+  /* ── Leaderboard ─────────────────────────────────────── */
+  .lb-card {
+    background: var(--bg);
+    border-radius: var(--radius);
+    box-shadow: var(--shadow);
+    overflow: hidden;
+    margin-bottom: 24px;
+  }
+  .lb-header {
+    background: var(--g-d);
+    color: #fff;
+    padding: 14px 20px;
+    font-weight: 700;
+    font-size: 0.9rem;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+  .lb-table { width: 100%; border-collapse: collapse; }
+  .lb-table th {
+    background: var(--g-l);
+    color: var(--g-d);
+    font-size: 0.75rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    padding: 10px 16px;
+    text-align: left;
+    border-bottom: 1px solid var(--rule);
+  }
+  .lb-table td {
+    padding: 11px 16px;
+    font-size: 0.87rem;
+    border-bottom: 1px solid var(--rule);
+    color: var(--ink);
+  }
+  .lb-table tr:last-child td { border-bottom: none; }
+  .lb-table tr:hover td { background: var(--g-faint); }
+  .lb-rank { font-weight: 700; color: var(--g-d); width: 36px; }
+  .lb-score-pill {
+    display: inline-block;
+    padding: 2px 10px;
+    border-radius: 99px;
+    font-size: 0.8rem;
+    font-weight: 700;
+  }
+  .grade-a { background: #D4EDDA; color: #1A5928; }
+  .grade-b { background: #D1ECF1; color: #0C5460; }
+  .grade-c { background: var(--amber); color: #5A3E00; }
+  .grade-d { background: var(--red); color: var(--red-b); }
+  .lb-empty { padding: 28px; text-align: center; color: var(--muted); font-size: 0.9rem; }
+
+  /* ── Tabs ────────────────────────────────────────────── */
+  .tabs {
+    display: flex;
+    gap: 4px;
+    background: var(--bg);
+    border-radius: 9px;
+    padding: 4px;
+    box-shadow: var(--shadow);
+    margin-bottom: 20px;
+  }
+  .tab {
+    flex: 1;
+    padding: 9px;
+    border-radius: 7px;
+    border: none;
+    background: transparent;
+    font-size: 0.85rem;
+    font-weight: 600;
+    color: var(--muted);
+    cursor: pointer;
+    transition: all 0.18s;
+  }
+  .tab.active { background: var(--g); color: #fff; }
+
+  /* ── Section nav dots ────────────────────────────────── */
+  .nav-dots {
+    display: flex;
+    gap: 6px;
+    flex-wrap: wrap;
+    margin-bottom: 24px;
+    background: var(--bg);
+    padding: 12px 16px;
+    border-radius: var(--radius);
+    box-shadow: var(--shadow);
+  }
+  .nav-dot {
+    width: 28px; height: 28px;
+    border-radius: 6px;
+    border: 1.5px solid var(--rule);
+    font-size: 0.72rem;
+    font-weight: 700;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    color: var(--muted);
+    transition: all 0.18s;
+    background: var(--card);
+  }
+  .nav-dot.answered { background: var(--g-l); border-color: var(--g); color: var(--g-d); }
+  .nav-dot.current  { background: var(--g); border-color: var(--g); color: #fff; }
+
+  /* ── Responsive ──────────────────────────────────────── */
+  @media (max-width: 560px) {
+    .field-row { grid-template-columns: 1fr; }
+    .result-stats { grid-template-columns: 1fr 1fr; }
+    .cover-hero { padding: 32px 20px 28px; }
+    header { padding: 0 16px; }
+    .container { padding: 20px 12px 60px; }
+    .q-card { padding: 18px 16px; }
+  }
+
+  /* ── Print / reduced motion ──────────────────────────── */
+  @media (prefers-reduced-motion: reduce) {
+    .score-ring .fill { transition: none; }
+    * { transition: none !important; }
+  }
+
+  /* ── Admin screen ────────────────────────────────────── */
+  .admin-header {
+    background: var(--g-d);
+    border-radius: var(--radius);
+    padding: 22px 28px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 20px;
+    box-shadow: var(--shadow);
+  }
+  .admin-header-left h2 {
+    font-size: 1.1rem;
+    font-weight: 700;
+    color: #fff;
+    margin-bottom: 2px;
+  }
+  .admin-header-left p {
+    font-size: 0.8rem;
+    color: rgba(255,255,255,0.55);
+  }
+  .admin-stat-row {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 12px;
+    margin-bottom: 20px;
+  }
+  @media (max-width: 600px) { .admin-stat-row { grid-template-columns: 1fr 1fr; } }
+  .admin-stat {
+    background: var(--bg);
+    border-radius: var(--radius);
+    box-shadow: var(--shadow);
+    padding: 16px 18px;
+    border-left: 4px solid var(--g);
+  }
+  .admin-stat.amber { border-left-color: var(--amber-b); }
+  .admin-stat.red   { border-left-color: var(--red-b); }
+  .admin-stat.blue  { border-left-color: #2E75B6; }
+  .admin-stat-n { font-size: 1.8rem; font-weight: 800; color: var(--g-d); line-height: 1; }
+  .admin-stat.amber .admin-stat-n { color: var(--amber-b); }
+  .admin-stat.red   .admin-stat-n { color: var(--red-b); }
+  .admin-stat.blue  .admin-stat-n { color: #1A4A8C; }
+  .admin-stat-l { font-size: 0.72rem; color: var(--muted); text-transform: uppercase; letter-spacing: 0.05em; margin-top: 4px; }
+
+  .admin-controls {
+    background: var(--bg);
+    border-radius: var(--radius);
+    box-shadow: var(--shadow);
+    padding: 16px 20px;
+    margin-bottom: 16px;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    flex-wrap: wrap;
+  }
+  .admin-search {
+    flex: 1;
+    min-width: 180px;
+    padding: 8px 14px;
+    border: 1.5px solid var(--rule);
+    border-radius: 7px;
+    font-size: 0.88rem;
+    outline: none;
+    color: var(--ink);
+    background: var(--bg);
+  }
+  .admin-search:focus { border-color: var(--g); }
+  .admin-sort {
+    padding: 8px 12px;
+    border: 1.5px solid var(--rule);
+    border-radius: 7px;
+    font-size: 0.85rem;
+    background: var(--bg);
+    color: var(--ink);
+    outline: none;
+    cursor: pointer;
+  }
+  .admin-table-wrap {
+    background: var(--bg);
+    border-radius: var(--radius);
+    box-shadow: var(--shadow);
+    overflow: hidden;
+    margin-bottom: 16px;
+  }
+  .admin-table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 0.85rem;
+  }
+  .admin-table thead th {
+    background: var(--g-d);
+    color: #fff;
+    padding: 12px 14px;
+    text-align: left;
+    font-size: 0.75rem;
+    font-weight: 700;
+    letter-spacing: 0.05em;
+    text-transform: uppercase;
+    white-space: nowrap;
+    cursor: pointer;
+    user-select: none;
+  }
+  .admin-table thead th:hover { background: var(--g-m); }
+  .admin-table thead th.sort-asc::after  { content: ' ▲'; font-size: 0.65rem; }
+  .admin-table thead th.sort-desc::after { content: ' ▼'; font-size: 0.65rem; }
+  .admin-table tbody td {
+    padding: 11px 14px;
+    border-bottom: 1px solid var(--rule);
+    vertical-align: middle;
+  }
+  .admin-table tbody tr:last-child td { border-bottom: none; }
+  .admin-table tbody tr:hover td { background: var(--g-faint); }
+  .admin-table .rank-medal { font-size: 1rem; }
+  .score-bar-wrap {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    min-width: 120px;
+  }
+  .score-bar {
+    flex: 1;
+    height: 6px;
+    background: var(--rule);
+    border-radius: 99px;
+    overflow: hidden;
+  }
+  .score-bar-fill {
+    height: 100%;
+    border-radius: 99px;
+    background: var(--g);
+    transition: width 0.6s ease;
+  }
+  .score-bar-fill.amber { background: var(--amber-b); }
+  .score-bar-fill.red   { background: var(--red-b); }
+  .score-bar-text { font-weight: 700; font-size: 0.82rem; color: var(--g-d); white-space: nowrap; min-width: 32px; }
+
+  .admin-action-row {
+    display: flex;
+    gap: 10px;
+    flex-wrap: wrap;
+    margin-top: 8px;
+  }
+  .btn-danger {
+    background: var(--red);
+    color: var(--red-b);
+    border: 1.5px solid var(--red-b);
+  }
+  .btn-danger:hover { background: #fbd0cc; }
+
+  /* Cover admin link */
+  .admin-link-row {
+    text-align: center;
+    margin-top: 18px;
+  }
+  .admin-link {
+    font-size: 0.8rem;
+    color: var(--muted);
+    cursor: pointer;
+    text-decoration: none;
+    border: none;
+    background: none;
+    padding: 4px 8px;
+    border-radius: 5px;
+    transition: color 0.15s, background 0.15s;
+  }
+  .admin-link:hover { color: var(--g-d); background: var(--g-l); }
+
+  /* Admin login modal */
+  .admin-modal-bg {
+    display: none;
+    position: fixed;
+    inset: 0;
+    background: rgba(0,0,0,0.6);
+    z-index: 300;
+    align-items: center;
+    justify-content: center;
+    padding: 20px;
+  }
+  .admin-modal-bg.open { display: flex; }
+  .admin-modal {
+    background: #fff;
+    border-radius: 14px;
+    width: 100%;
+    max-width: 380px;
+    box-shadow: 0 24px 64px rgba(0,0,0,0.35);
+    overflow: hidden;
+  }
+  .admin-modal-hdr {
+    background: var(--g-d);
+    padding: 20px 24px;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+  }
+  .admin-modal-hdr svg { width: 22px; height: 22px; fill: #7BD47E; flex-shrink: 0; }
+  .admin-modal-hdr h3 { font-size: 0.98rem; font-weight: 700; color: #fff; }
+  .admin-modal-body { padding: 24px; }
+  .admin-modal-body p { font-size: 0.88rem; color: var(--muted); margin-bottom: 16px; }
+  .admin-modal-err { font-size: 0.8rem; color: var(--red-b); margin-top: 8px; min-height: 18px; }
+
+  /* Distribution chart */
+  .dist-chart {
+    background: var(--bg);
+    border-radius: var(--radius);
+    box-shadow: var(--shadow);
+    padding: 20px 24px;
+    margin-bottom: 16px;
+  }
+  .dist-chart h3 { font-size: 0.88rem; font-weight: 700; color: var(--g-d); margin-bottom: 16px; }
+  .dist-bars { display: flex; align-items: flex-end; gap: 8px; height: 80px; }
+  .dist-bar-col { display: flex; flex-direction: column; align-items: center; flex: 1; gap: 4px; }
+  .dist-bar-viz {
+    width: 100%;
+    background: var(--g);
+    border-radius: 4px 4px 0 0;
+    min-height: 4px;
+    transition: height 0.6s ease;
+    position: relative;
+  }
+  .dist-bar-viz.amber { background: var(--amber-b); }
+  .dist-bar-viz.red   { background: var(--red-b); }
+  .dist-bar-viz.blue  { background: #2E75B6; }
+  .dist-bar-label { font-size: 0.72rem; font-weight: 700; color: var(--muted); }
+  .dist-bar-count { font-size: 0.72rem; color: var(--muted); }
+
+
+  /* ── Shake animation (admin + lock inputs) ──────────── */
+  .shake {
+    animation: shake 0.35s ease !important;
+    border-color: #ff6b6b !important;
+  }
+  @keyframes shake {
+    0%,100% { transform: translateX(0); }
+    20%      { transform: translateX(-6px); }
+    40%      { transform: translateX(6px); }
+    60%      { transform: translateX(-4px); }
+    80%      { transform: translateX(4px); }
+  }
+</style>
+</head>
+<body>
+
+<header>
+  <div class="logo">hosted<span>·</span>ai</div>
+  <div class="header-tag">Lead Economics Assessment</div>
+  <div style="display:flex;align-items:center;gap:10px;">
+    <div class="progress-bar-wrap"><div class="progress-bar-fill" id="progressBar"></div></div>
+    <span id="headerCount" style="font-size:0.75rem;color:rgba(255,255,255,0.5);">0/38</span>
+  </div>
+</header>
+
+<div class="container">
+
+  <!-- ══ SCREEN 1: Cover ══ -->
+  <div class="screen active" id="screen-cover">
+    <div class="cover-hero">
+      <div class="cover-logo-mark">
+        <svg viewBox="0 0 24 24"><circle cx="5" cy="5" r="2"/><circle cx="12" cy="5" r="2"/><circle cx="5" cy="12" r="2"/><circle cx="12" cy="12" r="2"/><circle cx="19" cy="5" r="2"/><circle cx="19" cy="12" r="2"/><circle cx="5" cy="19" r="2"/><circle cx="12" cy="19" r="2"/></svg>
+      </div>
+      <h1>Lead Economics Assessment</h1>
+      <p>Test your knowledge of hosted.ai's lead qualification process, BDR methodology, and sales pipeline stages.</p>
+      <div class="badge-row">
+        <span class="badge"><svg viewBox="0 0 24 24"><path d="M12 2a10 10 0 1 0 0 20A10 10 0 0 0 12 2zm1 15h-2v-6h2v6zm0-8h-2V7h2v2z"/></svg>38 Questions</span>
+        <span class="badge"><svg viewBox="0 0 24 24"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm0 18c-4.41 0-8-3.59-8-8s3.59-8 8-8 8 3.59 8 8-3.59 8-8 8zm.5-13H11v6l5.25 3.15.75-1.23-4.5-2.67V7z"/></svg>No time limit</span>
+        <span class="badge"><svg viewBox="0 0 24 24"><path d="M12 1L3 5v6c0 5.55 3.84 10.74 9 12 5.16-1.26 9-6.45 9-12V5l-9-4z"/></svg>Auto-graded</span>
+        <span class="badge"><svg viewBox="0 0 24 24"><path d="M19 3H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2zm-7 14l-5-5 1.41-1.41L12 14.17l7.59-7.59L21 8l-9 9z"/></svg>Results saved</span>
+      </div>
+    </div>
+
+    <div class="form-card">
+      <h2>Your Details</h2>
+      <div class="field-row">
+        <div class="field">
+          <label>First Name</label>
+          <input type="text" id="firstName" placeholder="e.g. Sarah" autocomplete="given-name">
+        </div>
+        <div class="field">
+          <label>Last Name</label>
+          <input type="text" id="lastName" placeholder="e.g. Cohen" autocomplete="family-name">
+        </div>
+      </div>
+      <div class="field-row">
+        <div class="field">
+          <label>Role / Team</label>
+          <input type="text" id="role" placeholder="e.g. BDR, ISR, Sales Manager">
+        </div>
+        <div class="field">
+          <label>Date of Test</label>
+          <input type="date" id="testDate">
+        </div>
+      </div>
+      <div style="margin-top:8px;">
+        <button class="btn btn-primary btn-lg btn-full" onclick="startTest()">
+          <svg viewBox="0 0 24 24"><path d="M8 5v14l11-7z"/></svg>
+          Begin Assessment
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Admin link -->
+  <div class="admin-link-row">
+    <button class="admin-link" onclick="openAdminLogin()">
+      🔐 Administrator login
+    </button>
+  </div>
+
+  <!-- Admin login modal -->
+  <div class="admin-modal-bg" id="adminLoginModal" onclick="if(event.target===this)closeAdminLogin()">
+    <div class="admin-modal">
+      <div class="admin-modal-hdr">
+        <svg viewBox="0 0 24 24"><path d="M18 8h-1V6c0-2.76-2.24-5-5-5S7 3.24 7 6v2H6c-1.1 0-2 .9-2 2v10c0 1.1.9 2 2 2h12c1.1 0 2-.9 2-2V10c0-1.1-.9-2-2-2zm-6 9c-1.1 0-2-.9-2-2s.9-2 2-2 2 .9 2 2-.9 2-2 2zm3.1-9H8.9V6c0-1.71 1.39-3.1 3.1-3.1 1.71 0 3.1 1.39 3.1 3.1v2z"/></svg>
+        <h3>Administrator Login</h3>
+      </div>
+      <div class="admin-modal-body">
+        <p>Enter the admin password to access all participant results without taking the assessment.</p>
+        <div class="field">
+          <label>Admin Password</label>
+          <input id="adminLoginInput" type="password" placeholder="Enter password"
+            style="width:100%;padding:10px 14px;border:1.5px solid var(--rule);border-radius:7px;font-size:0.95rem;outline:none;"
+            onkeydown="if(event.key==='Enter')submitAdminLogin()">
+        </div>
+        <div class="admin-modal-err" id="adminLoginErr"></div>
+        <div style="display:flex;gap:10px;margin-top:16px;">
+          <button class="btn btn-outline" style="flex:1" onclick="closeAdminLogin()">Cancel</button>
+          <button class="btn btn-primary" style="flex:1" onclick="submitAdminLogin()">
+            Enter Dashboard
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ══ SCREEN 2: Quiz ══ -->
+  <div class="screen" id="screen-quiz">
+    <div class="quiz-meta">
+      <div>
+        <div class="quiz-meta-name" id="quizName">—</div>
+        <div class="quiz-meta-count" id="quizDate">—</div>
+      </div>
+      <div id="answeredCount" style="font-size:0.85rem;color:var(--muted);">0 of 35 answered</div>
+      <div class="quiz-meta-timer" id="timerDisplay">00:00</div>
+    </div>
+
+    <div class="nav-dots" id="navDots"></div>
+
+    <div id="questionsContainer"></div>
+
+    <div class="submit-section">
+      <div class="unanswered-warning" id="unansWarn">
+        ⚠️ You have <strong id="unansCount">0</strong> unanswered question(s). You can still submit, but unanswered questions will be marked incorrect.
+      </div>
+      <button class="btn btn-primary btn-lg" onclick="submitTest()">
+        <svg viewBox="0 0 24 24"><path d="M12 1L3 5v6c0 5.55 3.84 10.74 9 12 5.16-1.26 9-6.45 9-12V5l-9-4zm-2 14l-4-4 1.41-1.41L10 12.17l6.59-6.59L18 7l-8 8z"/></svg>
+        Submit Assessment
+      </button>
+    </div>
+  </div>
+
+  <!-- ══ SCREEN 3: Results ══ -->
+  <div class="screen" id="screen-results">
+    <div class="result-hero" id="resultHero">
+      <div class="score-ring">
+        <svg viewBox="0 0 120 120" width="130" height="130">
+          <circle class="track" cx="60" cy="60" r="54"/>
+          <circle class="fill" id="scoreArc" cx="60" cy="60" r="54"/>
+        </svg>
+        <div class="score-label">
+          <div class="score-pct" id="scorePct">0%</div>
+          <div class="score-of" id="scoreOf">0/38</div>
+        </div>
+      </div>
+      <div class="result-grade" id="resultGrade">—</div>
+      <div class="result-msg" id="resultMsg">—</div>
+      <div class="result-stats">
+        <div class="stat-box">
+          <div class="stat-n" id="statCorrect">0</div>
+          <div class="stat-l">Correct</div>
+        </div>
+        <div class="stat-box">
+          <div class="stat-n" id="statWrong">0</div>
+          <div class="stat-l">Incorrect</div>
+        </div>
+        <div class="stat-box">
+          <div class="stat-n" id="statTime">—</div>
+          <div class="stat-l">Time Taken</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Admin lock banner -->
+    <div class="lock-banner" id="lockBanner">
+      <h3>🔒 Score Hidden</h3>
+      <p>Results are password-protected. Enter the admin password to reveal scores and answer review.</p>
+      <div class="lock-input-row">
+        <input class="lock-input" id="adminInput" type="password" placeholder="Admin password" onkeydown="if(event.key==='Enter')tryUnlock()">
+        <button class="btn btn-primary" onclick="tryUnlock()" style="white-space:nowrap;padding:9px 16px;font-size:0.88rem;">Unlock</button>
+      </div>
+      <div class="lock-err" id="lockErr"></div>
+    </div>
+    <div class="unlocked-badge" id="unlockedBadge">
+      <svg style="width:13px;height:13px;fill:var(--g)" viewBox="0 0 24 24"><path d="M18 8h-1V6c0-2.76-2.24-5-5-5S7 3.24 7 6v2H6c-1.1 0-2 .9-2 2v10c0 1.1.9 2 2 2h12c1.1 0 2-.9 2-2V10c0-1.1-.9-2-2-2zm-6 9c-1.1 0-2-.9-2-2s.9-2 2-2 2 .9 2 2-.9 2-2 2zm3.1-9H8.9V6c0-1.71 1.39-3.1 3.1-3.1 1.71 0 3.1 1.39 3.1 3.1v2z"/></svg>
+      Admin view unlocked
+    </div>
+
+
+    <div id="scoreSections">
+    <div class="tabs">
+      <button class="tab active" onclick="showTab('review')">Answer Review</button>
+      <button class="tab" onclick="showTab('leaderboard')">All Results</button>
+    </div>
+
+    <div id="tab-review">
+      <div id="reviewContainer"></div>
+    </div>
+
+    <div id="tab-leaderboard" style="display:none;">
+      <div class="lb-card">
+        <div class="lb-header">
+          <svg style="width:16px;height:16px;fill:#fff;flex-shrink:0" viewBox="0 0 24 24"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-2 14H8V8h2v8zm4 0h-2V8h2v8z"/></svg>
+          All Assessment Results
+        </div>
+        <div id="leaderboardBody"></div>
+      </div>
+    </div>
+
+    </div><!-- /scoreSections -->
+    <div style="display:flex;gap:12px;flex-wrap:wrap;margin-top:16px;">
+      <button class="btn btn-outline" onclick="retakeTest()">
+        <svg viewBox="0 0 24 24"><path d="M17.65 6.35C16.2 4.9 14.21 4 12 4c-4.42 0-7.99 3.58-7.99 8s3.57 8 7.99 8c3.73 0 6.84-2.55 7.73-6h-2.08c-.82 2.33-3.04 4-5.65 4-3.31 0-6-2.69-6-6s2.69-6 6-6c1.66 0 3.14.69 4.22 1.78L13 11h7V4l-2.35 2.35z"/></svg>
+        Retake Test
+      </button>
+      <button class="btn btn-cert" id="certBtn" onclick="openCertModal()" style="display:none;">
+        <svg viewBox="0 0 24 24" style="width:16px;height:16px;fill:#fff"><path d="M19 9h-4V3H9v6H5l7 7 7-7zM5 18v2h14v-2H5z"/></svg>
+        Download Certificate
+      </button>
+      <button class="btn btn-primary" onclick="showTab('leaderboard');document.getElementById('tab-leaderboard').scrollIntoView({behavior:'smooth'})">
+        <svg viewBox="0 0 24 24"><path d="M16 11c1.66 0 2.99-1.34 2.99-3S17.66 5 16 5c-1.66 0-3 1.34-3 3s1.34 3 3 3zm-8 0c1.66 0 2.99-1.34 2.99-3S9.66 5 8 5C6.34 5 5 6.34 5 8s1.34 3 3 3zm0 2c-2.33 0-7 1.17-7 3.5V19h14v-2.5c0-2.33-4.67-3.5-7-3.5zm8 0c-.29 0-.62.02-.97.05 1.16.84 1.97 1.97 1.97 3.45V19h6v-2.5c0-2.33-4.67-3.5-7-3.5z"/></svg>
+        View All Results
+      </button>
+    </div>
+  
+
+  <!-- ══ SCREEN 5: Admin Dashboard ══ -->
+  <div class="screen" id="screen-admin">
+
+    <div class="admin-header">
+      <div class="admin-header-left">
+        <h2>📊 Admin Dashboard</h2>
+        <p>All participant results · Lead Economics Assessment</p>
+      </div>
+      <button class="btn btn-outline" onclick="exitAdmin()"
+        style="color:#fff;border-color:rgba(255,255,255,0.35);font-size:0.82rem;padding:7px 16px;">
+        ← Exit Dashboard
+      </button>
+    </div>
+
+    <!-- Summary stats -->
+    <div class="admin-stat-row" id="adminStats">
+      <div class="admin-stat">
+        <div class="admin-stat-n" id="aStatTotal">0</div>
+        <div class="admin-stat-l">Total Attempts</div>
+      </div>
+      <div class="admin-stat">
+        <div class="admin-stat-n" id="aStatAvg">—</div>
+        <div class="admin-stat-l">Average Score</div>
+      </div>
+      <div class="admin-stat amber">
+        <div class="admin-stat-n" id="aStatPass">0</div>
+        <div class="admin-stat-l">Pass Rate (≥60%)</div>
+      </div>
+      <div class="admin-stat blue">
+        <div class="admin-stat-n" id="aStatTop">—</div>
+        <div class="admin-stat-l">Top Score</div>
+      </div>
+    </div>
+
+    <!-- Grade distribution -->
+    <div class="dist-chart">
+      <h3>Score Distribution</h3>
+      <div class="dist-bars" id="distBars">
+        <div class="dist-bar-col">
+          <div class="dist-bar-viz" id="distA" style="height:4px"></div>
+          <div class="dist-bar-label">A (≥80%)</div>
+          <div class="dist-bar-count" id="distAn">0</div>
+        </div>
+        <div class="dist-bar-col">
+          <div class="dist-bar-viz blue" id="distB" style="height:4px"></div>
+          <div class="dist-bar-label">B (70–79%)</div>
+          <div class="dist-bar-count" id="distBn">0</div>
+        </div>
+        <div class="dist-bar-col">
+          <div class="dist-bar-viz amber" id="distC" style="height:4px"></div>
+          <div class="dist-bar-label">C (60–69%)</div>
+          <div class="dist-bar-count" id="distCn">0</div>
+        </div>
+        <div class="dist-bar-col">
+          <div class="dist-bar-viz red" id="distD" style="height:4px"></div>
+          <div class="dist-bar-label">D (&lt;60%)</div>
+          <div class="dist-bar-count" id="distDn">0</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Search + sort controls -->
+    <div class="admin-controls">
+      <input class="admin-search" id="adminSearch" type="text"
+        placeholder="🔍  Search by name or role…" oninput="renderAdminTable()">
+      <select class="admin-sort" id="adminSort" onchange="renderAdminTable()">
+        <option value="pct-desc">Sort: Score ↓</option>
+        <option value="pct-asc">Sort: Score ↑</option>
+        <option value="date-desc">Sort: Newest first</option>
+        <option value="date-asc">Sort: Oldest first</option>
+        <option value="name-asc">Sort: Name A–Z</option>
+        <option value="time-asc">Sort: Fastest time</option>
+      </select>
+      <button class="btn btn-outline" onclick="exportCSV()" style="white-space:nowrap;font-size:0.82rem;padding:8px 14px;">
+        ⬇ Export CSV
+      </button>
+    </div>
+
+    <!-- Results table -->
+    <div class="admin-table-wrap">
+      <table class="admin-table">
+        <thead>
+          <tr>
+            <th style="width:36px">#</th>
+            <th onclick="setSortCol('name')">Name</th>
+            <th onclick="setSortCol('role')">Role</th>
+            <th onclick="setSortCol('pct')">Score</th>
+            <th onclick="setSortCol('grade')">Grade</th>
+            <th onclick="setSortCol('time')">Time</th>
+            <th onclick="setSortCol('date')">Date</th>
+            <th style="width:60px">Actions</th>
+          </tr>
+        </thead>
+        <tbody id="adminTableBody">
+          <tr><td colspan="8" style="text-align:center;padding:28px;color:var(--muted)">No results yet.</td></tr>
+        </tbody>
+      </table>
+    </div>
+
+    <!-- Bottom actions -->
+    <div class="admin-action-row">
+      <button class="btn btn-outline" onclick="exportCSV()">
+        <svg viewBox="0 0 24 24" style="width:15px;height:15px;fill:var(--g)"><path d="M19 9h-4V3H9v6H5l7 7 7-7zM5 18v2h14v-2H5z"/></svg>
+        Export All to CSV
+      </button>
+      <button class="btn btn-danger" onclick="clearAllResults()">
+        <svg viewBox="0 0 24 24" style="width:15px;height:15px;fill:var(--red-b)"><path d="M6 19c0 1.1.9 2 2 2h8c1.1 0 2-.9 2-2V7H6v12zM19 4h-3.5l-1-1h-5l-1 1H5v2h14V4z"/></svg>
+        Clear All Results
+      </button>
+    </div>
+
+  </div>
+
+  <!-- Certificate Modal -->
+  <div class="modal-bg" id="certModalBg" onclick="if(event.target===this)closeCertModal()">
+    <div class="modal">
+      <div class="modal-header">
+        <h3>Completion Certificate</h3>
+        <button class="modal-close" onclick="closeCertModal()">✕</button>
+      </div>
+      <div class="modal-body">
+        <div class="cert-preview">
+          <canvas id="certCanvas" width="800" height="560"></canvas>
+        </div>
+        <div class="modal-actions">
+          <button class="btn btn-primary btn-full" onclick="downloadCert()">
+            <svg viewBox="0 0 24 24" style="width:16px;height:16px;fill:#fff"><path d="M19 9h-4V3H9v6H5l7 7 7-7zM5 18v2h14v-2H5z"/></svg>
+            Download PDF Certificate
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+</div>
+
+</div>
+
+<script>
+// ═══════════════════════════════════════════════════════
+// QUESTION BANK — 38 Questions across 7 sections
+// ═══════════════════════════════════════════════════════
+const SECTIONS = [
+  "BDR Role & Responsibilities",
+  "Lead Scoring & Types",
+  "Lead Qualification",
+  "Sales Process & Stages",
+  "ISR & Sales Pipeline",
+  "ANUM & BANT Methodology",
+  "Lead Management Best Practices"
+];
+
+const QUESTIONS = [
+  // ── Section 0: BDR Role & Responsibilities ──────────────
+  {
+    s: 0,
+    q: "What does BDR stand for in the hosted.ai sales context?",
+    opts: [
+      "Business Development Representative",
+      "Business Data Reviewer",
+      "Brand Development Resource",
+      "Business Delivery Responsib"
+    ],
+    a: 0
+  },
+  {
+    s: 0,
+    q: "Which of the following best describes the BDR's primary role within hosted.ai?",
+    opts: [
+      "Closing enterprise deals and managing contracts",
+      "Acting as the 'Front page' of HAI — a proactive demand-generation resource responsible for evangelizing and solidifying the brand",
+      "Managing existing customer relationships and renewals",
+      "Processing billing and invoicing for hardware orders"
+    ],
+    a: 1
+  },
+  {
+    s: 0,
+    q: "A BDR at hosted.ai handles every lead before it is transferred to which role?",
+    opts: [
+      "Account Executive (AE)",
+      "Customer Success Manager (CSM)",
+      "Inside Sales Representative (ISR)",
+      "Data Team Lead"
+    ],
+    a: 2
+  },
+  {
+    s: 0,
+    q: "What are the Four P's that a BDR must validate as part of the qualification process?",
+    opts: [
+      "Prospect, Pipeline, Priority, Performance",
+      "Pain, Product, Power, Pressure",
+      "Price, Position, Promotion, Place",
+      "Profiling, Process, People, Proof"
+    ],
+    a: 1
+  },
+  {
+    s: 0,
+    q: "Which of the following is NOT listed as a BDR communication channel for validating prospect interest?",
+    opts: [
+      "Phone calls",
+      "Email",
+      "Direct mail / post",
+      "Social media"
+    ],
+    a: 2
+  },
+  {
+    s: 0,
+    q: "A BDR's ultimate conversion goal is to turn qualified leads into which type of lead before handing off to an ISR?",
+    opts: [
+      "SQL — Sales Qualified Lead",
+      "MQI — Marketing Qualified Inquiry",
+      "SAL — Sales Accepted Lead",
+      "RAW lead"
+    ],
+    a: 2
+  },
+
+  // ── Section 1: Lead Scoring & Types ─────────────────────
+  {
+    s: 1,
+    q: "A prospect downloads a PDF from the hosted.ai website with no other engagement. What lead type are they most likely assigned?",
+    opts: [
+      "MQL — score 100+",
+      "SAL — score 100+",
+      "RAW — score 0–49",
+      "MQI — score 50–99"
+    ],
+    a: 2
+  },
+  {
+    s: 1,
+    q: "A prospect signs up for a hosted.ai webinar but doesn't attend. Their lead score reaches 60. What status do they receive?",
+    opts: [
+      "RAW (cold)",
+      "MQI — Marketing Qualified Inquiry (warm)",
+      "MQL — Marketing Qualified Lead (hot)",
+      "SAL — Sales Accepted Lead"
+    ],
+    a: 1
+  },
+  {
+    s: 1,
+    q: "A prospect attends a hosted.ai webinar and shows clear purchase intent. Their score rises to 105. What status are they assigned?",
+    opts: [
+      "MQI — warm",
+      "RAW — cold",
+      "SAL — not yet qualified",
+      "MQL — Marketing Qualified Lead (hot)"
+    ],
+    a: 3
+  },
+  {
+    s: 1,
+    q: "What is the lead score threshold that separates a RAW lead from an MQI?",
+    opts: [
+      "25",
+      "50",
+      "75",
+      "100"
+    ],
+    a: 1
+  },
+  {
+    s: 1,
+    q: "Which statement best describes how a lead score is accumulated?",
+    opts: [
+      "It is set once at lead creation and never changes",
+      "It is manually assigned by the BDR after each call",
+      "It accumulates across ALL activities of the prospect over time",
+      "It resets to zero each quarter regardless of activity"
+    ],
+    a: 2
+  },
+  {
+    s: 1,
+    q: "Once a lead reaches MQL ('hot') status, it further advances toward a Deal by passing through which intermediate stage?",
+    opts: [
+      "MQI",
+      "RAW",
+      "SAL — Sales Accepted Lead",
+      "Prospect"
+    ],
+    a: 2
+  },
+
+  // ── Section 2: Lead Qualification ───────────────────────
+  {
+    s: 2,
+    q: "Why does hosted.ai emphasise rigorous lead qualification before advancing a lead to a Deal?",
+    opts: [
+      "To reduce the number of prospects in the system",
+      "Because deals involve multiple teams and significant resources — poorly qualified deals waste time and lose revenue",
+      "To give the Data Team more records to process",
+      "Because Deals are automatically created by PipeDrive without human input"
+    ],
+    a: 1
+  },
+  {
+    s: 2,
+    q: "In the hosted.ai lead process, what happens to leads that remain 'cold' after BDR warming efforts?",
+    opts: [
+      "They are automatically converted to Deals",
+      "They are deleted from the system permanently",
+      "They are assigned to a Senior BDR for a second attempt",
+      "They are set to 'Remarket' status and put aside"
+    ],
+    a: 3
+  },
+  {
+    s: 2,
+    q: "What is the PipeDrive lead status called when a BDR qualifies a hot lead and assigns it to an ISR?",
+    opts: [
+      "SQL — Sales Qualified Lead",
+      "SAL — Sales Accepted Lead",
+      "MQL — Marketing Qualified Lead",
+      "Opportunity"
+    ],
+    a: 1
+  },
+  {
+    s: 2,
+    q: "A healthy lead workflow is described as which of the following?",
+    opts: [
+      "A linear, one-time process from RAW to Deal with no feedback loops",
+      "An automated process handled entirely by PipeDrive without human input",
+      "An iterative process — keep calling and nurturing until qualified or remarketed",
+      "A quarterly batch review of all inactive leads"
+    ],
+    a: 2
+  },
+  {
+    s: 2,
+    q: "BDR Pre-Hand-off to ISR requires the BDR to affirm at least how many of the Four P's?",
+    opts: [
+      "All four",
+      "At least three",
+      "At least two",
+      "At least one"
+    ],
+    a: 2
+  },
+
+  // ── Section 3: Sales Process & Stages ───────────────────
+  {
+    s: 3,
+    q: "In the hosted.ai lead funnel, which team is responsible for the 'Nurture' stage?",
+    opts: [
+      "BDR team",
+      "ISR team",
+      "Marketing team",
+      "Data Team"
+    ],
+    a: 2
+  },
+  {
+    s: 3,
+    q: "PipeDrive creates a RAW lead and assigns it an initial lead score. What triggers this event?",
+    opts: [
+      "A prospect submits a support ticket",
+      "A HAI prospect shows activity",
+      "An existing customer places a renewal order",
+      "An ISR manually enters prospect data"
+    ],
+    a: 1
+  },
+  {
+    s: 3,
+    q: "When the Lead Score reaches 50, what happens next in the hosted.ai process?",
+    opts: [
+      "The lead is immediately converted to a Deal",
+      "The BDR qualifies the lead using BANT",
+      "The lead becomes an MQI and the BDR begins warm-up calls with Marketing's help",
+      "The ISR takes over and runs discovery calls"
+    ],
+    a: 2
+  },
+  {
+    s: 3,
+    q: "If an ISR receives a SAL and determines it is NOT qualified for a Deal, which TWO options are available to them?",
+    opts: [
+      "Convert to Deal immediately OR delete the lead",
+      "Set status back to MQL and return to BDR, OR set status to Remarket",
+      "Escalate to Senior ISR OR transfer to Legal",
+      "Assign to Marketing OR close as Lost"
+    ],
+    a: 1
+  },
+  {
+    s: 3,
+    q: "What is the lead score threshold at which a lead becomes an MQL ('hot') and is eligible to become a Deal?",
+    opts: [
+      "50",
+      "75",
+      "100",
+      "150"
+    ],
+    a: 2
+  },
+  {
+    s: 3,
+    q: "Which of the following correctly describes the SQL stage?",
+    opts: [
+      "A lead that has reached a score of 50 and is assigned to Marketing",
+      "A lead that has been fully qualified and converted to a Deal, attached to a Business Organisation",
+      "A lead that a BDR has warmed up but not yet qualified",
+      "A lead that has been remarketed and is awaiting re-engagement"
+    ],
+    a: 1
+  },
+
+  // ── Section 4: ISR & Sales Pipeline ─────────────────────
+  {
+    s: 4,
+    q: "What does ISR stand for?",
+    opts: [
+      "Internal Sales Reviewer",
+      "Inside Sales Representative",
+      "Inbound Specialist Representative",
+      "Integrated Sales Roadmap"
+    ],
+    a: 1
+  },
+  {
+    s: 4,
+    q: "What are the ISR's two primary KPI targets for deal close timelines at hosted.ai?",
+    opts: [
+      "30-day SMB close and 90-day enterprise close",
+      "45-day CSP close and 75-day DCO close",
+      "30-day CSP close and 60-day DCO close",
+      "60-day CSP close and 120-day DCO close"
+    ],
+    a: 2
+  },
+  {
+    s: 4,
+    q: "Which of the following is step #1 in the ISR's numbered Stages of Attack?",
+    opts: [
+      "Convert Lead in PD",
+      "Business Case Development",
+      "CXO kick-off meeting and handoff from BDR to ISR",
+      "POC / Test / Solution Validation"
+    ],
+    a: 2
+  },
+  {
+    s: 4,
+    q: "At what stage does the ISR work to convert a lead to SQL?",
+    opts: [
+      "When the lead score first hits 50",
+      "After the BDR sets SAL status and assigns to ISR, and the ISR determines the lead is qualified for an opportunity",
+      "Immediately upon receiving any MQI from Marketing",
+      "Only after completing a hardware deployment"
+    ],
+    a: 1
+  },
+  {
+    s: 4,
+    q: "The ISR's target conversion rate for SALs to qualified deals is:",
+    opts: [
+      "50% of SALs",
+      "60% of SALs",
+      "70% of SALs",
+      "80% of SALs"
+    ],
+    a: 2
+  },
+  {
+    s: 4,
+    q: "In the hosted.ai process, what does the BDR target daily for 'outbound touch-points' (calls, emails, social)?",
+    opts: [
+      "50–75 touch-points per day",
+      "100–125 touch-points per day",
+      "150–200 touch-points per day",
+      "250–300 touch-points per day"
+    ],
+    a: 2
+  },
+
+  // ── Section 5: ANUM & BANT Methodology ──────────────────
+  {
+    s: 5,
+    q: "What does the 'A' in the ANUM qualification framework stand for?",
+    opts: [
+      "Availability",
+      "Authority",
+      "Automation",
+      "Alignment"
+    ],
+    a: 1
+  },
+  {
+    s: 5,
+    q: "In ANUM, 'U' stands for Urgency. Which question best uncovers urgency?",
+    opts: [
+      "What is the prospect's annual revenue?",
+      "What is the implication or loss of NOT having the solution implemented soon?",
+      "How many seats does the prospect need?",
+      "Which competitor is the prospect currently using?"
+    ],
+    a: 1
+  },
+  {
+    s: 5,
+    q: "In the BANT qualification methodology, what does 'T' represent?",
+    opts: [
+      "Territory",
+      "Technical requirements",
+      "Time — the timeframe for implementing the project",
+      "Total addressable market"
+    ],
+    a: 2
+  },
+  {
+    s: 5,
+    q: "Both BANT and ANUM include 'Authority' as a qualification dimension. What does establishing Authority require discovering?",
+    opts: [
+      "The prospect's social media following",
+      "Who the decision makers are (name, email, mobile) and what the decision-making process looks like",
+      "The hardware specifications of the prospect's data centre",
+      "The prospect's current support ticket volume"
+    ],
+    a: 1
+  },
+  {
+    s: 5,
+    q: "In BANT, 'N' stands for Need. A good BANT 'Need' question would be:",
+    opts: [
+      "How many employees does your company have?",
+      "Have you heard of hosted.ai before?",
+      "What are the requirements for the solution you're looking for — e.g. GPU Virtualisation, Monetisation, Multitenancy?",
+      "What is your preferred payment method?"
+    ],
+    a: 2
+  },
+
+  // ── Section 6: Lead Management Best Practices ───────────
+  {
+    s: 6,
+    q: "When managing your lead queue daily, which leads should be prioritised FIRST?",
+    opts: [
+      "RAW leads (score 0–49)",
+      "MQI leads that are cold",
+      "MQL leads, based on Lead Priority score",
+      "Remarketed leads awaiting re-engagement"
+    ],
+    a: 2
+  },
+  {
+    s: 6,
+    q: "When reviewing SAL leads, what should the BDR specifically check?",
+    opts: [
+      "The lead's hardware purchase history",
+      "The lead's next scheduled follow-up date",
+      "The lead's annual company revenue",
+      "The lead's social media engagement score"
+    ],
+    a: 1
+  },
+  {
+    s: 6,
+    q: "If no follow-up is scheduled for a SAL lead, what should the BDR check to identify neglected leads?",
+    opts: [
+      "The lead's original referral source",
+      "The lead's geographic location",
+      "The Last Activity Date",
+      "The lead's webinar attendance record"
+    ],
+    a: 2
+  },
+  {
+    s: 6,
+    q: "After every call or activity on a lead, what is the BDR REQUIRED to do in PD (Pipedrive)?",
+    opts: [
+      "Send a gift or token of appreciation to the prospect",
+      "Update call/email activity, lead status, Four P's/BANT descriptions, and set a Next Follow-Up task",
+      "Escalate the lead to the ISR for review",
+      "Move the lead directly to SAL status"
+    ],
+    a: 1
+  }
+];
+
+// ═══════════════════════════════════════════════════════
+// STATE
+// ═══════════════════════════════════════════════════════
+let state = {
+  name: '', role: '', date: '',
+  answers: new Array(QUESTIONS.length).fill(null),
+  startTime: null, endTime: null, submitted: false
+};
+
+// ═══════════════════════════════════════════════════════
+// HELPERS
+// ═══════════════════════════════════════════════════════
+function show(id) {
+  document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
+  document.getElementById(id).classList.add('active');
+  window.scrollTo(0, 0);
+}
+
+function fmtTime(ms) {
+  const s = Math.floor(ms / 1000);
+  const m = Math.floor(s / 60);
+  return `${String(m).padStart(2,'0')}:${String(s % 60).padStart(2,'0')}`;
+}
+
+function gradePct(pct) {
+  if (pct >= 90) return { grade:'A+', msg:'Outstanding! You have a thorough mastery of the Lead Economics framework.', cls:'grade-a' };
+  if (pct >= 80) return { grade:'A',  msg:'Excellent work. You have a strong command of the BDR and ISR process.', cls:'grade-a' };
+  if (pct >= 70) return { grade:'B',  msg:'Good performance. Review the sections you missed to strengthen your knowledge.', cls:'grade-b' };
+  if (pct >= 60) return { grade:'C',  msg:'Passing. Focus on qualification methodologies and lead stage definitions.', cls:'grade-c' };
+  return { grade:'D', msg:'Needs improvement. Please review the Lead Economics materials and retake the assessment.', cls:'grade-d' };
+}
+
+// ═══════════════════════════════════════════════════════
+// LOCAL DB (localStorage)
+// ═══════════════════════════════════════════════════════
+const DB_KEY = 'hai_lead_econ_results';
+
+function saveResult(result) {
+  const db = JSON.parse(localStorage.getItem(DB_KEY) || '[]');
+  db.unshift(result);
+  localStorage.setItem(DB_KEY, JSON.stringify(db));
+}
+
+function loadResults() {
+  return JSON.parse(localStorage.getItem(DB_KEY) || '[]');
+}
+
+// ═══════════════════════════════════════════════════════
+// TIMER
+// ═══════════════════════════════════════════════════════
+let timerInterval = null;
+
+function startTimer() {
+  state.startTime = Date.now();
+  timerInterval = setInterval(() => {
+    const el = document.getElementById('timerDisplay');
+    if (el) el.textContent = fmtTime(Date.now() - state.startTime);
+  }, 1000);
+}
+
+// ═══════════════════════════════════════════════════════
+// START TEST
+// ═══════════════════════════════════════════════════════
+function startTest() {
+  const fn = document.getElementById('firstName').value.trim();
+  const ln = document.getElementById('lastName').value.trim();
+  const role = document.getElementById('role').value.trim();
+  const date = document.getElementById('testDate').value;
+
+  let err = false;
+  ['firstName','lastName','testDate'].forEach(id => {
+    const el = document.getElementById(id);
+    const val = el.value.trim();
+    if (!val) { el.classList.add('error'); err = true; }
+    else el.classList.remove('error');
+  });
+  if (err) return;
+
+  state.name = `${fn} ${ln}`;
+  state.role = role || 'Team Member';
+  state.date = date;
+  state.answers = new Array(QUESTIONS.length).fill(null);
+  state.submitted = false;
+
+  // Set date default to today
+  document.getElementById('testDate').value = date || new Date().toISOString().slice(0,10);
+
+  shuffleTest();
+  renderQuiz();
+  show('screen-quiz');
+  startTimer();
+}
+
+// ═══════════════════════════════════════════════════════
+// SHUFFLE
+// ═══════════════════════════════════════════════════════
+let shuffledQuestions = []; // working copy per session
+
+function fisherYates(arr) {
+  const a = [...arr];
+  for (let i = a.length - 1; i > 0; i--) {
+    const j = Math.floor(Math.random() * (i + 1));
+    [a[i], a[j]] = [a[j], a[i]];
+  }
+  return a;
+}
+
+function shuffleTest() {
+  // 1. Shuffle question order (keep section grouping for display but shuffle within)
+  // Shuffle all questions globally
+  const withIdx = QUESTIONS.map((q, origIdx) => ({ ...q, origIdx }));
+  const shuffled = fisherYates(withIdx);
+
+  // 2. For each question, shuffle its options and track where the correct answer landed
+  shuffledQuestions = shuffled.map(q => {
+    const optWithIdx = q.opts.map((opt, i) => ({ opt, isCorrect: i === q.a }));
+    const shuffledOpts = fisherYates(optWithIdx);
+    const newCorrectIdx = shuffledOpts.findIndex(o => o.isCorrect);
+    return {
+      ...q,
+      opts: shuffledOpts.map(o => o.opt),
+      a: newCorrectIdx
+    };
+  });
+
+  // Reset answers array to match new order
+  state.answers = new Array(shuffledQuestions.length).fill(null);
+}
+
+// ═══════════════════════════════════════════════════════
+// RENDER QUIZ
+// ═══════════════════════════════════════════════════════
+function renderQuiz() {
+  document.getElementById('quizName').textContent = state.name;
+  document.getElementById('quizDate').textContent = state.role + ' · ' + state.date;
+
+  // Nav dots
+  const QS = shuffledQuestions.length ? shuffledQuestions : QUESTIONS;
+  const dots = document.getElementById('navDots');
+  dots.innerHTML = QS.map((_, i) =>
+    `<div class="nav-dot" id="dot-${i}" title="Question ${i+1}" onclick="scrollToQ(${i})">${i+1}</div>`
+  ).join('');
+
+  // Questions
+  const container = document.getElementById('questionsContainer');
+  let html = '';
+  let lastSection = -1;
+
+  QS.forEach((q, i) => {
+    if (q.s !== lastSection) {
+      lastSection = q.s;
+      html += `<div class="section-divider">
+        <span>${SECTIONS[q.s]}</span>
+        <hr>
+      </div>`;
+    }
+    html += `<div class="q-card" id="qcard-${i}">
+      <div class="q-num">Question ${i+1} of ${QUESTIONS.length}</div>
+      <div class="q-text">${q.q}</div>
+      <div class="options" id="opts-${i}">
+        ${q.opts.map((opt, oi) => `
+          <div class="option" id="opt-${i}-${oi}" onclick="selectAnswer(${i},${oi})">
+            <div class="option-radio"></div>
+            <span class="option-key">${['A','B','C','D'][oi]}</span>
+            <span class="option-label">${opt}</span>
+          </div>
+        `).join('')}
+      </div>
+    </div>`;
+  });
+
+  container.innerHTML = html;
+  updateProgress();
+}
+
+function scrollToQ(i) {
+  const el = document.getElementById(`qcard-${i}`);
+  if (el) el.scrollIntoView({ behavior: 'smooth', block: 'center' });
+}
+
+// ═══════════════════════════════════════════════════════
+// SELECT ANSWER
+// ═══════════════════════════════════════════════════════
+function selectAnswer(qIdx, oIdx) {
+  if (state.submitted) return;
+  state.answers[qIdx] = oIdx;
+
+  // Update option styles
+  const opts = document.querySelectorAll(`#opts-${qIdx} .option`);
+  opts.forEach((o, i) => {
+    o.classList.toggle('selected', i === oIdx);
+  });
+
+  // Update nav dot
+  const dot = document.getElementById(`dot-${qIdx}`);
+  if (dot) dot.classList.add('answered');
+
+  updateProgress();
+}
+
+function updateProgress() {
+  const answered = state.answers.filter(a => a !== null).length;
+  const total = (shuffledQuestions.length ? shuffledQuestions : QUESTIONS).length;
+  const pct = (answered / total) * 100;
+
+  document.getElementById('progressBar').style.width = pct + '%';
+  document.getElementById('headerCount').textContent = `${answered}/${total}`;
+  document.getElementById('answeredCount').textContent = `${answered} of ${total} answered`;
+}
+
+// ═══════════════════════════════════════════════════════
+// SUBMIT TEST
+// ═══════════════════════════════════════════════════════
+function submitTest() {
+  const unanswered = state.answers.filter(a => a === null).length;
+
+  if (unanswered > 0) {
+    const warn = document.getElementById('unansWarn');
+    document.getElementById('unansCount').textContent = unanswered;
+    warn.style.display = 'block';
+    // Ask for confirmation
+    if (!confirm(`You have ${unanswered} unanswered question(s). They will be marked as incorrect. Submit anyway?`)) {
+      return;
+    }
+  }
+
+  clearInterval(timerInterval);
+  state.endTime = Date.now();
+  state.submitted = true;
+
+  // Score
+  let correct = 0;
+  const QS = shuffledQuestions.length ? shuffledQuestions : QUESTIONS;
+  QS.forEach((q, i) => {
+    if (state.answers[i] === q.a) correct++;
+  });
+
+  const pct = Math.round((correct / QUESTIONS.length) * 100);
+  const elapsed = state.endTime - state.startTime;
+  const { grade, msg, cls } = gradePct(pct);
+
+  // Save to DB
+  saveResult({
+    id: Date.now(),
+    name: state.name,
+    role: state.role,
+    date: state.date,
+    score: correct,
+    total: QUESTIONS.length,
+    pct,
+    grade,
+    timeTaken: elapsed,
+    answers: [...state.answers],
+    timestamp: new Date().toISOString()
+  });
+
+  renderResults(correct, pct, elapsed, grade, msg, cls);
+  show('screen-results');
+
+  // Animate score ring
+  setTimeout(() => {
+    const arc = document.getElementById('scoreArc');
+    const circumference = 2 * Math.PI * 54;
+    const offset = circumference * (1 - pct / 100);
+    arc.style.strokeDasharray = circumference;
+    arc.style.strokeDashoffset = offset;
+    document.getElementById('scorePct').textContent = pct + '%';
+  }, 200);
+}
+
+// ═══════════════════════════════════════════════════════
+// RENDER RESULTS
+// ═══════════════════════════════════════════════════════
+function renderResults(correct, pct, elapsed, grade, msg, cls) {
+  document.getElementById('scoreOf').textContent = `${correct}/${QUESTIONS.length}`;
+  document.getElementById('resultGrade').textContent = `${grade} — ${pct}%`;
+  document.getElementById('resultMsg').textContent = msg;
+  document.getElementById('statCorrect').textContent = correct;
+  document.getElementById('statWrong').textContent = QUESTIONS.length - correct;
+  document.getElementById('statTime').textContent = fmtTime(elapsed);
+
+  // Review
+  let reviewHTML = '';
+  const QS = shuffledQuestions.length ? shuffledQuestions : QUESTIONS;
+  QS.forEach((q, i) => {
+    const chosen = state.answers[i];
+    const isCorrect = chosen === q.a;
+    reviewHTML += `<div class="review-card ${isCorrect ? 'correct' : 'wrong'}">
+      <div class="review-status">${isCorrect ? '✓ Correct' : '✗ Incorrect'} — Q${i+1}</div>
+      <div class="review-q">${q.q}</div>
+      ${!isCorrect ? `<div class="review-chosen">Your answer: ${chosen !== null ? q.opts[chosen] : '(not answered)'}</div>` : ''}
+      <div class="review-answer">${isCorrect ? 'Your answer: ' : 'Correct answer: '}${q.opts[q.a]}</div>
+    </div>`;
+  });
+  document.getElementById('reviewContainer').innerHTML = reviewHTML;
+
+  renderLeaderboard();
+
+  // Populate cert data and init lock
+  certData = {
+    name: state.name,
+    role: state.role,
+    date: state.date,
+    score: correct,
+    total: (shuffledQuestions.length ? shuffledQuestions : QUESTIONS).length,
+    pct,
+    grade
+  };
+  state.lastPct = pct;
+  initResultLock();
+}
+
+// ═══════════════════════════════════════════════════════
+// LEADERBOARD
+// ═══════════════════════════════════════════════════════
+function renderLeaderboard() {
+  const results = loadResults();
+  const body = document.getElementById('leaderboardBody');
+
+  if (results.length === 0) {
+    body.innerHTML = '<div class="lb-empty">No results yet.</div>';
+    return;
+  }
+
+  // Sort by pct desc, then time asc
+  const sorted = [...results].sort((a,b) => b.pct - a.pct || a.timeTaken - b.timeTaken);
+
+  let html = `<table class="lb-table">
+    <thead><tr>
+      <th class="lb-rank">#</th>
+      <th>Name</th>
+      <th>Role</th>
+      <th>Score</th>
+      <th>Grade</th>
+      <th>Time</th>
+      <th>Date</th>
+    </tr></thead>
+    <tbody>`;
+
+  sorted.forEach((r, i) => {
+    const { cls } = gradePct(r.pct);
+    html += `<tr>
+      <td class="lb-rank">${i+1}</td>
+      <td style="font-weight:600">${r.name}</td>
+      <td style="color:var(--muted)">${r.role}</td>
+      <td>${r.score}/${r.total}</td>
+      <td><span class="lb-score-pill ${cls}">${r.grade} ${r.pct}%</span></td>
+      <td style="font-variant-numeric:tabular-nums">${fmtTime(r.timeTaken)}</td>
+      <td style="color:var(--muted)">${r.date}</td>
+    </tr>`;
+  });
+
+  html += '</tbody></table>';
+  body.innerHTML = html;
+}
+
+// ═══════════════════════════════════════════════════════
+// TABS
+// ═══════════════════════════════════════════════════════
+function showTab(tab) {
+  document.querySelectorAll('.tab').forEach((t,i) => {
+    t.classList.toggle('active', ['review','leaderboard'][i] === tab);
+  });
+  document.getElementById('tab-review').style.display = tab === 'review' ? 'block' : 'none';
+  document.getElementById('tab-leaderboard').style.display = tab === 'leaderboard' ? 'block' : 'none';
+  if (tab === 'leaderboard') renderLeaderboard();
+}
+
+
+// ═══════════════════════════════════════════════════════
+// ADMIN PASSWORD CONFIG
+// Change ADMIN_HASH to lock with a different password.
+// Default password: hosted2025
+// To change: run btoa('yournewpassword') in browser console and paste result here.
+// ═══════════════════════════════════════════════════════
+const ADMIN_HASH = btoa('hosted2025'); // base64 of 'hosted2025'
+const PASSING_PCT = 60; // minimum % to earn a certificate
+
+let scoreUnlocked = false;
+
+function initResultLock() {
+  const pct = state.lastPct || 0;
+  const banner = document.getElementById('lockBanner');
+  const sections = document.getElementById('scoreSections');
+  const certBtn = document.getElementById('certBtn');
+  const hero = document.getElementById('resultHero');
+
+  // Always blur score on first load
+  scoreUnlocked = false;
+  if (hero) hero.classList.add('score-locked');
+  if (sections) sections.classList.add('score-locked');
+  if (banner) banner.classList.add('visible');
+
+  // Show cert button always (participant can download without seeing score)
+  if (certBtn) certBtn.style.display = 'inline-flex';
+}
+
+function tryUnlock() {
+  const input = document.getElementById('adminInput');
+  const err = document.getElementById('lockErr');
+  const val = input.value.trim();
+
+  if (btoa(val) === ADMIN_HASH) {
+    scoreUnlocked = true;
+    document.getElementById('resultHero').classList.remove('score-locked');
+    document.getElementById('scoreSections').classList.remove('score-locked');
+    document.getElementById('lockBanner').classList.remove('visible');
+    document.getElementById('unlockedBadge').classList.add('visible');
+    input.value = '';
+    err.textContent = '';
+  } else {
+    input.classList.add('shake');
+    err.textContent = 'Incorrect password. Please try again.';
+    setTimeout(() => input.classList.remove('shake'), 400);
+    input.value = '';
+    input.focus();
+  }
+}
+
+
+// ═══════════════════════════════════════════════════════
+// ADMIN DASHBOARD
+// ═══════════════════════════════════════════════════════
+
+let adminSortCol = 'pct';
+let adminSortDir = 'desc';
+
+function openAdminLogin() {
+  document.getElementById('adminLoginModal').classList.add('open');
+  setTimeout(() => document.getElementById('adminLoginInput').focus(), 100);
+}
+
+function closeAdminLogin() {
+  document.getElementById('adminLoginModal').classList.remove('open');
+  document.getElementById('adminLoginInput').value = '';
+  document.getElementById('adminLoginErr').textContent = '';
+}
+
+function submitAdminLogin() {
+  const input = document.getElementById('adminLoginInput');
+  const err   = document.getElementById('adminLoginErr');
+  const val   = input.value.trim();
+
+  if (btoa(val) === ADMIN_HASH) {
+    closeAdminLogin();
+    show('screen-admin');       // show first so elements exist in DOM
+    try { loadAdminDashboard(); } catch(e) { console.error('Admin load error:', e); }
+  } else {
+    input.classList.add('shake');
+    err.textContent = 'Incorrect password.';
+    setTimeout(() => input.classList.remove('shake'), 400);
+    input.value = '';
+    input.focus();
+  }
+}
+
+function exitAdmin() {
+  show('screen-cover');
+}
+
+function loadAdminDashboard() {
+  const results = loadResults();
+  const safeSet = (id, val) => { const el = document.getElementById(id); if (el) el.textContent = String(val); };
+
+  // ── Summary stats ──────────────────────────────────────
+  const total = results.length;
+  safeSet('aStatTotal', total);
+
+
+  if (total === 0) {
+    safeSet('aStatAvg', '—');
+    safeSet('aStatPass', '0%');
+    safeSet('aStatTop', '—');
+    try { renderAdminTable(); } catch(e) { console.error('renderAdminTable error:', e); }
+    return;
+  }
+
+  const avgPct = Math.round(results.reduce((s,r) => s + r.pct, 0) / total);
+  const passCount = results.filter(r => r.pct >= 60).length;
+  const passRate = Math.round((passCount / total) * 100);
+  const topPct = Math.max(...results.map(r => r.pct));
+
+  safeSet('aStatAvg', avgPct + '%');
+  safeSet('aStatPass', passRate + '%');
+  safeSet('aStatTop', topPct + '%');
+
+  // ── Grade distribution bars ────────────────────────────
+  const gradeA = results.filter(r => r.pct >= 80).length;
+  const gradeB = results.filter(r => r.pct >= 70 && r.pct < 80).length;
+  const gradeC = results.filter(r => r.pct >= 60 && r.pct < 70).length;
+  const gradeD = results.filter(r => r.pct < 60).length;
+  const maxGrade = Math.max(gradeA, gradeB, gradeC, gradeD, 1);
+
+  const setBar = (id, nId, count) => {
+    const bar = document.getElementById(id);
+    const pct = Math.round((count / maxGrade) * 72);
+    if (bar) bar.style.height = Math.max(pct, 4) + 'px';
+    const n = document.getElementById(nId);
+    if (n) n.textContent = count;
+  };
+  setBar('distA', 'distAn', gradeA);
+  setBar('distB', 'distBn', gradeB);
+  setBar('distC', 'distCn', gradeC);
+  setBar('distD', 'distDn', gradeD);
+
+  renderAdminTable();
+}
+
+function setSortCol(col) {
+  if (adminSortCol === col) {
+    adminSortDir = adminSortDir === 'asc' ? 'desc' : 'asc';
+  } else {
+    adminSortCol = col;
+    adminSortDir = col === 'name' || col === 'role' ? 'asc' : 'desc';
+  }
+  // Update header styles
+  document.querySelectorAll('.admin-table thead th').forEach(th => {
+    th.classList.remove('sort-asc', 'sort-desc');
+  });
+  renderAdminTable();
+}
+
+function renderAdminTable() {
+  let results = loadResults();
+  const search = (document.getElementById('adminSearch')?.value || '').toLowerCase();
+  const sortVal = document.getElementById('adminSort')?.value || 'pct-desc';
+
+  // Filter
+  if (search) {
+    results = results.filter(r =>
+      r.name.toLowerCase().includes(search) ||
+      r.role.toLowerCase().includes(search)
+    );
+  }
+
+  // Sort
+  const [col, dir] = sortVal.split('-');
+  results.sort((a, b) => {
+    let va, vb;
+    if (col === 'pct')   { va = a.pct;       vb = b.pct; }
+    else if (col === 'date')  { va = new Date(a.timestamp || a.date); vb = new Date(b.timestamp || b.date); }
+    else if (col === 'name')  { va = a.name;       vb = b.name; }
+    else if (col === 'time')  { va = a.timeTaken;  vb = b.timeTaken; }
+    else { va = a.pct; vb = b.pct; }
+
+    if (typeof va === 'string') return dir === 'asc' ? va.localeCompare(vb) : vb.localeCompare(va);
+    return dir === 'asc' ? va - vb : vb - va;
+  });
+
+  const tbody = document.getElementById('adminTableBody');
+  if (!tbody) return;  // guard: screen may not be in DOM yet
+  if (!results.length) {
+    tbody.innerHTML = '<tr><td colspan="8" style="text-align:center;padding:28px;color:var(--muted)">No results found.</td></tr>';
+    return;
+  }
+
+  // Build rows
+  let html = '';
+  results.forEach((r, i) => {
+    const { cls } = gradePct(r.pct);
+    const barCls = r.pct >= 80 ? '' : r.pct >= 60 ? 'amber' : 'red';
+    const medal = i === 0 ? '🥇' : i === 1 ? '🥈' : i === 2 ? '🥉' : `${i+1}`;
+    const timeStr = r.timeTaken ? fmtTime(r.timeTaken) : '—';
+    html += `<tr>
+      <td class="rank-medal" style="font-weight:700;color:var(--muted)">${medal}</td>
+      <td style="font-weight:600">${escHtml(r.name)}</td>
+      <td style="color:var(--muted);font-size:0.82rem">${escHtml(r.role || '—')}</td>
+      <td>
+        <div class="score-bar-wrap">
+          <div class="score-bar">
+            <div class="score-bar-fill ${barCls}" style="width:${r.pct}%"></div>
+          </div>
+          <span class="score-bar-text">${r.pct}%</span>
+        </div>
+      </td>
+      <td><span class="lb-score-pill ${cls}">${r.grade}</span></td>
+      <td style="font-variant-numeric:tabular-nums;color:var(--muted)">${timeStr}</td>
+      <td style="color:var(--muted);font-size:0.82rem">${escHtml(r.date || '—')}</td>
+      <td>
+        <button onclick="deleteResult('${r.id}')"
+          style="background:none;border:none;cursor:pointer;color:var(--red-b);font-size:1rem;padding:2px 6px;"
+          title="Delete this result">✕</button>
+      </td>
+    </tr>`;
+  });
+  tbody.innerHTML = html;
+}
+
+function escHtml(str) {
+  return String(str).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
+}
+
+function deleteResult(id) {
+  if (!confirm('Delete this result? This cannot be undone.')) return;
+  const db = loadResults().filter(r => String(r.id) !== String(id));
+  localStorage.setItem(DB_KEY, JSON.stringify(db));
+  loadAdminDashboard();
+}
+
+function clearAllResults() {
+  if (!confirm('Delete ALL results permanently? This cannot be undone.')) return;
+  localStorage.removeItem(DB_KEY);
+  loadAdminDashboard();
+}
+
+function exportCSV() {
+  const results = loadResults();
+  if (!results.length) { alert('No results to export.'); return; }
+
+  const headers = ['Rank','Name','Role','Score (%)','Score (raw)','Total Questions','Grade','Time Taken (mm:ss)','Date','Timestamp'];
+  const sorted = [...results].sort((a,b) => b.pct - a.pct);
+
+  const rows = sorted.map((r, i) => [
+    i + 1,
+    `"${(r.name || '').replace(/"/g,'""')}"`,
+    `"${(r.role || '').replace(/"/g,'""')}"`,
+    r.pct,
+    r.score,
+    r.total,
+    r.grade,
+    r.timeTaken ? fmtTime(r.timeTaken) : '',
+    r.date || '',
+    r.timestamp || '',
+  ]);
+
+  const csv = [headers.join(','), ...rows.map(r => r.join(','))].join('\n');
+  const blob = new Blob([csv], { type: 'text/csv' });
+  const url  = URL.createObjectURL(blob);
+  const a    = document.createElement('a');
+  a.href     = url;
+  a.download = `hosted_ai_lead_econ_results_${new Date().toISOString().slice(0,10)}.csv`;
+  a.click();
+  setTimeout(() => URL.revokeObjectURL(url), 3000);
+}
+
+
+// ═══════════════════════════════════════════════════════
+// CERTIFICATE GENERATION (Canvas → PDF via data URL)
+// ═══════════════════════════════════════════════════════
+let certData = {}; // populated on submit
+
+function openCertModal() {
+  drawCertificate();
+  document.getElementById('certModalBg').classList.add('open');
+}
+
+function closeCertModal() {
+  document.getElementById('certModalBg').classList.remove('open');
+}
+
+function wrapText(ctx, text, x, y, maxWidth, lineHeight) {
+  const words = text.split(' ');
+  let line = '';
+  let currentY = y;
+  for (let n = 0; n < words.length; n++) {
+    const testLine = line + words[n] + ' ';
+    const metrics = ctx.measureText(testLine);
+    if (metrics.width > maxWidth && n > 0) {
+      ctx.fillText(line.trim(), x, currentY);
+      line = words[n] + ' ';
+      currentY += lineHeight;
+    } else {
+      line = testLine;
+    }
+  }
+  ctx.fillText(line.trim(), x, currentY);
+  return currentY;
+}
+
+function drawCertificate() {
+  const canvas = document.getElementById('certCanvas');
+  const ctx = canvas.getContext('2d');
+  const W = 800, H = 560;
+  canvas.width = W;
+  canvas.height = H;
+
+  const G_DARK  = '#1A3D1A';
+  const G_MID   = '#2C5F2D';
+  const G_LIGHT = '#EBF3EB';
+  const G_PALE  = '#F4FAF4';
+  const GOLD    = '#B8860B';
+  const GOLD_L  = '#F5E6A3';
+  const INK     = '#111111';
+  const GREY    = '#6B6B6B';
+
+  // ── Background ──────────────────────────────────────────
+  ctx.fillStyle = G_PALE;
+  ctx.fillRect(0, 0, W, H);
+
+  // ── Outer border ────────────────────────────────────────
+  ctx.strokeStyle = G_DARK;
+  ctx.lineWidth = 10;
+  ctx.strokeRect(14, 14, W-28, H-28);
+
+  // ── Inner border ────────────────────────────────────────
+  ctx.strokeStyle = GOLD;
+  ctx.lineWidth = 2;
+  ctx.strokeRect(26, 26, W-52, H-52);
+
+  // ── Top green header band ───────────────────────────────
+  ctx.fillStyle = G_DARK;
+  ctx.fillRect(14, 14, W-28, 82);
+
+  // ── Logo dot-grid (simplified) ──────────────────────────
+  ctx.fillStyle = '#7BD47E';
+  const dotPositions = [
+    [58,30],[58,46],[58,62],[58,78],
+    [74,38],[74,54],[74,70],
+    [90,30],[90,46],[90,62],[90,78],
+    [42,46],[42,62],
+  ];
+  dotPositions.forEach(([dx,dy]) => {
+    ctx.beginPath();
+    ctx.arc(dx, dy, 4.5, 0, Math.PI*2);
+    ctx.fill();
+  });
+
+  // ── Brand name in header ────────────────────────────────
+  ctx.fillStyle = '#ffffff';
+  ctx.font = 'bold 28px Arial, sans-serif';
+  ctx.textAlign = 'left';
+  ctx.fillText('hosted\u2022ai', 110, 62);
+
+  ctx.fillStyle = 'rgba(255,255,255,0.55)';
+  ctx.font = '13px Arial, sans-serif';
+  ctx.fillText('transforming neocloud economics', 110, 82);
+
+  // ── "Certificate of Completion" title ───────────────────
+  ctx.textAlign = 'center';
+  ctx.fillStyle = GOLD;
+  ctx.font = 'bold 13px Arial, sans-serif';
+  ctx.letterSpacing = '0.15em';
+  ctx.fillText('C E R T I F I C A T E   O F   C O M P L E T I O N', W/2, 135);
+
+  // Decorative divider line under title
+  ctx.strokeStyle = GOLD;
+  ctx.lineWidth = 1.5;
+  ctx.beginPath(); ctx.moveTo(W/2-180, 146); ctx.lineTo(W/2+180, 146); ctx.stroke();
+
+  // ── "This certifies that" ────────────────────────────────
+  ctx.fillStyle = GREY;
+  ctx.font = 'italic 15px Georgia, serif';
+  ctx.fillText('This certifies that', W/2, 178);
+
+  // ── Recipient name ───────────────────────────────────────
+  ctx.fillStyle = G_DARK;
+  ctx.font = 'bold 34px Georgia, serif';
+  ctx.fillText(certData.name || '—', W/2, 225);
+
+  // Name underline
+  const nameW = ctx.measureText(certData.name || '—').width;
+  ctx.strokeStyle = G_MID;
+  ctx.lineWidth = 1.5;
+  ctx.beginPath();
+  ctx.moveTo(W/2 - nameW/2, 234);
+  ctx.lineTo(W/2 + nameW/2, 234);
+  ctx.stroke();
+
+  // ── "has successfully completed" ────────────────────────
+  ctx.fillStyle = GREY;
+  ctx.font = 'italic 15px Georgia, serif';
+  ctx.fillText('has successfully completed the', W/2, 265);
+
+  // ── Course name ──────────────────────────────────────────
+  ctx.fillStyle = INK;
+  ctx.font = 'bold 18px Arial, sans-serif';
+  ctx.fillText('hosted\u2022ai Lead Economics Assessment', W/2, 295);
+
+  ctx.fillStyle = GREY;
+  ctx.font = '13px Arial, sans-serif';
+  ctx.fillText('BDR Methodology · Lead Qualification · Sales Pipeline · ANUM & BANT', W/2, 316);
+
+  // ── Score badge ──────────────────────────────────────────
+  const scoreText = `${certData.pct || 0}%  ·  ${certData.grade || '—'}`;
+  const sbW = 140, sbH = 38, sbX = W/2 - sbW/2, sbY = 336;
+  ctx.fillStyle = G_LIGHT;
+  ctx.beginPath();
+  ctx.roundRect(sbX, sbY, sbW, sbH, 8);
+  ctx.fill();
+  ctx.strokeStyle = G_MID;
+  ctx.lineWidth = 1.5;
+  ctx.beginPath();
+  ctx.roundRect(sbX, sbY, sbW, sbH, 8);
+  ctx.stroke();
+  ctx.fillStyle = G_DARK;
+  ctx.font = 'bold 16px Arial, sans-serif';
+  ctx.textAlign = 'center';
+  ctx.fillText(scoreText, W/2, sbY + 25);
+
+  // ── Bottom section ───────────────────────────────────────
+  // Left: date
+  ctx.textAlign = 'left';
+  ctx.fillStyle = GREY;
+  ctx.font = '11px Arial, sans-serif';
+  ctx.fillText('DATE OF ASSESSMENT', 60, 440);
+  ctx.fillStyle = INK;
+  ctx.font = 'bold 14px Arial, sans-serif';
+  ctx.fillText(certData.date || '—', 60, 460);
+
+  // Middle: role
+  ctx.textAlign = 'center';
+  ctx.fillStyle = GREY;
+  ctx.font = '11px Arial, sans-serif';
+  ctx.fillText('ROLE / TEAM', W/2, 440);
+  ctx.fillStyle = INK;
+  ctx.font = 'bold 14px Arial, sans-serif';
+  ctx.fillText(certData.role || '—', W/2, 460);
+
+  // Right: score
+  ctx.textAlign = 'right';
+  ctx.fillStyle = GREY;
+  ctx.font = '11px Arial, sans-serif';
+  ctx.fillText('SCORE', W-60, 440);
+  ctx.fillStyle = INK;
+  ctx.font = 'bold 14px Arial, sans-serif';
+  ctx.fillText(`${certData.score || 0} / ${certData.total || 38} correct`, W-60, 460);
+
+  // Divider above bottom section
+  ctx.strokeStyle = G_MID;
+  ctx.lineWidth = 1;
+  ctx.setLineDash([4, 4]);
+  ctx.beginPath(); ctx.moveTo(60, 422); ctx.lineTo(W-60, 422); ctx.stroke();
+  ctx.setLineDash([]);
+
+  // ── Signature line ───────────────────────────────────────
+  ctx.strokeStyle = G_DARK;
+  ctx.lineWidth = 1.2;
+  // Left sig
+  ctx.beginPath(); ctx.moveTo(60, 510); ctx.lineTo(220, 510); ctx.stroke();
+  ctx.fillStyle = GREY;
+  ctx.font = '11px Arial, sans-serif';
+  ctx.textAlign = 'center';
+  ctx.fillText('Authorised Signatory', 140, 526);
+  ctx.fillStyle = G_DARK;
+  ctx.font = 'bold 12px Arial, sans-serif';
+  ctx.fillText('hosted\u2022ai', 140, 540);
+
+  // Right sig
+  ctx.strokeStyle = G_DARK;
+  ctx.lineWidth = 1.2;
+  ctx.beginPath(); ctx.moveTo(W-220, 510); ctx.lineTo(W-60, 510); ctx.stroke();
+  ctx.fillStyle = GREY;
+  ctx.font = '11px Arial, sans-serif';
+  ctx.fillText('Learning & Development', W-140, 526);
+  ctx.fillStyle = G_DARK;
+  ctx.font = 'bold 12px Arial, sans-serif';
+  ctx.fillText('BDR Excellence Programme', W-140, 540);
+
+  // ── Corner ornaments ─────────────────────────────────────
+  [[60,52],[W-60,52],[60,H-52],[W-60,H-52]].forEach(([cx,cy]) => {
+    ctx.fillStyle = GOLD;
+    ctx.beginPath();
+    ctx.arc(cx, cy, 5, 0, Math.PI*2);
+    ctx.fill();
+  });
+
+  // ── Certificate ID watermark (bottom center) ─────────────
+  ctx.textAlign = 'center';
+  ctx.fillStyle = 'rgba(44,95,45,0.25)';
+  ctx.font = '10px Arial, sans-serif';
+  const certId = `CERT-${Date.now().toString(36).toUpperCase()}`;
+  ctx.fillText(`Certificate ID: ${certId}  ·  Issued: ${new Date().toLocaleDateString()}`, W/2, H-32);
+}
+
+async function downloadCert() {
+  const canvas = document.getElementById('certCanvas');
+
+  // Use jsPDF if available, otherwise fall back to PNG download
+  // We'll create a simple PDF wrapper using a data URL embedded in a PDF shell
+  const imgData = canvas.toDataURL('image/jpeg', 0.95);
+
+  // Build a minimal PDF that embeds the JPEG
+  // This is a self-contained pure-JS PDF generator for single image pages
+  const pdfBytes = buildPDF(imgData, canvas.width, canvas.height);
+  const blob = new Blob([pdfBytes], { type: 'application/pdf' });
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement('a');
+  a.href = url;
+  const safeName = (certData.name || 'participant').replace(/[^a-zA-Z0-9]/g, '_');
+  a.download = `hosted_ai_cert_${safeName}_${certData.date || 'test'}.pdf`;
+  a.click();
+  setTimeout(() => URL.revokeObjectURL(url), 5000);
+}
+
+// ── Pure-JS minimal PDF builder (single JPEG page, A4 landscape) ─────────────
+function buildPDF(jpegDataURL, imgW, imgH) {
+  // Strip data URL prefix, get raw base64
+  const b64 = jpegDataURL.replace(/^data:image\/jpeg;base64,/, '');
+  const rawBytes = atob(b64);
+  const imgBytes = new Uint8Array(rawBytes.length);
+  for (let i = 0; i < rawBytes.length; i++) imgBytes[i] = rawBytes.charCodeAt(i);
+
+  // A4 landscape: 841.89 x 595.28 pt
+  const PW = 841.89, PH = 595.28;
+  // Scale image to fit page with margin
+  const margin = 20;
+  const scaleX = (PW - margin*2) / imgW;
+  const scaleY = (PH - margin*2) / imgH;
+  const scale = Math.min(scaleX, scaleY);
+  const drawW = imgW * scale;
+  const drawH = imgH * scale;
+  const drawX = (PW - drawW) / 2;
+  const drawY = (PH - drawH) / 2;
+
+  // PDF objects
+  const enc = (s) => s.split('').map(c => c.charCodeAt(0));
+  const encStr = (s) => new Uint8Array(enc(s));
+
+  let pdf = [];
+  let offsets = [];
+  let pos = 0;
+
+  const write = (chunk) => {
+    if (typeof chunk === 'string') {
+      const bytes = enc(chunk);
+      pdf.push(...bytes);
+      pos += bytes.length;
+    } else {
+      pdf.push(...chunk);
+      pos += chunk.length;
+    }
+  };
+
+  // Header
+  write('%PDF-1.4\n%\xE2\xE3\xCF\xD3\n');
+
+  // Obj 1: catalog
+  offsets[1] = pos;
+  write('1 0 obj\n<< /Type /Catalog /Pages 2 0 R >>\nendobj\n');
+
+  // Obj 2: pages
+  offsets[2] = pos;
+  write(`2 0 obj\n<< /Type /Pages /Kids [3 0 R] /Count 1 >>\nendobj\n`);
+
+  // Obj 3: page
+  offsets[3] = pos;
+  write(`3 0 obj\n<< /Type /Page /Parent 2 0 R\n   /MediaBox [0 0 ${PW.toFixed(2)} ${PH.toFixed(2)}]\n   /Contents 4 0 R\n   /Resources << /XObject << /Img 5 0 R >> >>\n>>\nendobj\n`);
+
+  // Obj 4: content stream
+  const streamContent = `q\n${drawW.toFixed(2)} 0 0 ${drawH.toFixed(2)} ${drawX.toFixed(2)} ${drawY.toFixed(2)} cm\n/Img Do\nQ\n`;
+  offsets[4] = pos;
+  write(`4 0 obj\n<< /Length ${streamContent.length} >>\nstream\n${streamContent}endstream\nendobj\n`);
+
+  // Obj 5: image XObject
+  offsets[5] = pos;
+  const imgLen = imgBytes.length;
+  const imgHdr = `5 0 obj\n<< /Type /XObject /Subtype /Image\n   /Width ${imgW} /Height ${imgH}\n   /ColorSpace /DeviceRGB /BitsPerComponent 8\n   /Filter /DCTDecode /Length ${imgLen}\n>>\nstream\n`;
+  write(imgHdr);
+  write(imgBytes);
+  write('\nendstream\nendobj\n');
+
+  // xref
+  const xrefPos = pos;
+  write(`xref\n0 6\n0000000000 65535 f \n`);
+  for (let i = 1; i <= 5; i++) {
+    write(`${String(offsets[i]).padStart(10,'0')} 00000 n \n`);
+  }
+
+  // trailer
+  write(`trailer\n<< /Size 6 /Root 1 0 R >>\nstartxref\n${xrefPos}\n%%EOF\n`);
+
+  return new Uint8Array(pdf);
+}
+
+// ═══════════════════════════════════════════════════════
+// RETAKE
+// ═══════════════════════════════════════════════════════
+function retakeTest() {
+  state.answers = new Array(QUESTIONS.length).fill(null);
+  state.submitted = false;
+  scoreUnlocked = false;
+  clearInterval(timerInterval);
+  // Reset lock state
+  const hero = document.getElementById('resultHero');
+  const sections = document.getElementById('scoreSections');
+  const banner = document.getElementById('lockBanner');
+  const badge = document.getElementById('unlockedBadge');
+  const certBtn = document.getElementById('certBtn');
+  if (hero) hero.classList.remove('score-locked');
+  if (sections) sections.classList.remove('score-locked');
+  if (banner) banner.classList.remove('visible');
+  if (badge) badge.classList.remove('visible');
+  if (certBtn) certBtn.style.display = 'none';
+  show('screen-cover');
+}
+
+// ═══════════════════════════════════════════════════════
+// INIT — set today's date
+// ═══════════════════════════════════════════════════════
+document.addEventListener('DOMContentLoaded', () => {
+  const d = document.getElementById('testDate');
+  if (d) d.value = new Date().toISOString().slice(0, 10);
+
+  // Keyboard shortcut: Enter on form fields
+  ['firstName','lastName','role'].forEach(id => {
+    const el = document.getElementById(id);
+    if (el) el.addEventListener('keydown', e => {
+      if (e.key === 'Enter') startTest();
+    });
+  });
+});
+</script>
+</body>
+</html>

@@ -1,0 +1,1019 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Neocloud GPU Economics: ROI Calculator</title>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+            background: #f5f7fa;
+            color: #2d3e50;
+        }
+
+        .header {
+            background: linear-gradient(135deg, #1f4788 0%, #00b4d8 100%);
+            color: white;
+            padding: 40px 20px;
+            text-align: center;
+        }
+
+        .header h1 {
+            font-size: 32px;
+            margin-bottom: 10px;
+        }
+
+        .header p {
+            font-size: 16px;
+            opacity: 0.95;
+        }
+
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+
+        .tabs {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 30px;
+            border-bottom: 2px solid #ddd;
+            flex-wrap: wrap;
+        }
+
+        .tab-button {
+            padding: 12px 20px;
+            border: none;
+            background: none;
+            cursor: pointer;
+            font-size: 16px;
+            font-weight: 600;
+            color: #666;
+            border-bottom: 3px solid transparent;
+            transition: all 0.3s;
+        }
+
+        .tab-button.active {
+            color: #1f4788;
+            border-bottom-color: #00b4d8;
+        }
+
+        .tab-button:hover {
+            color: #1f4788;
+        }
+
+        .tab-content {
+            display: none;
+        }
+
+        .tab-content.active {
+            display: block;
+        }
+
+        .grid {
+            display: grid;
+            grid-template-columns: 1fr 2fr;
+            gap: 30px;
+            margin-bottom: 30px;
+        }
+
+        @media (max-width: 1000px) {
+            .grid {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        .card {
+            background: white;
+            border-radius: 8px;
+            padding: 25px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+        }
+
+        .card h2 {
+            color: #1f4788;
+            font-size: 20px;
+            margin-bottom: 20px;
+            border-bottom: 2px solid #f0f0f0;
+            padding-bottom: 10px;
+        }
+
+        .form-group {
+            margin-bottom: 20px;
+        }
+
+        .form-group label {
+            display: block;
+            font-weight: 600;
+            margin-bottom: 8px;
+            color: #2d3e50;
+            font-size: 14px;
+        }
+
+        .form-group input,
+        .form-group select {
+            width: 100%;
+            padding: 10px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            font-size: 14px;
+        }
+
+        .form-group input:focus,
+        .form-group select:focus {
+            outline: none;
+            border-color: #00b4d8;
+            box-shadow: 0 0 0 3px rgba(0,180,216,0.1);
+        }
+
+        .input-group {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 15px;
+        }
+
+        .metrics {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 15px;
+        }
+
+        .metric {
+            background: #f9f9f9;
+            padding: 15px;
+            border-radius: 6px;
+            border-left: 4px solid #00b4d8;
+        }
+
+        .metric-label {
+            font-size: 12px;
+            color: #666;
+            text-transform: uppercase;
+            font-weight: 600;
+            margin-bottom: 5px;
+        }
+
+        .metric-value {
+            font-size: 24px;
+            font-weight: bold;
+            color: #1f4788;
+        }
+
+        .metric.positive .metric-value {
+            color: #27ae60;
+        }
+
+        .metric.negative .metric-value {
+            color: #e74c3c;
+        }
+
+        .tier-row {
+            display: grid;
+            grid-template-columns: 1fr 1fr 1fr 1fr 1fr;
+            gap: 10px;
+            padding: 15px;
+            background: #f9f9f9;
+            border-radius: 6px;
+            margin-bottom: 10px;
+            align-items: center;
+        }
+
+        .tier-row.header {
+            background: #1f4788;
+            color: white;
+            font-weight: 600;
+            margin-bottom: 5px;
+        }
+
+        .tier-col {
+            font-size: 14px;
+        }
+
+        .button-group {
+            display: flex;
+            gap: 10px;
+            margin-top: 20px;
+        }
+
+        button.primary {
+            background: #1f4788;
+            color: white;
+            padding: 12px 24px;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            font-weight: 600;
+            font-size: 14px;
+            transition: all 0.3s;
+        }
+
+        button.primary:hover {
+            background: #153a5f;
+            box-shadow: 0 4px 12px rgba(31,71,136,0.3);
+        }
+
+        button.secondary {
+            background: #f0f0f0;
+            color: #333;
+            padding: 12px 24px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            cursor: pointer;
+            font-weight: 600;
+            font-size: 14px;
+            transition: all 0.3s;
+        }
+
+        button.secondary:hover {
+            background: #e0e0e0;
+        }
+
+        .chart-container {
+            position: relative;
+            height: 300px;
+            margin-bottom: 20px;
+        }
+
+        .scenario-description {
+            background: #e3f2fd;
+            border-left: 4px solid #00b4d8;
+            padding: 15px;
+            border-radius: 4px;
+            margin-bottom: 20px;
+            font-size: 14px;
+            line-height: 1.6;
+        }
+
+        .comparison-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 20px;
+        }
+
+        .comparison-table th {
+            background: #1f4788;
+            color: white;
+            padding: 12px;
+            text-align: left;
+            font-weight: 600;
+        }
+
+        .comparison-table td {
+            padding: 12px;
+            border-bottom: 1px solid #eee;
+        }
+
+        .comparison-table tr:hover {
+            background: #f9f9f9;
+        }
+
+        .highlight {
+            background: #fff9e6;
+            font-weight: 600;
+            color: #e67e22;
+        }
+
+        .footer {
+            text-align: center;
+            color: #666;
+            padding: 20px;
+            margin-top: 40px;
+            font-size: 14px;
+        }
+
+        @media print {
+            .tabs, button {
+                display: none;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="header">
+        <h1>Neocloud GPU Economics: ROI Calculator</h1>
+        <p>Interactive scenario modeling for hosted·ai GPU pool virtualization</p>
+    </div>
+
+    <div class="container">
+        <div class="tabs">
+            <button class="tab-button active" onclick="switchTab('custom')">Custom Calculator</button>
+            <button class="tab-button" onclick="switchTab('phase1')">Phase 1: MVP Entry</button>
+            <button class="tab-button" onclick="switchTab('phase2')">Phase 2: Scale</button>
+            <button class="tab-button" onclick="switchTab('portfolio')">Full Portfolio</button>
+            <button class="tab-button" onclick="switchTab('comparison')">Tier Comparison</button>
+        </div>
+
+        <!-- CUSTOM CALCULATOR TAB -->
+        <div id="custom" class="tab-content active">
+            <div class="scenario-description">
+                <strong>Custom GPU Pool Calculator:</strong> Configure a single 8-GPU node with your parameters and see real-time ROI calculations.
+            </div>
+
+            <div class="grid">
+                <!-- INPUTS -->
+                <div class="card">
+                    <h2>⚙️ Configuration</h2>
+
+                    <div class="form-group">
+                        <label>GPU Type</label>
+                        <select id="gpuType" onchange="updateCustom()">
+                            <option value="vera">Vera Rubin (1x, Premium Training)</option>
+                            <option value="h200" selected>H200 (3x-4x, Inference)</option>
+                            <option value="h100">H100 (2x-3x, Dev/Fine-tuning)</option>
+                            <option value="l40s">L40S (4x, Batch)</option>
+                        </select>
+                    </div>
+
+                    <div class="input-group">
+                        <div class="form-group">
+                            <label>GPU Count per Node</label>
+                            <input type="number" id="gpuCount" value="8" min="1" onchange="updateCustom()">
+                        </div>
+                        <div class="form-group">
+                            <label>Overcommit Ratio (1x-10x)</label>
+                            <input type="number" id="overcommit" value="3" min="1" max="10" step="0.5" onchange="updateCustom()">
+                        </div>
+                    </div>
+
+                    <div class="input-group">
+                        <div class="form-group">
+                            <label>Price per vGPU/hr ($)</label>
+                            <input type="number" id="pricePerHour" value="2.40" min="0.10" step="0.10" onchange="updateCustom()">
+                        </div>
+                        <div class="form-group">
+                            <label>GPU Cost per Unit ($K)</label>
+                            <input type="number" id="gpuCost" value="40" min="10" step="5" onchange="updateCustom()">
+                        </div>
+                    </div>
+
+                    <div class="input-group">
+                        <div class="form-group">
+                            <label>Annual Utilization (%)</label>
+                            <input type="number" id="utilization" value="70" min="10" max="100" step="5" onchange="updateCustom()">
+                        </div>
+                        <div class="form-group">
+                            <label>Annual OpEx ($K)</label>
+                            <input type="number" id="annualOpex" value="102" min="20" step="10" onchange="updateCustom()">
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <label>Add Compliance Tier (+15% price)</label>
+                        <input type="checkbox" id="compliance" onchange="updateCustom()" style="width: auto; margin-right: 10px;">
+                        <span style="font-size: 12px; color: #666;">Enable memory zeroing for HIPAA/PCI/SOC2</span>
+                    </div>
+
+                    <button class="primary" onclick="updateCustom()">Calculate</button>
+                </div>
+
+                <!-- RESULTS -->
+                <div class="card">
+                    <h2>📊 Results (Annual)</h2>
+
+                    <div class="metrics">
+                        <div class="metric">
+                            <div class="metric-label">Total vGPUs</div>
+                            <div class="metric-value" id="totalVGPUs">24</div>
+                        </div>
+                        <div class="metric">
+                            <div class="metric-label">Annual Revenue</div>
+                            <div class="metric-value" id="annualRevenue">$286K</div>
+                        </div>
+                        <div class="metric">
+                            <div class="metric-label">Annual OpEx</div>
+                            <div class="metric-value" id="displayOpex">$102K</div>
+                        </div>
+                        <div class="metric positive">
+                            <div class="metric-label">Annual Profit</div>
+                            <div class="metric-value" id="annualProfit">$184K</div>
+                        </div>
+                        <div class="metric">
+                            <div class="metric-label">Gross Margin</div>
+                            <div class="metric-value" id="grossMargin">64%</div>
+                        </div>
+                        <div class="metric">
+                            <div class="metric-label">CapEx (3-yr)</div>
+                            <div class="metric-value" id="capex">$320K</div>
+                        </div>
+                    </div>
+
+                    <div style="margin-top: 20px; padding-top: 20px; border-top: 2px solid #f0f0f0;">
+                        <div class="metric positive" style="border-left: 4px solid #27ae60;">
+                            <div class="metric-label">3-Year ROI (Annualized)</div>
+                            <div class="metric-value" id="roiAnnual" style="color: #27ae60; font-size: 28px;">20%</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- CHART -->
+            <div class="card">
+                <h2>📈 Revenue vs. Costs Breakdown</h2>
+                <div class="chart-container">
+                    <canvas id="customChart"></canvas>
+                </div>
+            </div>
+        </div>
+
+        <!-- PHASE 1 TAB -->
+        <div id="phase1" class="tab-content">
+            <div class="scenario-description">
+                <strong>Phase 1: MVP Entry (Months 1–3, $320K CapEx)</strong><br>
+                Deploy 8 H200 GPUs (TIER 2), start with 1x overcommit, scale to 3x after 2 weeks. Target: 3–5 pilot customers.
+            </div>
+
+            <div class="grid">
+                <div class="card">
+                    <h2>⚙️ Phase 1 Config</h2>
+                    
+                    <div class="form-group">
+                        <label>Start Overcommit (1x-2x)</label>
+                        <input type="number" id="phase1StartCommit" value="1" min="1" max="2" step="0.5" onchange="updatePhase1()">
+                    </div>
+
+                    <div class="form-group">
+                        <label>Scale Overcommit (2x-3x)</label>
+                        <input type="number" id="phase1ScaleCommit" value="3" min="2" max="3" step="0.5" onchange="updatePhase1()">
+                    </div>
+
+                    <div class="form-group">
+                        <label>Weeks at Start Ratio</label>
+                        <input type="number" id="phase1StartWeeks" value="2" min="1" max="12" step="1" onchange="updatePhase1()">
+                    </div>
+
+                    <div class="form-group">
+                        <label>H200 Price/hr ($)</label>
+                        <input type="number" id="phase1Price" value="2.40" min="1" step="0.10" onchange="updatePhase1()">
+                    </div>
+
+                    <div class="form-group">
+                        <label>Utilization (%)</label>
+                        <input type="number" id="phase1Util" value="70" min="10" max="100" step="5" onchange="updatePhase1()">
+                    </div>
+
+                    <button class="primary" onclick="updatePhase1()">Calculate Phase 1</button>
+                </div>
+
+                <div class="card">
+                    <h2>📊 Phase 1 Summary</h2>
+                    <div class="metrics">
+                        <div class="metric">
+                            <div class="metric-label">CapEx</div>
+                            <div class="metric-value">$320K</div>
+                        </div>
+                        <div class="metric">
+                            <div class="metric-label">Monthly Revenue (Mo 3)</div>
+                            <div class="metric-value" id="phase1MonthlyRev">$23.8K</div>
+                        </div>
+                        <div class="metric">
+                            <div class="metric-label">Monthly OpEx</div>
+                            <div class="metric-value">$8.5K</div>
+                        </div>
+                        <div class="metric positive">
+                            <div class="metric-label">3-Month Profit (Avg)</div>
+                            <div class="metric-value" id="phase1Profit">$36K</div>
+                        </div>
+                        <div class="metric">
+                            <div class="metric-label">Payback (Months)</div>
+                            <div class="metric-value" id="phase1Payback">9</div>
+                        </div>
+                        <div class="metric">
+                            <div class="metric-label">Target Customers</div>
+                            <div class="metric-value">3–5</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- PHASE 2 TAB -->
+        <div id="phase2" class="tab-content">
+            <div class="scenario-description">
+                <strong>Phase 2: Scale & Tier Mix (Months 4–6, +$96K CapEx)</strong><br>
+                Keep Phase 1 H200 (8 nodes) + Add 8 L40S GPUs (TIER 4 — highest ROI). Target: 20–30 customers.
+            </div>
+
+            <div class="grid">
+                <div class="card">
+                    <h2>⚙️ Phase 2 Config</h2>
+                    
+                    <div class="form-group">
+                        <label>H200 Overcommit</label>
+                        <input type="number" id="phase2H200Commit" value="3" min="1" max="4" step="0.5" onchange="updatePhase2()">
+                    </div>
+
+                    <div class="form-group">
+                        <label>L40S Overcommit</label>
+                        <input type="number" id="phase2L40SCommit" value="4" min="2" max="10" step="0.5" onchange="updatePhase2()">
+                    </div>
+
+                    <div class="input-group">
+                        <div class="form-group">
+                            <label>H200 Price/hr ($)</label>
+                            <input type="number" id="phase2H200Price" value="2.40" step="0.10" onchange="updatePhase2()">
+                        </div>
+                        <div class="form-group">
+                            <label>L40S Price/hr ($)</label>
+                            <input type="number" id="phase2L40SPrice" value="2.10" step="0.10" onchange="updatePhase2()">
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <label>Utilization (%)</label>
+                        <input type="number" id="phase2Util" value="70" min="10" max="100" step="5" onchange="updatePhase2()">
+                    </div>
+
+                    <button class="primary" onclick="updatePhase2()">Calculate Phase 2</button>
+                </div>
+
+                <div class="card">
+                    <h2>📊 Phase 2 Results</h2>
+                    <div class="metrics">
+                        <div class="metric">
+                            <div class="metric-label">Total GPUs</div>
+                            <div class="metric-value">16</div>
+                        </div>
+                        <div class="metric">
+                            <div class="metric-label">Total CapEx (Cumulative)</div>
+                            <div class="metric-value">$416K</div>
+                        </div>
+                        <div class="metric">
+                            <div class="metric-label">Monthly Revenue</div>
+                            <div class="metric-value" id="phase2Revenue">$44K</div>
+                        </div>
+                        <div class="metric">
+                            <div class="metric-label">Monthly OpEx</div>
+                            <div class="metric-value" id="phase2OpEx">$14.2K</div>
+                        </div>
+                        <div class="metric positive">
+                            <div class="metric-label">Monthly Profit</div>
+                            <div class="metric-value" id="phase2Profit">$29.8K</div>
+                        </div>
+                        <div class="metric">
+                            <div class="metric-label">Blended Margin</div>
+                            <div class="metric-value" id="phase2Margin">68%</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- FULL PORTFOLIO TAB -->
+        <div id="portfolio" class="tab-content">
+            <div class="scenario-description">
+                <strong>Full Portfolio: 4-Tier Neocloud (164 GPUs)</strong><br>
+                Enterprise deployment with Vera Rubin (training), H200 (inference), H100 (dev), and L40S (batch).
+            </div>
+
+            <div class="card">
+                <h2>🏢 Full Portfolio Configuration</h2>
+                
+                <div class="tier-row header">
+                    <div class="tier-col"><strong>Tier</strong></div>
+                    <div class="tier-col"><strong>GPU Type</strong></div>
+                    <div class="tier-col"><strong>Nodes</strong></div>
+                    <div class="tier-col"><strong>Overcommit</strong></div>
+                    <div class="tier-col"><strong>Price/hr</strong></div>
+                </div>
+
+                <div class="tier-row">
+                    <div class="tier-col"><strong>TIER 1</strong></div>
+                    <div class="tier-col">Vera Rubin</div>
+                    <div class="tier-col"><input type="number" id="tier1Nodes" value="1" min="0" step="0.5" onchange="updatePortfolio()" style="width: 60px;"></div>
+                    <div class="tier-col"><input type="number" id="tier1Commit" value="1" min="1" max="1" step="0.5" onchange="updatePortfolio()" style="width: 60px;"></div>
+                    <div class="tier-col">$<input type="number" id="tier1Price" value="4.50" min="1" step="0.10" onchange="updatePortfolio()" style="width: 80px;"></div>
+                </div>
+
+                <div class="tier-row">
+                    <div class="tier-col"><strong>TIER 2</strong></div>
+                    <div class="tier-col">H200</div>
+                    <div class="tier-col"><input type="number" id="tier2Nodes" value="4" min="0" step="0.5" onchange="updatePortfolio()" style="width: 60px;"></div>
+                    <div class="tier-col"><input type="number" id="tier2Commit" value="3" min="1" max="4" step="0.5" onchange="updatePortfolio()" style="width: 60px;"></div>
+                    <div class="tier-col">$<input type="number" id="tier2Price" value="2.40" min="0.5" step="0.10" onchange="updatePortfolio()" style="width: 80px;"></div>
+                </div>
+
+                <div class="tier-row">
+                    <div class="tier-col"><strong>TIER 3</strong></div>
+                    <div class="tier-col">H100</div>
+                    <div class="tier-col"><input type="number" id="tier3Nodes" value="2" min="0" step="0.5" onchange="updatePortfolio()" style="width: 60px;"></div>
+                    <div class="tier-col"><input type="number" id="tier3Commit" value="3" min="1" max="4" step="0.5" onchange="updatePortfolio()" style="width: 60px;"></div>
+                    <div class="tier-col">$<input type="number" id="tier3Price" value="2.40" min="0.5" step="0.10" onchange="updatePortfolio()" style="width: 80px;"></div>
+                </div>
+
+                <div class="tier-row">
+                    <div class="tier-col"><strong>TIER 4</strong></div>
+                    <div class="tier-col">L40S</div>
+                    <div class="tier-col"><input type="number" id="tier4Nodes" value="3" min="0" step="0.5" onchange="updatePortfolio()" style="width: 60px;"></div>
+                    <div class="tier-col"><input type="number" id="tier4Commit" value="4" min="2" max="10" step="0.5" onchange="updatePortfolio()" style="width: 60px;"></div>
+                    <div class="tier-col">$<input type="number" id="tier4Price" value="2.10" min="0.5" step="0.10" onchange="updatePortfolio()" style="width: 80px;"></div>
+                </div>
+
+                <div class="form-group" style="margin-top: 20px;">
+                    <label>Overall Utilization (%)</label>
+                    <input type="number" id="portfolioUtil" value="70" min="10" max="100" step="5" onchange="updatePortfolio()">
+                </div>
+
+                <button class="primary" onclick="updatePortfolio()">Calculate Portfolio</button>
+            </div>
+
+            <div class="grid" style="margin-top: 20px;">
+                <div class="card">
+                    <h2>📊 Portfolio Summary</h2>
+                    <div class="metrics">
+                        <div class="metric">
+                            <div class="metric-label">Total GPUs</div>
+                            <div class="metric-value" id="portfolioGPUs">164</div>
+                        </div>
+                        <div class="metric">
+                            <div class="metric-label">Total vGPUs</div>
+                            <div class="metric-value" id="portfolioVGPUs">n/a</div>
+                        </div>
+                        <div class="metric">
+                            <div class="metric-label">Annual Revenue</div>
+                            <div class="metric-value" id="portfolioRevenue">$3.8M</div>
+                        </div>
+                        <div class="metric">
+                            <div class="metric-label">Annual OpEx</div>
+                            <div class="metric-value" id="portfolioOpEx">$680K</div>
+                        </div>
+                    </div>
+
+                    <div style="margin-top: 20px; padding-top: 20px; border-top: 2px solid #f0f0f0;">
+                        <div class="metric positive" style="border-left: 4px solid #27ae60;">
+                            <div class="metric-label">Annual Profit</div>
+                            <div class="metric-value" id="portfolioProfit">$2.4M</div>
+                        </div>
+                        <div class="metric">
+                            <div class="metric-label">Blended Margin</div>
+                            <div class="metric-value" id="portfolioMargin">62%</div>
+                        </div>
+                        <div class="metric positive">
+                            <div class="metric-label">3-Year ROI (Annualized)</div>
+                            <div class="metric-value" id="portfolioROI">14.4%</div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="card">
+                    <h2>💰 Tier Breakdown</h2>
+                    <table class="comparison-table" id="portfolioTable">
+                        <!-- Populated by JavaScript -->
+                    </table>
+                </div>
+            </div>
+        </div>
+
+        <!-- COMPARISON TAB -->
+        <div id="comparison" class="tab-content">
+            <div class="scenario-description">
+                <strong>Tier Comparison:</strong> Side-by-side ROI analysis of all 4 GPU tiers at standard configurations.
+            </div>
+
+            <div class="card">
+                <h2>🏆 Tier ROI Comparison (Annual, Per 8-GPU Node)</h2>
+                <table class="comparison-table" id="comparisonTable">
+                    <tr>
+                        <th>Tier</th>
+                        <th>GPU Type</th>
+                        <th>Overcommit</th>
+                        <th>Price/hr</th>
+                        <th>vGPUs</th>
+                        <th>Annual Revenue</th>
+                        <th>Annual OpEx</th>
+                        <th>Profit</th>
+                        <th>Margin</th>
+                        <th>ROI (Annualized)</th>
+                    </tr>
+                    <tr>
+                        <td class="highlight">TIER 1</td>
+                        <td>Vera Rubin</td>
+                        <td>1x</td>
+                        <td>$4.50/hr</td>
+                        <td>8</td>
+                        <td>$79.2K</td>
+                        <td>$102K</td>
+                        <td>-$22.8K</td>
+                        <td>-29%</td>
+                        <td class="highlight">Not Break-Even</td>
+                    </tr>
+                    <tr>
+                        <td class="highlight">TIER 2</td>
+                        <td>H200</td>
+                        <td>3x</td>
+                        <td>$2.40/hr</td>
+                        <td>24</td>
+                        <td>$286K</td>
+                        <td>$102K</td>
+                        <td>$184K</td>
+                        <td>64%</td>
+                        <td class="highlight">20% 🌟 PRIMARY</td>
+                    </tr>
+                    <tr>
+                        <td class="highlight">TIER 3</td>
+                        <td>H100</td>
+                        <td>3x</td>
+                        <td>$2.40/hr</td>
+                        <td>24</td>
+                        <td>$218K</td>
+                        <td>$85K</td>
+                        <td>$133K</td>
+                        <td>61%</td>
+                        <td class="highlight">18%</td>
+                    </tr>
+                    <tr>
+                        <td class="highlight">TIER 4</td>
+                        <td>L40S</td>
+                        <td>4x</td>
+                        <td>$2.10/hr</td>
+                        <td>32</td>
+                        <td>$320K</td>
+                        <td>$70K</td>
+                        <td>$250K</td>
+                        <td>78%</td>
+                        <td class="highlight">30% 🏆 BEST</td>
+                    </tr>
+                </table>
+            </div>
+
+            <div class="grid" style="margin-top: 20px;">
+                <div class="card">
+                    <h2>📊 ROI by Tier</h2>
+                    <div class="chart-container">
+                        <canvas id="comparisonChart"></canvas>
+                    </div>
+                </div>
+
+                <div class="card">
+                    <h2>💡 Recommendations</h2>
+                    <div style="line-height: 1.8; font-size: 14px;">
+                        <p><strong style="color: #27ae60;">✓ Phase 1 Priority: H200 (TIER 2)</strong><br>
+                        Highest revenue per node, proven inference market demand, 20% annualized ROI</p>
+                        
+                        <p style="margin-top: 15px;"><strong style="color: #27ae60;">✓ Phase 2 Priority: L40S (TIER 4)</strong><br>
+                        Highest ROI (30%), lowest CapEx, highest margin (78%), fills capacity</p>
+                        
+                        <p style="margin-top: 15px;"><strong style="color: #e67e22;">△ Phase 3 Defer: Vera Rubin (TIER 1)</strong><br>
+                        Lowest ROI, complex setup. Deploy only if capital abundant or Fortune 500 deal signed.</p>
+                        
+                        <p style="margin-top: 15px;"><strong style="color: #27ae60;">✓ Always add: Compliance Tier</strong><br>
+                        +15% price premium, negligible cost. Target healthcare/finance for +5pp margin.</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="footer">
+        <p><strong>Neocloud GPU Economics: hosted·ai Platform</strong></p>
+        <p>All calculations based on 70% average utilization, $102K annual OpEx per 8-GPU node, and 3-year depreciation schedule.</p>
+        <p>For more information: <strong>https://hosted.ai/demo</strong> | <strong>hello@hosted.ai</strong></p>
+    </div>
+
+    <script>
+        // Tab switching
+        function switchTab(tabName) {
+            document.querySelectorAll('.tab-content').forEach(el => el.classList.remove('active'));
+            document.querySelectorAll('.tab-button').forEach(el => el.classList.remove('active'));
+            document.getElementById(tabName).classList.add('active');
+            event.target.classList.add('active');
+        }
+
+        // CUSTOM CALCULATOR
+        function updateCustom() {
+            const gpuType = document.getElementById('gpuType').value;
+            const gpuCount = parseInt(document.getElementById('gpuCount').value) || 8;
+            const overcommit = parseFloat(document.getElementById('overcommit').value) || 3;
+            const pricePerHour = parseFloat(document.getElementById('pricePerHour').value) || 2.40;
+            const gpuCost = parseFloat(document.getElementById('gpuCost').value) || 40;
+            const utilization = parseFloat(document.getElementById('utilization').value) / 100 || 0.7;
+            const annualOpex = parseFloat(document.getElementById('annualOpex').value) || 102;
+            const compliance = document.getElementById('compliance').checked;
+
+            const vgpuCount = gpuCount * overcommit;
+            const hoursPerYear = 24 * 365;
+            let annualRevenue = vgpuCount * pricePerHour * hoursPerYear * utilization;
+            
+            if (compliance) {
+                annualRevenue *= 1.15;
+            }
+
+            const annualProfit = annualRevenue - (annualOpex * 1000);
+            const grossMargin = (annualProfit / annualRevenue * 100).toFixed(1);
+            const capex = gpuCount * gpuCost;
+            const totalCost3Yr = (capex * 1000) + (annualOpex * 1000 * 3);
+            const profit3Yr = (annualProfit * 3);
+            const roi3Yr = (profit3Yr / (capex * 1000)) * 100;
+            const roiAnnual = (roi3Yr / 3).toFixed(1);
+
+            document.getElementById('totalVGPUs').textContent = vgpuCount;
+            document.getElementById('annualRevenue').textContent = '$' + (annualRevenue / 1000).toFixed(0) + 'K';
+            document.getElementById('displayOpex').textContent = '$' + annualOpex + 'K';
+            document.getElementById('annualProfit').textContent = '$' + (annualProfit / 1000).toFixed(0) + 'K';
+            document.getElementById('grossMargin').textContent = grossMargin + '%';
+            document.getElementById('capex').textContent = '$' + capex + 'K';
+            document.getElementById('roiAnnual').textContent = roiAnnual + '%';
+
+            // Update chart
+            updateCustomChart(vgpuCount, annualRevenue, annualOpex * 1000, annualProfit);
+        }
+
+        function updateCustomChart(vgpus, revenue, opex, profit) {
+            const ctx = document.getElementById('customChart').getContext('2d');
+            if (window.customChartInstance) {
+                window.customChartInstance.destroy();
+            }
+            window.customChartInstance = new Chart(ctx, {
+                type: 'bar',
+                data: {
+                    labels: ['Annual Revenue', 'Annual OpEx', 'Annual Profit'],
+                    datasets: [{
+                        label: 'Amount ($)',
+                        data: [revenue, opex, profit],
+                        backgroundColor: ['#00b4d8', '#e74c3c', '#27ae60'],
+                        borderColor: ['#00b4d8', '#e74c3c', '#27ae60'],
+                        borderWidth: 2
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                        legend: {
+                            display: false
+                        }
+                    },
+                    scales: {
+                        y: {
+                            beginAtZero: true,
+                            ticks: {
+                                callback: function(value) {
+                                    return '$' + (value / 1000).toFixed(0) + 'K';
+                                }
+                            }
+                        }
+                    }
+                }
+            });
+        }
+
+        // PHASE 1
+        function updatePhase1() {
+            const startCommit = parseFloat(document.getElementById('phase1StartCommit').value) || 1;
+            const scaleCommit = parseFloat(document.getElementById('phase1ScaleCommit').value) || 3;
+            const startWeeks = parseInt(document.getElementById('phase1StartWeeks').value) || 2;
+            const price = parseFloat(document.getElementById('phase1Price').value) || 2.40;
+            const util = parseFloat(document.getElementById('phase1Util').value) / 100 || 0.7;
+
+            const totalWeeks = 13; // 3 months
+            const scaleWeeks = totalWeeks - startWeeks;
+
+            const vgpusStart = 8 * startCommit;
+            const vgpusScale = 8 * scaleCommit;
+            const avgVgpus = (vgpusStart * startWeeks + vgpusScale * scaleWeeks) / totalWeeks;
+
+            const hoursPerWeek = 24 * 7;
+            const totalHours = totalWeeks * hoursPerWeek;
+            const monthlyRevenue = (avgVgpus * price * 24 * 7 * 4.33 * util);
+            const monthlyOpex = 8.5;
+            const profit3Month = (monthlyRevenue - monthlyOpex * 1000) * 3;
+            const payback = (320000 / ((monthlyRevenue - monthlyOpex * 1000) / 1000)).toFixed(1);
+
+            document.getElementById('phase1MonthlyRev').textContent = '$' + (monthlyRevenue / 1000).toFixed(1) + 'K';
+            document.getElementById('phase1Profit').textContent = '$' + (profit3Month / 1000).toFixed(0) + 'K';
+            document.getElementById('phase1Payback').textContent = payback + ' months';
+        }
+
+        // PHASE 2
+        function updatePhase2() {
+            const h200Commit = parseFloat(document.getElementById('phase2H200Commit').value) || 3;
+            const l40sCommit = parseFloat(document.getElementById('phase2L40SCommit').value) || 4;
+            const h200Price = parseFloat(document.getElementById('phase2H200Price').value) || 2.40;
+            const l40sPrice = parseFloat(document.getElementById('phase2L40SPrice').value) || 2.10;
+            const util = parseFloat(document.getElementById('phase2Util').value) / 100 || 0.7;
+
+            const h200Revenue = (8 * 8 * h200Commit * h200Price * 24 * 365 * util) / 12;
+            const l40sRevenue = (8 * 8 * l40sCommit * l40sPrice * 24 * 365 * util) / 12;
+            const monthlyRevenue = h200Revenue + l40sRevenue;
+            const monthlyOpex = 14.2;
+            const profit = monthlyRevenue - (monthlyOpex * 1000);
+            const totalH200vgpus = 8 * 8 * h200Commit;
+            const totalL40svgpus = 8 * 8 * l40sCommit;
+            const blendedMargin = ((profit) / (monthlyRevenue)).toFixed(1) * 100;
+
+            document.getElementById('phase2Revenue').textContent = '$' + (monthlyRevenue / 1000).toFixed(1) + 'K';
+            document.getElementById('phase2OpEx').textContent = '$' + monthlyOpex + 'K';
+            document.getElementById('phase2Profit').textContent = '$' + (profit / 1000).toFixed(1) + 'K';
+            document.getElementById('phase2Margin').textContent = (((profit) / (monthlyRevenue)) * 100).toFixed(0) + '%';
+        }
+
+        // PORTFOLIO
+        function updatePortfolio() {
+            const tiers = [];
+            for (let i = 1; i <= 4; i++) {
+                const nodes = parseFloat(document.getElementById('tier' + i + 'Nodes').value) || 0;
+                const commit = parseFloat(document.getElementById('tier' + i + 'Commit').value) || 1;
+                const price = parseFloat(document.getElementById('tier' + i + 'Price').value) || 2.40;
+                const util = parseFloat(document.getElementById('portfolioUtil').value) / 100 || 0.7;
+
+                const gpus = nodes * 8;
+                const vgpus = gpus * commit;
+                const monthlyRevenue = (vgpus * price * 24 * 365 * util) / 12;
+                
+                tiers.push({
+                    tier: i,
+                    nodes: nodes,
+                    gpus: gpus,
+                    vgpus: vgpus,
+                    price: price,
+                    monthlyRevenue: monthlyRevenue
+                });
+            }
+
+            const totalGpus = tiers.reduce((sum, t) => sum + t.gpus, 0);
+            const totalVgpus = tiers.reduce((sum, t) => sum + t.vgpus, 0);
+            const totalRevenue = tiers.reduce((sum, t) => sum + t.monthlyRevenue, 0) * 12;
+            const annualOpex = (totalGpus / 8) * 102;
+            const profit = totalRevenue - (annualOpex * 1000);
+            const margin = (profit / totalRevenue * 100).toFixed(1);
+            
+            const capex = tiers[0].gpus * 65 + tiers[1].gpus * 40 + tiers[2].gpus * 30 + tiers[3].gpus * 12;
+            const roi3yr = (profit * 3) / (capex * 1000);
+            const roiAnnual = (roi3yr / 3 * 100).toFixed(1);
+
+            document.getElementById('portfolioGPUs').textContent = totalGpus;
+            document.getElementById('portfolioVGPUs').textContent = totalVgpus;
+            document.getElementById('portfolioRevenue').textContent = '$' + (totalRevenue / 1000000).toFixed(1) + 'M';
+            document.getElementById('portfolioOpEx').textContent = '$' + (annualOpex * 1000 / 1000).toFixed(0) + 'K';
+            document.getElementById('portfolioProfit').textContent = '$' + (profit / 1000000).toFixed(1) + 'M';
+            document.getElementById('portfolioMargin').textContent = margin + '%';
+            document.getElementById('portfolioROI').textContent = roiAnnual + '%';
+
+            // Update portfolio table
+            let html = '<tr><th>Tier</th><th>Nodes</th><th>GPUs</th><th>vGPUs</th><th>Annual Revenue</th><th>Profit</th><th>Margin</th></tr>';
+            tiers.forEach(t => {
+                const tierNames = ['TIER 1', 'TIER 2', 'TIER 3', 'TIER 4'];
+                const tierRevenue = t.monthlyRevenue * 12;
+                const tierOpex = (t.gpus / 8) * 102 * 1000;
+                const tierProfit = tierRevenue - tierOpex;
+                const tierMargin = (tierProfit / tierRevenue * 100).toFixed(0);
+                html += `<tr><td>${tierNames[t.tier - 1]}</td><td>${t.nodes}</td><td>${t.gpus}</td><td>${t.vgpus}</td><td>$${(tierRevenue / 1000).toFixed(0)}K</td><td>$${(tierProfit / 1000).toFixed(0)}K</td><td>${tierMargin}%</td></tr>`;
+            });
+            document.getElementById('portfolioTable').innerHTML = html;
+        }
+
+        // COMPARISON CHART
+        function initComparisonChart() {
+            const ctx = document.getElementById('comparisonChart').getContext('2d');
+            new Chart(ctx, {
+                type: 'radar',
+                data: {
+                    labels: ['Revenue', 'Profit', 'Margin %', 'ROI %', 'Price Competitiveness'],
+                    datasets: [
+                        {
+                            label: 'TIER 2 (H200)',
+                            data: [286, 184, 64, 20, 70],
+                            borderColor: '#00b4d8',
+                            backgroundColor: 'rgba(0, 180, 216, 0.1)',
+                            borderWidth: 2
+                        },
+                        {
+                            label: 'TIER 4 (L40S)',
+                            data: [320, 250, 78, 30, 85],
+                            borderColor: '#27ae60',
+                            backgroundColor: 'rgba(39, 174, 96, 0.1)',
+                            borderWidth: 2
+                        }
+                    ]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    scales: {
+                        r: {
+                            beginAtZero: true,
+                            max: 100
+                        }
+                    }
+                }
+            });
+        }
+
+        // Initialize on load
+        window.addEventListener('load', () => {
+            updateCustom();
+            updatePhase1();
+            updatePhase2();
+            updatePortfolio();
+            initComparisonChart();
+        });
+    </script>
+</body>
+</html>

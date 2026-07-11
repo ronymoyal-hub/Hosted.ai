@@ -1,0 +1,595 @@
+<!DOCTYPE html>
+<html lang="en-GB">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Build a neocloud — hosted·ai</title>
+<meta name="description" content="Answer five questions and get a working plan for your neocloud: architecture, phased GPU buy, and the economics behind it.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=Inter:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+:root{
+  --bg:#0a0e16; --panel:#111826; --panel2:#151c2b; --line:#232b3b;
+  --text:#e9edf5; --dim:#8c96ab; --green:#3ecf8e; --blue:#4f8cff;
+  --amber:#ffb454; --red:#ff6b6b;
+  --display:'Space Grotesk',system-ui,sans-serif;
+  --body:'Inter',-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;
+  --mono:'IBM Plex Mono','SF Mono',Consolas,monospace;
+}
+*{box-sizing:border-box;}
+html{scroll-behavior:smooth;}
+@media (prefers-reduced-motion:reduce){ html{scroll-behavior:auto;} *,*::before,*::after{animation:none!important;transition:none!important;} }
+body{margin:0;background:var(--bg);color:var(--text);font-family:var(--body);font-size:16px;line-height:1.6;}
+a{color:var(--blue);text-decoration:none;}
+a:hover{text-decoration:underline;}
+:focus-visible{outline:2px solid var(--blue);outline-offset:2px;border-radius:4px;}
+.wrap{max-width:1060px;margin:0 auto;padding:0 24px;}
+
+/* ---------- top nav ---------- */
+nav{position:sticky;top:0;z-index:50;background:rgba(10,14,22,.88);backdrop-filter:blur(8px);border-bottom:1px solid var(--line);}
+nav .wrap{display:flex;align-items:center;justify-content:space-between;height:58px;}
+.logo{font-family:var(--display);font-weight:700;font-size:18px;color:var(--text);letter-spacing:.2px;}
+.logo .dot{color:var(--green);}
+nav .links{display:flex;gap:22px;font-size:14px;align-items:center;}
+nav .links a{color:var(--dim);}
+nav .links a:hover{color:var(--text);text-decoration:none;}
+nav .links a.cta{color:#0a0e16;background:var(--green);padding:7px 14px;border-radius:8px;font-weight:600;}
+@media(max-width:640px){nav .links a:not(.cta){display:none;}}
+
+/* ---------- hero ---------- */
+.hero{padding:84px 0 64px;border-bottom:1px solid var(--line);
+  background:radial-gradient(1100px 500px at 70% -10%,rgba(79,140,255,.10),transparent 60%),
+             radial-gradient(800px 400px at 10% 110%,rgba(62,207,142,.07),transparent 60%);}
+.eyebrow{font-family:var(--mono);font-size:12.5px;letter-spacing:.14em;text-transform:uppercase;color:var(--green);margin-bottom:18px;}
+h1{font-family:var(--display);font-weight:700;font-size:clamp(32px,5.4vw,54px);line-height:1.08;margin:0 0 22px;max-width:16ch;letter-spacing:-.01em;}
+h1 em{font-style:normal;color:var(--green);}
+.hero p.lede{font-size:18px;color:var(--dim);max-width:58ch;margin:0 0 30px;}
+.btnrow{display:flex;gap:14px;flex-wrap:wrap;}
+.btn{display:inline-block;font-family:var(--display);font-weight:600;font-size:16px;padding:13px 24px;border-radius:10px;border:1px solid var(--line);color:var(--text);background:var(--panel);cursor:pointer;}
+.btn:hover{border-color:var(--dim);text-decoration:none;}
+.btn.primary{background:var(--green);border-color:var(--green);color:#0a0e16;}
+.btn.primary:hover{filter:brightness(1.08);}
+
+/* signature: the slot bar */
+.slotbar{margin-top:56px;}
+.slotbar .caption{display:flex;justify-content:space-between;font-family:var(--mono);font-size:12px;color:var(--dim);margin-bottom:8px;}
+.slots{display:grid;grid-template-columns:repeat(48,1fr);gap:3px;}
+.slot{aspect-ratio:1/1.6;border-radius:2px;background:#1a2234;position:relative;}
+.slot.sold{animation:fillslot .5s ease both;}
+.slot.t1{background:var(--green);} .slot.t2{background:var(--blue);}
+.slot.t3{background:#b48cff;} .slot.t4{background:var(--amber);}
+@keyframes fillslot{from{transform:scaleY(.2);opacity:.2;}to{transform:scaleY(1);opacity:1;}}
+.slotlegend{display:flex;gap:18px;flex-wrap:wrap;margin-top:12px;font-size:12.5px;color:var(--dim);font-family:var(--mono);}
+.slotlegend .key{display:inline-block;width:10px;height:10px;border-radius:2px;margin-right:6px;vertical-align:-1px;}
+.slotmeter{font-family:var(--mono);font-size:13px;color:var(--text);margin-top:10px;}
+.slotmeter b{color:var(--green);}
+
+/* ---------- sections ---------- */
+section{padding:72px 0;border-bottom:1px solid var(--line);}
+h2{font-family:var(--display);font-weight:700;font-size:clamp(24px,3.2vw,34px);line-height:1.15;margin:0 0 14px;letter-spacing:-.01em;}
+.sub{color:var(--dim);max-width:62ch;margin:0 0 34px;}
+.cards3{display:grid;grid-template-columns:repeat(3,1fr);gap:16px;}
+@media(max-width:820px){.cards3{grid-template-columns:1fr;}}
+.card{background:var(--panel);border:1px solid var(--line);border-radius:12px;padding:22px;}
+.card h3{font-family:var(--display);font-size:17px;margin:0 0 8px;font-weight:600;}
+.card p{font-size:14.5px;color:var(--dim);margin:0;}
+.card .tag{font-family:var(--mono);font-size:11.5px;color:var(--blue);letter-spacing:.1em;text-transform:uppercase;display:block;margin-bottom:10px;}
+
+/* ---------- wizard ---------- */
+#plan{scroll-margin-top:70px;}
+.wizard{background:var(--panel);border:1px solid var(--line);border-radius:16px;padding:34px;max-width:760px;margin:0 auto;}
+@media(max-width:640px){.wizard{padding:22px;}}
+.wprogress{display:grid;grid-template-columns:repeat(5,1fr);gap:5px;margin-bottom:30px;}
+.wprogress .p{height:8px;border-radius:2px;background:#1a2234;}
+.wprogress .p.done{background:var(--green);}
+.wprogress .p.cur{background:var(--blue);}
+.wq{font-family:var(--display);font-weight:600;font-size:22px;margin:0 0 6px;}
+.whint{color:var(--dim);font-size:14px;margin:0 0 22px;}
+.opts{display:grid;gap:10px;}
+.opt{display:block;width:100%;text-align:left;background:var(--panel2);border:1px solid var(--line);border-radius:10px;padding:15px 18px;cursor:pointer;color:var(--text);font-family:var(--body);font-size:15.5px;}
+.opt:hover{border-color:var(--blue);}
+.opt .d{display:block;font-size:13px;color:var(--dim);margin-top:3px;}
+.wnav{display:flex;justify-content:space-between;margin-top:26px;align-items:center;}
+.wback{background:none;border:none;color:var(--dim);font-size:14px;cursor:pointer;font-family:var(--body);padding:6px 0;}
+.wback:hover{color:var(--text);}
+.wstep{font-family:var(--mono);font-size:12.5px;color:var(--dim);}
+
+/* ---------- results ---------- */
+#results{display:none;}
+.blueprint-head{margin-bottom:36px;}
+.blueprint-head .eyebrow{margin-bottom:12px;}
+.replay{font-size:14px;color:var(--dim);background:none;border:1px solid var(--line);border-radius:8px;padding:7px 14px;cursor:pointer;font-family:var(--body);}
+.replay:hover{color:var(--text);border-color:var(--dim);}
+.kpis{display:grid;grid-template-columns:repeat(4,1fr);gap:14px;margin:30px 0;}
+@media(max-width:820px){.kpis{grid-template-columns:repeat(2,1fr)!important;}}
+.kpi{background:var(--panel);border:1px solid var(--line);border-radius:12px;padding:16px 18px;}
+.kpi .l{font-size:12px;color:var(--dim);text-transform:uppercase;letter-spacing:.06em;margin-bottom:6px;font-family:var(--mono);}
+.kpi .v{font-family:var(--mono);font-weight:600;font-size:24px;color:var(--green);}
+.kpi .s{font-size:12px;color:var(--dim);margin-top:4px;}
+.controls{display:grid;grid-template-columns:repeat(3,1fr);gap:20px;background:var(--panel);border:1px solid var(--line);border-radius:12px;padding:18px 22px;margin-bottom:26px;}
+@media(max-width:820px){.controls{grid-template-columns:1fr!important;}}
+.ctrl label{display:flex;justify-content:space-between;font-size:13px;color:var(--dim);margin-bottom:6px;}
+.ctrl label .v{font-family:var(--mono);color:var(--text);font-weight:600;}
+.ctrl input[type=range]{width:100%;accent-color:var(--green);}
+.ctrl .note{font-size:11.5px;color:var(--dim);margin-top:4px;}
+table{width:100%;border-collapse:collapse;font-size:13.5px;margin:10px 0 6px;}
+th,td{padding:9px 10px;text-align:right;border-bottom:1px solid var(--line);font-family:var(--mono);white-space:nowrap;}
+th:first-child,td:first-child{text-align:left;font-family:var(--body);}
+thead th{color:var(--dim);font-weight:500;font-size:11.5px;text-transform:uppercase;letter-spacing:.05em;font-family:var(--mono);}
+tr.total td{font-weight:600;border-top:2px solid var(--line);color:var(--text);}
+.tablewrap{overflow-x:auto;background:var(--panel);border:1px solid var(--line);border-radius:12px;padding:8px 14px 14px;}
+.revbar{display:flex;height:34px;border-radius:8px;overflow:hidden;background:#131a29;margin:18px 0 8px;}
+.revbar .seg{min-width:2px;}
+.barlegend{display:flex;gap:16px;flex-wrap:wrap;font-size:12.5px;color:var(--dim);font-family:var(--mono);}
+.barlegend .key{display:inline-block;width:10px;height:10px;border-radius:2px;margin-right:6px;vertical-align:-1px;}
+.phases{display:grid;gap:12px;margin-top:10px;}
+.phase{display:flex;gap:16px;background:var(--panel);border:1px solid var(--line);border-radius:12px;padding:16px 20px;align-items:baseline;}
+.phase .n{font-family:var(--mono);color:var(--blue);font-size:13px;white-space:nowrap;}
+.phase .t{font-size:14.5px;}
+.phase .t b{font-family:var(--display);font-weight:600;}
+.phase .t span{color:var(--dim);display:block;font-size:13.5px;margin-top:2px;}
+.callout{background:var(--panel);border:1px solid var(--line);border-left:3px solid var(--green);border-radius:10px;padding:18px 22px;margin:26px 0;font-size:14.5px;}
+.callout.blue{border-left-color:var(--blue);}
+.callout.amber{border-left-color:var(--amber);}
+.callout b{font-family:var(--display);}
+h3.rsec{font-family:var(--display);font-size:19px;font-weight:600;margin:44px 0 12px;}
+details.assump{background:var(--panel);border:1px solid var(--line);border-radius:12px;padding:0;margin-top:30px;}
+details.assump summary{padding:16px 22px;cursor:pointer;font-family:var(--display);font-weight:600;font-size:15px;list-style:none;display:flex;justify-content:space-between;}
+details.assump summary::after{content:'+';font-family:var(--mono);color:var(--dim);}
+details.assump[open] summary::after{content:'–';}
+details.assump .inner{padding:0 22px 20px;font-size:13.5px;color:var(--dim);}
+details.assump .inner li{margin-bottom:6px;}
+
+/* ---------- proof & footer ---------- */
+.proof{display:grid;grid-template-columns:1fr 1fr;gap:36px;align-items:center;}
+@media(max-width:820px){.proof{grid-template-columns:1fr;}}
+.bignum{font-family:var(--mono);font-weight:600;font-size:clamp(40px,6vw,64px);color:var(--green);line-height:1;}
+.bignum small{display:block;font-size:14px;color:var(--dim);font-weight:400;margin-top:8px;font-family:var(--body);}
+.provenance{font-size:13px;color:var(--dim);}
+footer{padding:44px 0 60px;color:var(--dim);font-size:13.5px;}
+footer .grid{display:flex;justify-content:space-between;gap:30px;flex-wrap:wrap;}
+footer h4{font-family:var(--display);color:var(--text);font-size:14px;margin:0 0 10px;}
+footer ul{list-style:none;margin:0;padding:0;}
+footer li{margin-bottom:6px;}
+</style>
+</head>
+<body>
+
+<nav>
+  <div class="wrap">
+    <div class="logo">hosted<span class="dot">·</span>ai</div>
+    <div class="links">
+      <a href="#how">How it works</a>
+      <a href="#proof">Proof</a>
+      <a href="#models">Deep-dive models</a>
+      <a class="cta" href="#plan">Plan my neocloud</a>
+    </div>
+  </div>
+</nav>
+
+<header class="hero">
+  <div class="wrap">
+    <div class="eyebrow">For builders of neoclouds</div>
+    <h1>The GPU market has a <em>waste</em> problem, not a scarcity problem.</h1>
+    <p class="lede">Most GPU fleets sell 20–40% of the hours they could. hosted·ai pools, schedules and meters those hours across tenants, so a neocloud built on it runs towards 80% and keeps the difference as margin. Answer five questions and we'll sketch yours: architecture, phased buy, and the economics behind it.</p>
+    <div class="btnrow">
+      <a class="btn primary" href="#plan">Plan my neocloud</a>
+      <a class="btn" href="#how">See how the scheduling works</a>
+    </div>
+    <div class="slotbar" aria-hidden="true">
+      <div class="caption"><span>one GPU · 48 time slots</span><span id="slotmode">static allocation</span></div>
+      <div class="slots" id="slots"></div>
+      <div class="slotlegend">
+        <span><span class="key" style="background:#1a2234"></span>idle</span>
+        <span><span class="key" style="background:var(--green)"></span>tenant A</span>
+        <span><span class="key" style="background:var(--blue)"></span>tenant B</span>
+        <span><span class="key" style="background:#b48cff"></span>tenant C</span>
+        <span><span class="key" style="background:var(--amber)"></span>tenant D</span>
+      </div>
+      <div class="slotmeter">sold hours: <b id="slotpct">31%</b></div>
+    </div>
+  </div>
+</header>
+
+<section id="how">
+  <div class="wrap">
+    <h2>One physical GPU, several paying tenants</h2>
+    <p class="sub">hosted·ai virtualises a GPU fleet into pools and schedules tenant workloads across them, the way vCPU did for compute two decades ago. Customers see a normal GPU: unmodified CUDA, standard NVIDIA tooling, Kubernetes pods.</p>
+    <div class="cards3">
+      <div class="card"><span class="tag">Spatial</span><h3>Memory isolation</h3><p>Physical GPUs become logical pools. Each tenant's VRAM is isolated, with optional hardware-assisted memory zeroing between sessions for regulated workloads.</p></div>
+      <div class="card"><span class="tag">Temporal</span><h3>Time-division scheduling</h3><p>Tenants get scheduled slots and burst to the full GPU inside them. Working sets stay cached in VRAM between slots, so context switches cost milliseconds, not model reloads.</p></div>
+      <div class="card"><span class="tag">Contention</span><h3>QoS enforcement</h3><p>Soft caps stop runaway processes, priority tiers map to your SLAs, and the scheduler smooths asynchronous peaks across tenants instead of letting one crowd out the rest.</p></div>
+    </div>
+  </div>
+</section>
+
+<section id="plan">
+  <div class="wrap">
+    <h2>Sketch your neocloud</h2>
+    <p class="sub">Five questions. No email gate. You get a working plan with editable assumptions, and the full models behind it are linked at the end.</p>
+    <div class="wizard" id="wizard">
+      <div class="wprogress" id="wprog"></div>
+      <div id="wbody"></div>
+      <div class="wnav">
+        <button class="wback" id="wback" type="button">&larr; Back</button>
+        <span class="wstep" id="wstep"></span>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section id="results">
+  <div class="wrap">
+    <div class="blueprint-head">
+      <div class="eyebrow">Your blueprint</div>
+      <h2 id="rTitle"></h2>
+      <p class="sub" id="rSub"></p>
+      <button class="replay" id="replay" type="button">&larr; Change my answers</button>
+    </div>
+    <div id="rBody"></div>
+  </div>
+</section>
+
+<section id="proof">
+  <div class="wrap">
+    <h2>Proof it works: packet·ai</h2>
+    <div class="proof">
+      <div>
+        <div class="bignum">$500K ARR<small>in its first six weeks, with no owned GPUs</small></div>
+      </div>
+      <div>
+        <p>packet·ai is a neocloud built entirely on hosted·ai. It sources capacity wholesale through the Mesh, runs multi-tenant scheduling on top, and sells on-demand B200, H200 and RTX Pro roughly 50% under hyperscaler on-demand rates, at a 25% gross margin.</p>
+        <p class="provenance">It exists partly as a proof point: every part of its stack is the same software you would run. The playbook, pricing and tooling are available to hosted·ai customers.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section id="models">
+  <div class="wrap">
+    <h2>Go deeper</h2>
+    <p class="sub">The wizard above runs a simplified version of our full models. When you're ready to pressure-test the numbers with your own power costs, financing and depreciation schedules, open the complete versions.</p>
+    <div class="cards3">
+      <a class="card" href="models/AI_Cloud_TCO_Model.html" style="text-decoration:none;"><span class="tag">Interactive model</span><h3>AI cloud TCO &amp; returns</h3><p>Full cost-of-ownership build-up per GPU-hour: power, facility, financing, depreciation, tax, and the with/without hosted·ai comparison.</p></a>
+      <a class="card" href="models/CSP_Mesh_Packet_Dashboard_v2.html" style="text-decoration:none;"><span class="tag">Interactive model</span><h3>Mesh &amp; packet scenarios</h3><p>Scenario-by-scenario comparison for service providers: baseline without hosted·ai against three operating models, including Mesh wholesale.</p></a>
+      <a class="card" href="models/gpu_efficiency_dashboard.html" style="text-decoration:none;"><span class="tag">Interactive model</span><h3>GPU and Chassis Power Efficiency</h3><p>Power consumption across different GPUs and supporting hardware, mapped to virtualization usage and total cost of ownership per GPU-hour.</p></a>
+    </div>
+  </div>
+</section>
+
+<section style="border-bottom:none;">
+  <div class="wrap" style="text-align:center;">
+    <h2>Ready to test it on real hardware?</h2>
+    <p class="sub" style="margin:0 auto 30px;">A proof of concept runs on your GPUs or ours, with your workloads. Most take under two weeks to show utilisation and margin numbers you can put in front of a board.</p>
+    <div class="btnrow" style="justify-content:center;">
+      <a class="btn primary" href="https://hosted.ai/demo">Book a proof of concept</a>
+      <a class="btn" href="mailto:SW@hosted.ai?subject=Neocloud%20PoC">Email the team</a>
+    </div>
+  </div>
+</section>
+
+<footer>
+  <div class="wrap grid">
+    <div>
+      <div class="logo" style="margin-bottom:8px;">hosted<span class="dot">·</span>ai</div>
+      <p style="max-width:38ch;">GPU pool virtualisation for neoclouds, service providers and telcos.</p>
+    </div>
+    <div>
+      <h4>Platform</h4>
+      <ul><li><a href="#how">How it works</a></li><li><a href="#plan">Plan a neocloud</a></li><li><a href="#models">Models</a></li></ul>
+    </div>
+    <div>
+      <h4>Contact</h4>
+      <ul><li><a href="https://hosted.ai/demo">Book a demo</a></li><li><a href="mailto:SW@hosted.ai">SW@hosted.ai</a></li></ul>
+    </div>
+  </div>
+</footer>
+<script>
+/* ============ helpers ============ */
+const $=s=>document.querySelector(s);
+const fmt$=n=>{
+  const neg=n<0?'-':''; n=Math.abs(n);
+  if(n>=1e6) return neg+'$'+(n/1e6).toFixed(2)+'M';
+  if(n>=1e3) return neg+'$'+Math.round(n/1e3)+'K';
+  return neg+'$'+Math.round(n);
+};
+const pct=n=>Math.round(n*100)+'%';
+
+/* ============ hero slot animation ============ */
+(function(){
+  const grid=$('#slots'); if(!grid) return;
+  const N=48, slots=[];
+  for(let i=0;i<N;i++){const d=document.createElement('div');d.className='slot';grid.appendChild(d);slots.push(d);}
+  const reduced=window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+  function paintStatic(){
+    slots.forEach((s,i)=>{ s.className='slot'+(i<15?' sold t1':''); });
+    $('#slotmode').textContent='static allocation';
+    $('#slotpct').textContent='31%';
+  }
+  function paintPooled(){
+    const tenants=['t1','t2','t3','t4']; let sold=0;
+    slots.forEach((s,i)=>{
+      if(Math.random()<0.78){ s.className='slot sold '+tenants[(i+Math.floor(Math.random()*2))%4]; sold++; }
+      else s.className='slot';
+    });
+    $('#slotmode').textContent='hosted·ai pooled scheduling';
+    $('#slotpct').textContent=Math.round(sold/N*100)+'%';
+  }
+  if(reduced){ paintPooled(); return; }
+  paintStatic();
+  let pooled=false;
+  setInterval(()=>{ pooled=!pooled; pooled?paintPooled():paintStatic(); },4200);
+})();
+
+/* ============ wizard ============ */
+const STEPS=[
+ {id:'start',q:'Where are you starting from?',hint:'This decides whether your plan is about buying GPUs, sweating existing ones, or skipping ownership entirely.',opts:[
+   {v:'greenfield',l:'Greenfield — no GPUs yet',d:'You want to launch a GPU cloud from scratch.'},
+   {v:'expand',l:'Existing hoster, telco or ISP adding GPUs',d:'You run infrastructure today and want a GPUaaS line of business.'},
+   {v:'existing',l:'Already running GPUs, utilisation is low',d:'You own a fleet that sells a fraction of its hours.'},
+   {v:'assetfree',l:'No capital for hardware',d:'You want to sell GPU capacity without owning any.'}]},
+ {id:'budget',q:'What CapEx can you commit in year one?',hint:'Rough envelope is fine — the plan shows a phased buy, not a single cheque.',opts:[
+   {v:'lean',l:'Under $500K',d:'A focused entry with one or two node types.'},
+   {v:'balanced',l:'Around $2M',d:'A multi-tier portfolio serving several customer segments.'},
+   {v:'premium',l:'$5M or more',d:'Room for a flagship training rack alongside inference capacity.'},
+   {v:'none',l:'None — I want to stay asset-free',d:'Capacity sourced wholesale through the Mesh.'}]},
+ {id:'demand',q:'What do your target customers mostly ask for?',hint:'If you have not surveyed them yet, pick "mixed" — the industry pattern is roughly 70% inference.',opts:[
+   {v:'inference',l:'LLM inference and APIs',d:'Chatbots, RAG, embeddings, token generation.'},
+   {v:'training',l:'Training and heavy fine-tuning',d:'Foundation or large domain models, long batch jobs.'},
+   {v:'mixed',l:'Mixed, or not sure yet',d:'A spread of inference, fine-tuning and experimentation.'},
+   {v:'batch',l:'Batch and data processing',d:'Preprocessing, offline inference, cost-sensitive jobs.'}]},
+ {id:'compliance',q:'Will you serve regulated customers?',hint:'Healthcare, finance and public sector pay a premium for verified tenant isolation.',opts:[
+   {v:'yes',l:'Yes — it is a core segment',d:'HIPAA, PCI-DSS or sovereign requirements are central to your pitch.'},
+   {v:'some',l:'Some — nice to have',d:'You would take the premium where it appears.'},
+   {v:'no',l:'No',d:'General workloads only.'}]},
+ {id:'risk',q:'How aggressively do you want to share GPUs?',hint:'Higher overcommit means more tenants per GPU: more margin, more scheduling discipline required.',opts:[
+   {v:'conservative',l:'Conservative — up to 2 tenants per GPU',d:'Premium positioning, generous headroom.'},
+   {v:'balanced',l:'Balanced — up to 3 tenants per GPU',d:'The standard operating point for inference fleets.'},
+   {v:'aggressive',l:'Aggressive — up to 4 tenants per GPU',d:'Maximum margin; suits batch and bursty inference.'}]}
+];
+const state={start:null,budget:null,demand:null,compliance:null,risk:null};
+let step=0;
+
+function renderStep(){
+  const s=STEPS[step];
+  $('#wprog').innerHTML=STEPS.map((_,i)=>`<div class="p ${i<step?'done':i===step?'cur':''}"></div>`).join('');
+  $('#wbody').innerHTML=`<p class="wq">${s.q}</p><p class="whint">${s.hint}</p>
+    <div class="opts">${s.opts.map(o=>`<button type="button" class="opt" data-v="${o.v}">${o.l}<span class="d">${o.d}</span></button>`).join('')}</div>`;
+  $('#wstep').textContent=`Question ${step+1} of ${STEPS.length}`;
+  $('#wback').style.visibility=step===0?'hidden':'visible';
+  document.querySelectorAll('.opt').forEach(b=>b.addEventListener('click',()=>{
+    state[s.id]=b.dataset.v;
+    if(s.id==='start'&&b.dataset.v==='assetfree') state.budget='none';
+    if(s.id==='budget'&&b.dataset.v==='none'&&state.start!=='existing') state.start=state.start||'assetfree';
+    step++;
+    // skip budget question for asset-free starters
+    if(STEPS[step]&&STEPS[step].id==='budget'&&state.start==='assetfree') step++;
+    if(step>=STEPS.length){ buildPlan(); return; }
+    renderStep();
+  }));
+}
+$('#wback').addEventListener('click',()=>{
+  if(step===0) return;
+  step--;
+  if(STEPS[step].id==='budget'&&state.start==='assetfree') step--;
+  renderStep();
+});
+$('#replay').addEventListener('click',()=>{
+  $('#results').style.display='none'; step=0; renderStep();
+  document.getElementById('plan').scrollIntoView();
+});
+renderStep();
+
+/* ============ economics engine ============ */
+const NODES={
+  vr:  {name:'Vera Rubin NVL72 rack',gpus:72,capex:4680000,opex:650000,tier:'Enterprise training',color:'#b48cff'},
+  h200:{name:'H200 node · 8 GPU',gpus:8,capex:320000,opex:101500,tier:'Production inference',color:'#3ecf8e'},
+  h100:{name:'H100 node · 8 GPU',gpus:8,capex:240000,opex:85000,tier:'Dev & fine-tuning',color:'#4f8cff'},
+  l40s:{name:'L40S node · 8 GPU',gpus:8,capex:96000,opex:70000,tier:'Batch & cost-optimised',color:'#ffb454'}
+};
+const OC={conservative:{vr:1,h200:2,h100:2,l40s:2},balanced:{vr:1,h200:3,h100:3,l40s:3},aggressive:{vr:1,h200:4,h100:3,l40s:4}};
+const PORTFOLIOS={
+  lean:{inference:{h200:1,l40s:1},training:{h100:2},mixed:{h100:1,l40s:1},batch:{l40s:4}},
+  balanced:{inference:{h200:4,h100:2,l40s:2},training:{h200:2,h100:4,l40s:2},mixed:{h200:3,h100:2,l40s:3},batch:{h200:2,h100:2,l40s:6}},
+  premium:{inference:{h200:12,h100:2,l40s:4},training:{vr:1,h200:1},mixed:{vr:1,h200:2,l40s:2},batch:{h200:8,h100:4,l40s:12}}
+};
+const rate=(anchor,oc)=>anchor*(1-0.10*(oc-1));
+const HOURS=8760;
+
+function computePortfolio(port,risk,anchor,util,secureShare){
+  const rows=[]; let capex=0,rev=0,opex=0;
+  for(const k in port){
+    const n=NODES[k],c=port[k],oc=OC[risk][k];
+    const r=k==='vr'?anchor*1.5:rate(anchor,oc);
+    let nodeRev=c*n.gpus*oc*r*HOURS*util;
+    let secure=0;
+    if(k==='h200'&&secureShare>0){ secure=nodeRev*secureShare*0.15; nodeRev+=secure; }
+    const nodeOpex=c*n.opex;
+    rows.push({k,name:n.name,tier:n.tier,color:n.color,count:c,gpus:c*n.gpus,oc,rate:r,rev:nodeRev,secure,opex:nodeOpex,profit:nodeRev-nodeOpex,capex:c*n.capex});
+    capex+=c*n.capex; rev+=nodeRev; opex+=nodeOpex;
+  }
+  return {rows,capex,rev,opex,profit:rev-opex,margin:(rev-opex)/rev,payback:capex/(rev-opex)*12,cash3:(rev-opex)*3-capex};
+}
+
+/* ============ plan builder ============ */
+function buildPlan(){
+  $('#wizard').parentElement.parentElement.scrollIntoView();
+  $('#results').style.display='block';
+  const path = state.start==='existing' ? 'uplift' : (state.start==='assetfree'||state.budget==='none') ? 'assetfree' : 'capex';
+  if(path==='capex') renderCapex();
+  if(path==='uplift') renderUplift();
+  if(path==='assetfree') renderAssetFree();
+  document.getElementById('results').scrollIntoView();
+}
+
+/* ---------- shared blocks ---------- */
+function meshBlock(path){
+  const items={
+    capex:[
+      ['Sell spare hours from day one','Publish idle pool capacity to the Mesh and let other operators pay wholesale for hours your own customers have not bought yet. Utilisation you cannot sell retail still earns.'],
+      ['Buy overflow instead of over-building','When demand spikes past your fleet, consume wholesale capacity from other members rather than rushing a hardware order.']],
+    uplift:[
+      ['Publish your idle capacity','Your unsold hours become wholesale inventory other operators can consume. Two revenue streams from the same physical GPUs: your retail customers plus Mesh wholesale.'],
+      ['No lock-in either way','Wholesale is pay-per-consumption on both sides. You are not leasing capacity out on fixed terms.']],
+    assetfree:[
+      ['Consume wholesale, sell retail','Subscribe to member pools at wholesale rates and resell under your own brand and pricing. You pay only when your customers consume.'],
+      ['Scale without a hardware order','Growth means subscribing to more capacity, not raising CapEx. packet·ai runs entirely on this model.']]
+  };
+  return `<h3 class="rsec">Where the Mesh fits</h3>
+  <p class="sub" style="margin-bottom:18px;">The Mesh is hosted·ai's capacity alliance for operators — think Star Alliance, not a spot marketplace. Members interconnect capacity under common scheduling and settlement, and each keeps its own brand and customers.</p>
+  <div class="cards3" style="grid-template-columns:1fr 1fr;">${items[path].map(i=>`<div class="card"><h3>${i[0]}</h3><p>${i[1]}</p></div>`).join('')}</div>`;
+}
+function complianceBlock(){
+  if(state.compliance==='no') return '';
+  const share=state.compliance==='yes'?'40%':'20%';
+  return `<div class="callout"><b>Secure tier: the cheapest premium you will ever sell.</b> Hardware-assisted memory zeroing between tenant sessions adds under a millisecond of overhead and supports HIPAA, PCI-DSS and SOC 2 positioning. Priced at +15% over standard rates, and since OpEx barely moves, the uplift is nearly all margin. The plan below assumes ${share} of your inference revenue lands in this tier.</div>`;
+}
+function riskBlock(){
+  if(state.risk!=='aggressive') return '';
+  return `<div class="callout amber"><b>Running at 4× needs discipline.</b> Watch 95th-percentile utilisation weekly; when a pool passes 85%, shift tenants down a tier or add capacity. hosted·ai's observability dashboards flag this, but the pricing ladder should give premium tiers scheduling priority so contention lands on batch first.</div>`;
+}
+function assumpBlock(extra){
+  return `<details class="assump"><summary>Every assumption in this model</summary><div class="inner"><ul>
+    <li>Pricing ladder: dedicated 1× at the anchor rate, then −10% per additional tenant tier (2× / 3× / 4×). Vera Rubin dedicated training priced at 1.5× the anchor. All adjustable per market.</li>
+    <li>Revenue = GPUs × tenants per GPU × rate × 8,760 hours × utilisation. Utilisation is sold hours as a share of the year, pooled across tenants.</li>
+    <li>Node OpEx per year (power, cooling, colocation, networking, shared staffing, maintenance, hosted·ai fees): H200 node $101.5K, H100 node $85K, L40S node $70K, Vera Rubin rack $650K.</li>
+    <li>hosted·ai software is roughly $25K per 8-GPU node per year — fixed regardless of overcommit ratio, so every additional tenant tier is nearly pure margin.</li>
+    <li>Secure tier: +15% price on the assumed regulated share of inference revenue; memory zeroing overhead treated as negligible.</li>
+    <li>CapEx per unit: H200 8-GPU node $320K, H100 node $240K, L40S node $96K, Vera Rubin NVL72 rack $4.68M. GPU street prices move — treat as mid-2026 planning figures.</li>
+    ${extra||''}
+    <li>This is a planning sketch, not an offer. The <a href="models/AI_Cloud_TCO_Model.html">full TCO model</a> adds financing, depreciation, tax and discounting.</li>
+  </ul></div></details>`;
+}
+function ctaBlock(){
+  return `<div class="btnrow" style="margin-top:34px;">
+    <a class="btn primary" href="https://hosted.ai/demo">Book a proof of concept</a>
+    <a class="btn" href="mailto:SW@hosted.ai?subject=Neocloud%20plan">Send this plan to the team</a>
+  </div>`;
+}
+function kpi(l,v,s){return `<div class="kpi"><div class="l">${l}</div><div class="v">${v}</div><div class="s">${s||''}</div></div>`;}
+
+/* ---------- path 1: capex build ---------- */
+function renderCapex(){
+  const port=PORTFOLIOS[state.budget][state.demand];
+  const totalGpus=Object.keys(port).reduce((a,k)=>a+port[k]*NODES[k].gpus,0);
+  const tiers=Object.keys(port).length;
+  $('#rTitle').textContent=`A ${totalGpus}-GPU build across ${tiers} tier${tiers>1?'s':''}`;
+  $('#rSub').textContent={
+    inference:'Inference is where demand is heading — and where static allocation wastes the most, since inference workloads idle around 85% of the time. Your portfolio leans H200 with a batch tier to fill the troughs.',
+    training:'Training anchors the brand and lands the largest contracts. Your portfolio pairs dedicated training capacity with shared tiers that keep blended utilisation high.',
+    mixed:'A spread portfolio: inference for recurring revenue, dev capacity for sticky startup relationships, batch to fill the gaps. Industry demand runs roughly 70% inference, so the weighting leans that way.',
+    batch:'Cost-optimised capacity at aggressive sharing ratios is the highest-margin corner of the market. Your portfolio majors on it, with inference nodes for customers who graduate upward.'
+  }[state.demand];
+
+  const secureShare=state.compliance==='yes'?0.4:state.compliance==='some'?0.2:0;
+  const draw=()=>{
+    const util=+$('#sUtil').value/100, anchor=+$('#sAnchor').value/100;
+    $('#vUtil').textContent=Math.round(util*100)+'%';
+    $('#vAnchor').textContent='$'+anchor.toFixed(2)+'/hr';
+    const m=computePortfolio(port,state.risk,anchor,util,secureShare);
+    $('#capexKpis').innerHTML=
+      kpi('CapEx',fmt$(m.capex),'phased over 6–12 months')+
+      kpi('Annual revenue',fmt$(m.rev),'at '+Math.round(util*100)+'% pooled utilisation')+
+      kpi('Blended margin',pct(m.margin),fmt$(m.profit)+' gross profit / year')+
+      kpi('CapEx payback',Math.round(m.payback)+' mo',fmt$(m.cash3)+' cash after 3 years');
+    $('#capexTable').innerHTML=`<table><thead><tr><th>Pool</th><th>Nodes</th><th>GPUs</th><th>Tenants/GPU</th><th>Rate</th><th>Revenue/yr</th><th>OpEx/yr</th><th>Margin</th></tr></thead><tbody>`+
+      m.rows.map(r=>`<tr><td>${r.name}<br><span style="color:var(--dim);font-size:11.5px;">${r.tier}${r.secure?` · incl. ${fmt$(r.secure)} secure uplift`:''}</span></td><td>${r.count}</td><td>${r.gpus}</td><td>${r.oc}×</td><td>$${r.rate.toFixed(2)}</td><td>${fmt$(r.rev)}</td><td>${fmt$(r.opex)}</td><td>${pct(r.profit/r.rev)}</td></tr>`).join('')+
+      `<tr class="total"><td>Total</td><td></td><td>${totalGpus}</td><td></td><td></td><td>${fmt$(m.rev)}</td><td>${fmt$(m.opex)}</td><td>${pct(m.margin)}</td></tr></tbody></table>`;
+    $('#revbar').innerHTML=m.rows.map(r=>`<div class="seg" style="flex:${r.rev};background:${r.color}"></div>`).join('');
+    $('#barlegend').innerHTML=m.rows.map(r=>`<span><span class="key" style="background:${r.color}"></span>${r.tier} ${pct(r.rev/m.rev)}</span>`).join('');
+  };
+
+  const order=['h200','h100','l40s','vr'].filter(k=>port[k]);
+  const phaseCopy={h200:['Deploy inference capacity first','H200 pools carry the primary revenue line. Land 1–3 pilot customers and validate the tier pricing.'],
+    h100:['Add dev & fine-tuning capacity','H100 pools are the startup wedge — longer scheduling slots, sticky relationships, fine-tuning revenue.'],
+    l40s:['Add the margin engine','L40S at aggressive sharing is the highest return per CapEx dollar. It fills capacity troughs and lifts blended margin.'],
+    vr:['Anchor with dedicated training','The Vera Rubin rack lands flagship contracts and justifies regional presence. Defer it if capital is tight — inference pays the bills first.']};
+  const phases=order.map((k,i)=>`<div class="phase"><span class="n">Phase ${i+1} · mo ${i*3+1}–${i*3+3}</span><span class="t"><b>${phaseCopy[k][0]}</b> — ${port[k]} × ${NODES[k].name} (${fmt$(port[k]*NODES[k].capex)})<span>${phaseCopy[k][1]}</span></span></div>`).join('');
+
+  $('#rBody').innerHTML=`
+    <div class="controls">
+      <div class="ctrl"><label>Pooled utilisation <span class="v" id="vUtil"></span></label><input type="range" id="sUtil" min="40" max="85" value="60"><div class="note">Static fleets sell 20–40% of hours. Pooled fleets on hosted·ai typically reach 60–80%.</div></div>
+      <div class="ctrl"><label>Dedicated 1× anchor rate <span class="v" id="vAnchor"></span></label><input type="range" id="sAnchor" min="200" max="450" value="300" step="10"><div class="note">Shared tiers price down 10% per tenant tier from here. Hyperscaler on-demand runs $6–10/hr.</div></div>
+      <div class="ctrl"><label>Sharing appetite <span class="v">${state.risk}</span></label><div class="note" style="margin-top:10px;">Set by your answer: up to ${OC[state.risk].h200}× tenants per inference GPU. Change your answers to adjust.</div></div>
+    </div>
+    <div class="kpis" id="capexKpis"></div>
+    <div class="tablewrap" id="capexTable"></div>
+    <div class="revbar" id="revbar"></div><div class="barlegend" id="barlegend"></div>
+    ${complianceBlock()}${riskBlock()}
+    <h3 class="rsec">Phased rollout</h3>
+    <div class="phases">${phases}</div>
+    ${meshBlock('capex')}
+    ${assumpBlock()}
+    ${ctaBlock()}`;
+  $('#sUtil').addEventListener('input',draw);
+  $('#sAnchor').addEventListener('input',draw);
+  draw();
+}
+
+/* ---------- path 2: existing fleet uplift ---------- */
+function renderUplift(){
+  $('#rTitle').textContent='Monetise the fleet you already own';
+  $('#rSub').textContent='No new hardware in this plan. hosted·ai pools your existing GPUs, schedules tenants across the hours you are not selling today, and the Mesh gives unsold hours a wholesale buyer. OpEx barely moves — the incremental revenue is nearly all margin.';
+  const FEE_PER_GPU=3200; /* hosted·ai software per GPU per year */
+  const draw=()=>{
+    const gpus=+$('#uGpus').value, cur=+$('#uCur').value/100, tgt=+$('#uTgt').value/100, r=+$('#uRate').value/100;
+    $('#vGpus').textContent=gpus; $('#vCur').textContent=Math.round(cur*100)+'%';
+    $('#vTgt').textContent=Math.round(tgt*100)+'%'; $('#vRate').textContent='$'+r.toFixed(2)+'/hr';
+    const addHours=Math.max(0,(tgt-cur))*gpus*HOURS;
+    const addRev=addHours*r, fee=gpus*FEE_PER_GPU, addProfit=addRev-fee;
+    $('#upKpis').innerHTML=
+      kpi('Hours recovered / yr',Math.round(addHours/1000)+'K','from '+Math.round(cur*100)+'% to '+Math.round(tgt*100)+'% sold')+
+      kpi('Incremental revenue',fmt$(addRev),'at $'+r.toFixed(2)+' blended')+
+      kpi('hosted·ai software',fmt$(fee),'~$3.2K per GPU per year')+
+      kpi('Incremental profit',fmt$(addProfit),pct(addRev?addProfit/addRev:0)+' margin on recovered hours');
+  };
+  $('#rBody').innerHTML=`
+    <div class="controls" style="grid-template-columns:repeat(4,1fr);">
+      <div class="ctrl"><label>GPUs in fleet <span class="v" id="vGpus"></span></label><input type="range" id="uGpus" min="8" max="512" step="8" value="64"></div>
+      <div class="ctrl"><label>Sold hours today <span class="v" id="vCur"></span></label><input type="range" id="uCur" min="10" max="60" value="30"><div class="note">Industry average sits at 20–40%.</div></div>
+      <div class="ctrl"><label>Sold hours pooled <span class="v" id="vTgt"></span></label><input type="range" id="uTgt" min="40" max="85" value="65"><div class="note">Retail tenants plus Mesh wholesale.</div></div>
+      <div class="ctrl"><label>Blended rate <span class="v" id="vRate"></span></label><input type="range" id="uRate" min="120" max="400" step="10" value="240"></div>
+    </div>
+    <div class="kpis" id="upKpis"></div>
+    <div class="callout blue"><b>Why this works without new hardware.</b> Power, cooling and staffing already run whether the GPUs are sold or idle. Pooled scheduling turns idle hours into sellable inventory across more tenants, and hardware-assisted memory zeroing keeps tenants isolated while doing it.</div>
+    ${complianceBlock()}${riskBlock()}
+    ${meshBlock('uplift')}
+    ${assumpBlock('<li>Uplift model: incremental revenue = GPUs × 8,760 × (pooled sold share − current sold share) × blended rate, less hosted·ai software at ~$3.2K per GPU per year. Existing OpEx treated as sunk.</li>')}
+    ${ctaBlock()}`;
+  ['uGpus','uCur','uTgt','uRate'].forEach(id=>$('#'+id).addEventListener('input',draw));
+  draw();
+}
+
+/* ---------- path 3: asset-free ---------- */
+function renderAssetFree(){
+  $('#rTitle').textContent='The asset-free neocloud: sell first, buy never';
+  $('#rSub').textContent='This is the packet·ai model. You source capacity wholesale through the Mesh, hosted·ai runs scheduling and metering, and you own the brand, pricing and customers. No CapEx, no depreciation, no locked capacity — you pay wholesale only when your customers consume.';
+  const draw=()=>{
+    const hrs=+$('#aHrs').value*1000, r=+$('#aRate').value/100, w=+$('#aWhole').value/100;
+    $('#vHrs').textContent=(hrs/1000)+'K'; $('#vARate').textContent='$'+r.toFixed(2)+'/hr'; $('#vWhole').textContent=Math.round(w*100)+'%';
+    const rev=hrs*r*12, cogs=rev*w, gp=rev-cogs;
+    $('#afKpis').innerHTML=
+      kpi('Annual revenue',fmt$(rev),(hrs/1000)+'K GPU-hours / month at $'+r.toFixed(2))+
+      kpi('Wholesale cost',fmt$(cogs),'paid only on consumption')+
+      kpi('Gross profit',fmt$(gp),'no depreciation underneath it')+
+      kpi('Gross margin',pct(gp/rev),'packet·ai runs at ~25%');
+  };
+  $('#rBody').innerHTML=`
+    <div class="controls">
+      <div class="ctrl"><label>GPU-hours sold / month <span class="v" id="vHrs"></span></label><input type="range" id="aHrs" min="5" max="500" step="5" value="50"><div class="note">packet·ai crossed $500K ARR within weeks of launch on this model.</div></div>
+      <div class="ctrl"><label>Your retail rate <span class="v" id="vARate"></span></label><input type="range" id="aRate" min="150" max="400" step="10" value="250"><div class="note">Hyperscalers charge $6–10/hr — there is room to undercut heavily and still keep margin.</div></div>
+      <div class="ctrl"><label>Wholesale cost as share of retail <span class="v" id="vWhole"></span></label><input type="range" id="aWhole" min="60" max="90" value="75"><div class="note">Depends on your pricing position versus Mesh wholesale rates.</div></div>
+    </div>
+    <div class="kpis" id="afKpis"></div>
+    <div class="callout"><b>What you actually run.</b> A white-label portal, your pricing tiers, billing integration, and customer relationships. hosted·ai handles pool scheduling, isolation, metering and SLA enforcement across the wholesale capacity underneath.</div>
+    ${complianceBlock()}
+    ${meshBlock('assetfree')}
+    ${assumpBlock('<li>Asset-free model: revenue = monthly GPU-hours × retail rate × 12; cost of capacity = revenue × wholesale share. Portal, billing and support costs excluded — they scale with your team, not with GPUs.</li>')}
+    ${ctaBlock()}`;
+  ['aHrs','aRate','aWhole'].forEach(id=>$('#'+id).addEventListener('input',draw));
+  draw();
+}
+</script>
+</body>
+</html>

@@ -1,0 +1,3632 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>hosted·ai – Sales Order Form</title>
+<link rel="icon" type="image/png" href="https://hosted.ai/wp-content/uploads/2025/05/cropped-hostedai-site-icon-270x270.png">
+<link rel="shortcut icon" href="https://hosted.ai/wp-content/uploads/2025/05/cropped-hostedai-site-icon-270x270.png">
+<style>
+  :root {
+    --blue:      #1B3A6B;
+    --mid-blue:  #3A6FAD;
+    --light-blue:#D5E3F0;
+    --accent:    #0066CC;
+    --green:     #1A7A4A;
+    --light-green:#E6F5ED;
+    --amber:     #B45309;
+    --light-amber:#FEF3C7;
+    --gray-50:   #F8FAFC;
+    --gray-100:  #F1F5F9;
+    --gray-200:  #E2E8F0;
+    --gray-300:  #CBD5E1;
+    --gray-600:  #475569;
+    --gray-700:  #334155;
+    --gray-800:  #1E293B;
+    --red:       #DC2626;
+    --radius:    8px;
+    --shadow:    0 1px 3px rgba(0,0,0,.1), 0 1px 2px rgba(0,0,0,.06);
+    --shadow-md: 0 4px 6px rgba(0,0,0,.07), 0 2px 4px rgba(0,0,0,.06);
+  }
+
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+
+  body {
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Arial, sans-serif;
+    background: var(--gray-100);
+    color: var(--gray-800);
+    font-size: 14px;
+    line-height: 1.6;
+  }
+
+  /* ---- HEADER ---- */
+  .page-header {
+    background: var(--blue);
+    color: white;
+    padding: 0;
+    print-color-adjust: exact;
+    -webkit-print-color-adjust: exact;
+  }
+  .page-header-inner {
+    max-width: 1100px;
+    margin: 0 auto;
+    padding: 14px 28px;
+    display: flex;
+    align-items: center;
+    gap: 16px;
+  }
+  .logo-area {
+    flex-shrink: 0;
+  }
+  .logo-area h1 {
+    font-size: 20px;
+    font-weight: 700;
+    letter-spacing: -0.5px;
+    color: white;
+  }
+  .logo-area p {
+    font-size: 11px;
+    color: rgba(255,255,255,.6);
+    margin-top: 1px;
+  }
+  .header-fields {
+    flex: 1;
+    display: flex;
+    align-items: flex-end;
+    gap: 12px;
+    justify-content: center;
+  }
+  .header-field {
+    display: flex;
+    flex-direction: column;
+    gap: 3px;
+  }
+  .header-field label {
+    color: rgba(255,255,255,.6);
+    font-size: 10px;
+    text-transform: uppercase;
+    letter-spacing: .5px;
+    white-space: nowrap;
+  }
+  .header-field input {
+    background: rgba(255,255,255,.1);
+    border: 1px solid rgba(255,255,255,.3);
+    color: white;
+    padding: 5px 8px;
+    border-radius: 5px;
+    font-size: 13px;
+  }
+  .header-actions {
+    flex-shrink: 0;
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+    min-width: 170px;
+  }
+  .order-meta label { color: rgba(255,255,255,.6); font-size: 11px; text-transform: uppercase; letter-spacing: .5px; }
+
+  /* ---- GOVERNING NOTE ---- */
+  .gov-note {
+    background: var(--light-blue);
+    border-left: 4px solid var(--mid-blue);
+    max-width: 900px;
+    margin: 20px auto 0;
+    padding: 12px 16px;
+    border-radius: 0 var(--radius) var(--radius) 0;
+    font-size: 12.5px;
+    color: var(--blue);
+  }
+  .gov-note a { color: var(--accent); }
+
+  /* ---- MAIN CONTAINER ---- */
+  .container {
+    max-width: 900px;
+    margin: 24px auto 48px;
+    padding: 0 16px;
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+  }
+
+  /* ---- CARD ---- */
+  .card {
+    background: white;
+    border-radius: var(--radius);
+    box-shadow: var(--shadow);
+    overflow: hidden;
+  }
+  .card-header {
+    background: var(--blue);
+    color: white;
+    padding: 12px 20px;
+    font-size: 13px;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: .6px;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    print-color-adjust: exact;
+    -webkit-print-color-adjust: exact;
+  }
+  .card-header .num {
+    background: rgba(255,255,255,.2);
+    border-radius: 50%;
+    width: 22px; height: 22px;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 12px; font-weight: 800; flex-shrink: 0;
+  }
+  .card-body { padding: 20px; }
+
+  /* ---- FORM GRID ---- */
+  .form-grid {
+    display: grid;
+    grid-template-columns: 220px 1fr;
+    gap: 0;
+  }
+  .form-row {
+    display: contents;
+  }
+  .form-row > .form-label,
+  .form-row > .form-value {
+    padding: 10px 14px;
+    border-bottom: 1px solid var(--gray-200);
+    display: flex;
+    align-items: flex-start;
+  }
+  .form-row:last-child > .form-label,
+  .form-row:last-child > .form-value { border-bottom: none; }
+  .form-row:nth-child(even) > .form-label,
+  .form-row:nth-child(even) > .form-value { background: var(--gray-50); }
+
+  .form-label {
+    font-weight: 600;
+    font-size: 12.5px;
+    color: var(--gray-700);
+    border-right: 1px solid var(--gray-200);
+    align-items: flex-start;
+    padding-top: 12px;
+  }
+
+  /* ---- INPUTS ---- */
+  input[type="text"],
+  input[type="email"],
+  input[type="number"],
+  input[type="date"],
+  select,
+  textarea {
+    width: 100%;
+    border: 1px solid var(--gray-300);
+    border-radius: 5px;
+    padding: 7px 10px;
+    font-size: 13.5px;
+    color: var(--gray-800);
+    background: white;
+    transition: border-color .15s, box-shadow .15s;
+    font-family: inherit;
+  }
+  input:focus, select:focus, textarea:focus {
+    outline: none;
+    border-color: var(--accent);
+    box-shadow: 0 0 0 3px rgba(0,102,204,.12);
+  }
+  input.readonly-field {
+    background: var(--gray-100);
+    color: var(--gray-600);
+    cursor: default;
+    border-style: dashed;
+  }
+
+  /* ---- RADIO / CHECKBOX OPTIONS ---- */
+  .option-group { display: flex; flex-direction: column; gap: 8px; width: 100%; }
+  .option-item {
+    display: flex;
+    align-items: flex-start;
+    gap: 10px;
+    padding: 10px 12px;
+    border: 2px solid var(--gray-200);
+    border-radius: 6px;
+    cursor: pointer;
+    transition: border-color .15s, background .15s;
+    position: relative;
+  }
+  .option-item:hover { border-color: var(--mid-blue); background: var(--gray-50); }
+  .option-item.selected {
+    border-color: var(--accent);
+    background: #EFF6FF;
+  }
+  .option-item input[type="radio"],
+  .option-item input[type="checkbox"] {
+    width: 16px; height: 16px;
+    margin-top: 1px;
+    flex-shrink: 0;
+    accent-color: var(--accent);
+    cursor: pointer;
+  }
+  .option-label { font-size: 13.5px; font-weight: 600; color: var(--gray-800); }
+  .option-desc { font-size: 12px; color: var(--gray-600); margin-top: 1px; }
+  .option-badge {
+    position: absolute; right: 10px; top: 8px;
+    font-size: 11px; font-weight: 700; padding: 2px 8px;
+    border-radius: 99px;
+    background: var(--light-green); color: var(--green);
+  }
+
+  /* ---- PRICING TABLE ---- */
+  .pricing-table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 13px;
+    margin-top: 8px;
+  }
+  .pricing-table th {
+    background: var(--blue);
+    color: white;
+    padding: 8px 12px;
+    text-align: left;
+    font-size: 12px;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: .4px;
+    print-color-adjust: exact;
+    -webkit-print-color-adjust: exact;
+  }
+  .pricing-table td {
+    padding: 9px 12px;
+    border-bottom: 1px solid var(--gray-200);
+    vertical-align: middle;
+  }
+  .pricing-table tr:nth-child(even) td { background: var(--gray-50); }
+  .pricing-table tr:last-child td { border-bottom: none; }
+  .price-cell { font-weight: 700; color: var(--blue); text-align: right; }
+
+  /* ---- BILLING CALCULATOR ---- */
+  .calc-box {
+    background: var(--gray-50);
+    border: 1px solid var(--gray-200);
+    border-radius: 8px;
+    padding: 16px 20px;
+    margin-top: 16px;
+  }
+  .calc-box h4 {
+    font-size: 13px;
+    color: var(--gray-600);
+    text-transform: uppercase;
+    letter-spacing: .5px;
+    margin-bottom: 12px;
+    font-weight: 700;
+  }
+  .calc-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 6px 0;
+    border-bottom: 1px dashed var(--gray-200);
+    font-size: 13px;
+  }
+  .calc-row:last-child { border-bottom: none; }
+  .calc-row.total {
+    border-top: 2px solid var(--gray-300);
+    margin-top: 8px;
+    padding-top: 10px;
+    font-weight: 700;
+    font-size: 15px;
+    color: var(--blue);
+  }
+  .calc-label { color: var(--gray-600); }
+  .calc-value { font-weight: 600; color: var(--gray-800); }
+  .calc-inputs {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 12px;
+    margin-bottom: 14px;
+  }
+  .calc-input-group label {
+    display: block;
+    font-size: 12px;
+    font-weight: 600;
+    color: var(--gray-600);
+    margin-bottom: 4px;
+    text-transform: uppercase;
+    letter-spacing: .4px;
+  }
+
+  /* ---- BILLING BASIS NOTE ---- */
+  .billing-basis {
+    background: var(--light-blue);
+    border-left: 3px solid var(--mid-blue);
+    border-radius: 0 6px 6px 0;
+    padding: 12px 14px;
+    margin-top: 14px;
+    font-size: 12.5px;
+    color: var(--blue);
+  }
+  .billing-basis strong { display: block; margin-bottom: 4px; }
+
+  /* ---- INFO BANNER ---- */
+  .info-banner {
+    background: var(--light-amber);
+    border: 1px solid #FDE68A;
+    border-radius: 6px;
+    padding: 10px 14px;
+    font-size: 12.5px;
+    color: var(--amber);
+    margin-top: 12px;
+    display: none;
+  }
+  .info-banner.visible { display: block; }
+
+  /* ---- EFFECTIVE RATE CELL ---- */
+  .effective-rate-cell {
+    font-weight: 700;
+    text-align: right;
+    transition: color .25s, background .25s;
+  }
+  .effective-rate-cell.no-discount {
+    color: var(--blue);
+  }
+  .effective-rate-cell.has-discount {
+    color: var(--green);
+    background: var(--light-green);
+    border-radius: 4px;
+    padding: 4px 8px !important;
+  }
+  .discount-banner {
+    display: none;
+    margin-top: 12px;
+    border-radius: 6px;
+    padding: 11px 14px;
+    font-size: 13px;
+    font-weight: 600;
+    align-items: center;
+    gap: 10px;
+    border: 1px solid;
+  }
+  .discount-banner.visible { display: flex; }
+  .discount-banner.green {
+    background: var(--light-green);
+    border-color: #6EE7B7;
+    color: var(--green);
+  }
+  .discount-banner.blue {
+    background: var(--light-blue);
+    border-color: var(--mid-blue);
+    color: var(--blue);
+  }
+  .discount-badge-big {
+    font-size: 18px;
+    font-weight: 800;
+    white-space: nowrap;
+    flex-shrink: 0;
+  }
+  .savings-line {
+    font-size: 11.5px;
+    font-weight: 400;
+    margin-top: 2px;
+    opacity: .85;
+  }
+
+  /* ---- SIGNATURE BLOCK ---- */
+  .sig-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 24px;
+  }
+  .sig-party {
+    background: var(--gray-50);
+    border: 1px solid var(--gray-200);
+    border-radius: 8px;
+    padding: 16px 18px;
+  }
+  .sig-party h3 {
+    font-size: 13px;
+    text-transform: uppercase;
+    letter-spacing: .5px;
+    color: var(--blue);
+    font-weight: 800;
+    margin-bottom: 14px;
+    padding-bottom: 8px;
+    border-bottom: 2px solid var(--blue);
+  }
+  .sig-party .sig-field { margin-bottom: 10px; }
+  .sig-party .sig-field label {
+    display: block;
+    font-size: 11px;
+    text-transform: uppercase;
+    letter-spacing: .5px;
+    color: var(--gray-600);
+    font-weight: 600;
+    margin-bottom: 3px;
+  }
+  .sig-line {
+    border: none;
+    border-bottom: 2px solid var(--gray-400);
+    width: 100%;
+    padding: 6px 4px;
+    background: transparent;
+    font-size: 13.5px;
+    color: var(--gray-800);
+  }
+  .sig-line:focus { outline: none; border-bottom-color: var(--accent); }
+  .pre-filled { color: var(--gray-600); font-style: italic; font-size: 13px; }
+
+  /* ---- ACTION BAR ---- */
+  .action-bar {
+    display: flex;
+    gap: 12px;
+    justify-content: flex-end;
+    flex-wrap: wrap;
+  }
+  .btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    padding: 10px 20px;
+    border-radius: 6px;
+    font-size: 14px;
+    font-weight: 600;
+    cursor: pointer;
+    border: none;
+    transition: all .15s;
+    font-family: inherit;
+    text-decoration: none;
+  }
+  .btn-primary {
+    background: var(--blue);
+    color: white;
+  }
+  .btn-primary:hover { background: #152e56; }
+  .btn-outline {
+    background: white;
+    color: var(--blue);
+    border: 2px solid var(--blue);
+  }
+  .btn-outline:hover { background: var(--light-blue); }
+  .btn-success {
+    background: var(--green);
+    color: white;
+  }
+  .btn-success:hover { background: #145e39; }
+
+  /* ---- STATUS BADGE ---- */
+  .status-dot {
+    display: inline-block;
+    width: 8px; height: 8px;
+    border-radius: 50%;
+    background: #FCD34D;
+    margin-right: 6px;
+    animation: pulse 2s infinite;
+  }
+  @keyframes pulse {
+    0%, 100% { opacity: 1; } 50% { opacity: .4; }
+  }
+
+  /* ---- PRINT ---- */
+  @media print {
+    body { background: white; font-size: 12px; }
+    .no-print { display: none !important; }
+    .container { margin: 0; padding: 0; max-width: 100%; }
+    .page-header-inner { padding: 16px 20px; }
+    .card { box-shadow: none; border: 1px solid var(--gray-300); page-break-inside: avoid; }
+    .action-bar { display: none; }
+    .gov-note { margin: 8px 0 0; }
+  }
+
+  /* ---- DIVIDER ---- */
+  .section-note {
+    font-size: 12px;
+    color: var(--gray-600);
+    font-style: italic;
+    padding: 0 20px 16px;
+  }
+
+  .two-col { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+  .full-col { grid-column: span 2; }
+
+  /* ---- ADMIN PANEL ---- */
+  #adminPanel {
+    display: none;
+    position: fixed; top: 0; right: 0; bottom: 0;
+    width: 480px; background: white;
+    box-shadow: -4px 0 24px rgba(0,0,0,.15);
+    z-index: 1000; flex-direction: column;
+    overflow: hidden;
+  }
+  #adminPanel.open { display: flex; }
+  .admin-panel-header {
+    background: var(--blue); color: white;
+    padding: 16px 20px; display: flex;
+    align-items: center; justify-content: space-between;
+    flex-shrink: 0;
+  }
+  .admin-panel-body { flex: 1; overflow-y: auto; padding: 20px; }
+  .admin-section { margin-bottom: 24px; }
+  .admin-section-title {
+    font-size: 11px; font-weight: 700; text-transform: uppercase;
+    letter-spacing: .5px; color: var(--gray-600);
+    margin-bottom: 12px; padding-bottom: 6px;
+    border-bottom: 1px solid var(--gray-200);
+  }
+  .discount-row {
+    display: grid; grid-template-columns: 1fr 100px 60px;
+    align-items: center; gap: 10px; margin-bottom: 10px;
+  }
+  .discount-row label { font-size: 13px; font-weight: 600; color: var(--gray-800); }
+  .discount-row span  { font-size: 11px; color: var(--gray-500); }
+  .discount-input {
+    display: flex; align-items: center;
+    border: 1.5px solid var(--gray-300); border-radius: 6px;
+    overflow: hidden; background: white;
+  }
+  .discount-input input {
+    border: none; width: 100%; padding: 6px 8px;
+    font-size: 14px; font-weight: 700; text-align: right;
+    outline: none; background: transparent;
+  }
+  .discount-input span { padding: 0 8px 0 2px; font-weight: 700; color: var(--gray-600); font-size: 13px; }
+  .discount-badge-pill {
+    font-size: 11px; font-weight: 700; padding: 3px 8px;
+    border-radius: 99px; text-align: center;
+    background: var(--light-green); color: var(--green);
+  }
+  #ordersPanel {
+    display: none;
+    position: fixed; top: 0; right: 0; bottom: 0;
+    width: 420px; background: white;
+    box-shadow: -4px 0 24px rgba(0,0,0,.15);
+    z-index: 1000; flex-direction: column;
+  }
+  #ordersPanel.open { display: flex; }
+  .orders-panel-header {
+    background: var(--blue); color: white;
+    padding: 16px 20px; display: flex;
+    align-items: center; justify-content: space-between;
+    flex-shrink: 0;
+  }
+  .orders-panel-header h3 { font-size: 15px; font-weight: 700; }
+  .orders-panel-body { flex: 1; overflow-y: auto; padding: 16px; }
+  .order-card {
+    border: 1px solid var(--gray-200); border-radius: 7px;
+    padding: 12px 14px; margin-bottom: 10px; cursor: pointer;
+    transition: border-color .15s, background .15s;
+  }
+  .order-card:hover { border-color: var(--accent); background: #EFF6FF; }
+  .order-card-num  { font-size: 13px; font-weight: 800; color: var(--blue); }
+  .order-card-cust { font-size: 13px; color: var(--gray-800); margin-top: 2px; }
+  .order-card-meta { font-size: 11px; color: var(--gray-600); margin-top: 4px; }
+  .order-card-del  {
+    float: right; background: none; border: none; cursor: pointer;
+    color: var(--gray-600); font-size: 16px; line-height: 1; padding: 0;
+  }
+  .order-card-del:hover { color: var(--red); }
+</style>
+</head>
+<body>
+
+<!-- ================================================================
+     AUTH MODAL (shown only when Save / View Orders is clicked)
+================================================================ -->
+<div id="authGate" style="display:none;position:fixed;inset:0;z-index:9999;background:rgba(0,0,0,.5);align-items:center;justify-content:center;">
+  <div style="background:white;border-radius:10px;padding:32px 28px;width:320px;text-align:center;box-shadow:0 8px 32px rgba(0,0,0,.2);">
+    <div style="font-size:22px;font-weight:800;color:var(--blue);margin-bottom:6px;">🔒 Sign in</div>
+    <p style="font-size:13px;color:var(--gray-600);margin-bottom:20px;" id="authGateHint">Enter your password to continue.</p>
+    <input type="password" id="passwordInput" placeholder="Password"
+           style="width:100%;padding:10px 14px;font-size:14px;border-radius:6px;border:2px solid var(--gray-300);text-align:center;letter-spacing:2px;margin-bottom:12px;">
+    <div style="display:flex;gap:10px;">
+      <button onclick="closeAuthGate()"
+              style="flex:1;padding:9px;border-radius:6px;border:2px solid var(--gray-300);background:white;font-size:13px;font-weight:600;cursor:pointer;color:var(--gray-700);">
+        Cancel
+      </button>
+      <button onclick="attemptLogin()"
+              style="flex:1;padding:9px;border-radius:6px;border:none;background:var(--blue);color:white;font-size:13px;font-weight:700;cursor:pointer;">
+        Unlock
+      </button>
+    </div>
+    <div id="authError" style="color:var(--red);font-size:12px;margin-top:10px;display:none;">Incorrect password — try again</div>
+  </div>
+</div>
+
+<!-- ================================================================
+     SAVE CHOICE MODAL
+================================================================ -->
+<div id="saveChoiceModal" style="display:none;position:fixed;inset:0;z-index:10001;background:rgba(0,0,0,.45);align-items:center;justify-content:center;">
+  <div style="background:white;border-radius:12px;padding:28px 32px;min-width:320px;max-width:400px;box-shadow:0 12px 40px rgba(0,0,0,.2);text-align:center;">
+    <div style="font-size:24px;margin-bottom:10px;">💾</div>
+    <div style="font-size:16px;font-weight:700;color:var(--navy);margin-bottom:8px;">Save Sales Order</div>
+    <div style="font-size:13.5px;color:var(--gray-600);margin-bottom:24px;line-height:1.5;">How would you like to save this order?</div>
+    <div style="display:flex;flex-direction:column;gap:10px;">
+      <button onclick="saveChoiceCRM()"
+              style="padding:12px 20px;background:var(--blue);color:white;border:none;border-radius:8px;font-size:14px;font-weight:700;cursor:pointer;display:flex;align-items:center;justify-content:center;gap:8px;">
+        ☁️ Save to CRM &amp; Database
+        <span style="font-size:11px;font-weight:400;opacity:.85;">(Create/Update Deal)</span>
+      </button>
+      <button onclick="saveChoiceLocal()"
+              style="padding:12px 20px;background:white;color:var(--navy);border:1.5px solid var(--gray-300);border-radius:8px;font-size:14px;font-weight:700;cursor:pointer;display:flex;align-items:center;justify-content:center;gap:8px;">
+        💻 Save Locally
+        <span style="font-size:11px;font-weight:400;color:var(--gray-500);">(Generate SO PDF)</span>
+      </button>
+      <button onclick="closeSaveChoiceModal()"
+              style="padding:8px;background:none;border:none;color:var(--gray-500);font-size:13px;cursor:pointer;">
+        Cancel
+      </button>
+    </div>
+  </div>
+</div>
+
+<!-- ================================================================
+     GENERAL POPUP
+================================================================ -->
+<div id="generalPopup" style="display:none;position:fixed;inset:0;z-index:10000;background:rgba(0,0,0,.4);align-items:center;justify-content:center;">
+  <div style="background:white;border-radius:10px;padding:28px 32px;min-width:280px;max-width:360px;text-align:center;box-shadow:0 8px 32px rgba(0,0,0,.2);">
+    <div style="font-size:32px;margin-bottom:10px;">⚠️</div>
+    <div id="generalPopupMsg" style="font-size:15px;font-weight:700;color:var(--gray-800);margin-bottom:20px;"></div>
+    <button onclick="closePopup()"
+            style="padding:9px 32px;background:var(--blue);color:white;border:none;border-radius:6px;font-size:14px;font-weight:700;cursor:pointer;">
+      OK
+    </button>
+  </div>
+</div>
+<div id="ordersPanel">
+  <div class="orders-panel-header">
+    <h3>📋 Saved Orders</h3>
+    <div style="display:flex;gap:10px;align-items:center;">
+      <button onclick="loadOrders()" style="background:rgba(255,255,255,.2);border:none;color:white;border-radius:5px;padding:5px 12px;font-size:12px;font-weight:600;cursor:pointer;">↺ Refresh</button>
+      <button onclick="closeOrdersPanel()" style="background:none;border:none;color:white;font-size:20px;cursor:pointer;line-height:1;">×</button>
+    </div>
+  </div>
+  <div class="orders-panel-body" id="ordersList">
+    <div style="color:var(--gray-600);font-size:13px;text-align:center;padding:40px 0;">Loading…</div>
+  </div>
+</div>
+
+<!-- ================================================================
+     ADMIN PANEL
+================================================================ -->
+<div id="adminPanel">
+  <div class="admin-panel-header">
+    <h3>⚙️ Admin Settings</h3>
+    <button onclick="closeAdminPanel()" style="background:none;border:none;color:white;font-size:20px;cursor:pointer;line-height:1;">×</button>
+  </div>
+  <div class="admin-panel-body">
+
+    <!-- Discount configuration -->
+    <div class="admin-section">
+      <div class="admin-section-title">Service Model Discounts</div>
+      <p style="font-size:12.5px;color:var(--gray-600);margin-bottom:16px;">
+        Set the discount percentage applied to unit pricing for each service model.
+        Changes apply immediately to the active form and are saved to the database.
+      </p>
+
+      <div class="discount-row" style="font-size:11px;font-weight:700;color:var(--gray-500);text-transform:uppercase;letter-spacing:.4px;margin-bottom:6px;">
+        <span>Model</span><span>Discount</span><span>Current</span>
+      </div>
+
+      <div class="discount-row">
+        <label>Month-to-Month PAYG</label>
+        <div class="discount-input">
+          <input type="number" id="disc_payg" min="0" max="50" step="1" value="0" oninput="previewDiscount('payg',this)">
+          <span>%</span>
+        </div>
+        <div class="discount-badge-pill" id="disc_payg_badge">0%</div>
+      </div>
+
+      <div class="discount-row">
+        <label>$750 Min. Commit, 12 Mo.</label>
+        <div class="discount-input">
+          <input type="number" id="disc_committed750" min="0" max="50" step="1" value="5" oninput="previewDiscount('committed750',this)">
+          <span>%</span>
+        </div>
+        <div class="discount-badge-pill" id="disc_committed750_badge">5%</div>
+      </div>
+
+      <div class="discount-row">
+        <label>$2,500 Min. Commit, 12 Mo.</label>
+        <div class="discount-input">
+          <input type="number" id="disc_committed" min="0" max="50" step="1" value="10" oninput="previewDiscount('committed',this)">
+          <span>%</span>
+        </div>
+        <div class="discount-badge-pill" id="disc_committed_badge">10%</div>
+      </div>
+
+      <div class="discount-row">
+        <label>Yearly Upfront $120K, 12 Mo.</label>
+        <div class="discount-input">
+          <input type="number" id="disc_prepaid" min="0" max="50" step="1" value="20" oninput="previewDiscount('prepaid',this)">
+          <span>%</span>
+        </div>
+        <div class="discount-badge-pill" id="disc_prepaid_badge">20%</div>
+      </div>
+
+      <div style="margin-top:18px;display:flex;gap:10px;">
+        <button onclick="saveDiscounts()"
+                id="saveDiscountsBtn"
+                style="flex:1;padding:10px;background:var(--blue);color:white;border:none;border-radius:6px;font-size:13px;font-weight:700;cursor:pointer;">
+          💾 Save Discounts
+        </button>
+        <button onclick="loadDiscounts(true)"
+                style="padding:10px 16px;background:white;color:var(--gray-700);border:1.5px solid var(--gray-300);border-radius:6px;font-size:13px;font-weight:600;cursor:pointer;">
+          ↺ Reset
+        </button>
+      </div>
+      <div id="discountSaveStatus" style="display:none;margin-top:10px;font-size:12.5px;font-weight:600;padding:8px 12px;border-radius:6px;"></div>
+    </div>
+
+    <!-- Commitment amount discounts -->
+    <div class="admin-section">
+      <div class="admin-section-title">Commitment Amount Discounts</div>
+      <p style="font-size:12.5px;color:var(--gray-600);margin-bottom:16px;">
+        Set a dollar discount applied to the monthly/yearly commitment amounts ($750, $2,500, $10,000/mo).
+      </p>
+
+      <div class="discount-row" style="font-size:11px;font-weight:700;color:var(--gray-500);text-transform:uppercase;letter-spacing:.4px;margin-bottom:6px;">
+        <span>Commitment</span><span>Discount ($)</span><span>Net Amount</span>
+      </div>
+
+      <div class="discount-row">
+        <label>PAYG / $750 Mo.</label>
+        <div class="discount-input">
+          <input type="number" id="mmf_disc_payg" min="0" max="750" step="10" value="0" oninput="previewMmfDiscount('payg',this)">
+          <span>$</span>
+        </div>
+        <div class="discount-badge-pill" id="mmf_disc_payg_badge">$750</div>
+      </div>
+
+      <div class="discount-row">
+        <label>$750 Min. Commit, 12 Mo.</label>
+        <div class="discount-input">
+          <input type="number" id="mmf_disc_committed750" min="0" max="750" step="10" value="0" oninput="previewMmfDiscount('committed750',this)">
+          <span>$</span>
+        </div>
+        <div class="discount-badge-pill" id="mmf_disc_committed750_badge">$750</div>
+      </div>
+
+      <div class="discount-row">
+        <label>$2,500 Min. Commit, 12 Mo.</label>
+        <div class="discount-input">
+          <input type="number" id="mmf_disc_committed" min="0" max="2500" step="50" value="0" oninput="previewMmfDiscount('committed',this)">
+          <span>$</span>
+        </div>
+        <div class="discount-badge-pill" id="mmf_disc_committed_badge">$2,500</div>
+      </div>
+
+      <div class="discount-row">
+        <label>Yearly Upfront $120K (mo.)</label>
+        <div class="discount-input">
+          <input type="number" id="mmf_disc_prepaid" min="0" max="10000" step="100" value="0" oninput="previewMmfDiscount('prepaid',this)">
+          <span>$</span>
+        </div>
+        <div class="discount-badge-pill" id="mmf_disc_prepaid_badge">$10,000</div>
+      </div>
+
+      <div style="margin-top:18px;display:flex;gap:10px;">
+        <button onclick="saveMmfDiscounts()"
+                id="saveMmfDiscountsBtn"
+                style="flex:1;padding:10px;background:var(--blue);color:white;border:none;border-radius:6px;font-size:13px;font-weight:700;cursor:pointer;">
+          💾 Save Commitment Discounts
+        </button>
+        <button onclick="loadMmfDiscounts(true)"
+                style="padding:10px 16px;background:white;color:var(--gray-700);border:1.5px solid var(--gray-300);border-radius:6px;font-size:13px;font-weight:600;cursor:pointer;">
+          ↺ Reset
+        </button>
+      </div>
+      <div id="mmfDiscountSaveStatus" style="display:none;margin-top:10px;font-size:12.5px;font-weight:600;padding:8px 12px;border-radius:6px;"></div>
+    </div>
+
+    <!-- Base rates (read-only reference) -->
+    <div class="admin-section">
+      <div class="admin-section-title">Base Unit Rates (Read-only)</div>
+      <div style="background:var(--gray-50);border-radius:6px;padding:12px 14px;font-size:12.5px;color:var(--gray-700);">
+        <div style="display:flex;justify-content:space-between;margin-bottom:6px;">
+          <span>Availability (allocated VRAM)</span><span style="font-weight:700;">$0.0005 / GB-h</span>
+        </div>
+        <div style="display:flex;justify-content:space-between;">
+          <span>Consumption (utilized VRAM)</span><span style="font-weight:700;">$0.0030 / GB-h</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- Termination Language -->
+    <div class="admin-section">
+      <div class="admin-section-title">Termination Language</div>
+      <p style="font-size:12.5px;color:var(--gray-600);margin-bottom:12px;">
+        Replaces the default auto-generated termination clause in all PDFs. Leave blank to use the default dynamic language.
+      </p>
+      <textarea id="adminTerminationText" rows="6"
+                placeholder="Enter custom termination language… (leave blank to use default)"
+                style="width:100%;padding:10px 12px;border-radius:6px;border:1.5px solid var(--gray-300);font-size:13px;color:var(--gray-700);resize:vertical;font-family:inherit;line-height:1.55;margin-bottom:10px;"></textarea>
+      <div style="display:flex;gap:8px;">
+        <button onclick="saveTerminationText()" id="saveTerminationBtn"
+                style="flex:1;padding:10px;background:var(--blue);color:white;border:none;border-radius:6px;font-size:13px;font-weight:700;cursor:pointer;">
+          💾 Save Language
+        </button>
+        <button onclick="clearTerminationText()"
+                style="padding:10px 14px;background:white;color:var(--red);border:1.5px solid #FECACA;border-radius:6px;font-size:13px;font-weight:600;cursor:pointer;"
+                title="Reset to default dynamic language">
+          ✕ Reset to Default
+        </button>
+      </div>
+      <div id="terminationTextStatus" style="display:none;margin-top:8px;font-size:12.5px;font-weight:600;padding:8px 12px;border-radius:6px;"></div>
+    </div>
+
+    <!-- Change Password -->
+    <div class="admin-section">
+      <div class="admin-section-title">Change Password</div>
+      <p style="font-size:12.5px;color:var(--gray-600);margin-bottom:14px;">
+        Updates the app password. You must redeploy the Worker after changing it via <code style="background:var(--gray-100);padding:1px 5px;border-radius:3px;">wrangler secret put API_KEY</code>.
+      </p>
+      <div style="display:flex;flex-direction:column;gap:10px;">
+        <div>
+          <label style="display:block;font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.4px;color:var(--gray-600);margin-bottom:4px;">Current Password</label>
+          <input type="password" id="pwCurrent" placeholder="Enter current password"
+                 style="width:100%;padding:8px 12px;border-radius:6px;border:1.5px solid var(--gray-300);font-size:13px;">
+        </div>
+        <div>
+          <label style="display:block;font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.4px;color:var(--gray-600);margin-bottom:4px;">New Password</label>
+          <input type="password" id="pwNew" placeholder="Enter new password"
+                 style="width:100%;padding:8px 12px;border-radius:6px;border:1.5px solid var(--gray-300);font-size:13px;">
+        </div>
+        <div>
+          <label style="display:block;font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.4px;color:var(--gray-600);margin-bottom:4px;">Confirm New Password</label>
+          <input type="password" id="pwConfirm" placeholder="Re-enter new password"
+                 style="width:100%;padding:8px 12px;border-radius:6px;border:1.5px solid var(--gray-300);font-size:13px;">
+        </div>
+        <button onclick="changePassword()"
+                id="changePwBtn"
+                style="padding:10px;background:var(--blue);color:white;border:none;border-radius:6px;font-size:13px;font-weight:700;cursor:pointer;">
+          🔑 Update Password
+        </button>
+        <div id="pwStatus" style="display:none;font-size:12.5px;font-weight:600;padding:8px 12px;border-radius:6px;"></div>
+      </div>
+    </div>
+
+    <!-- Order Number Counter -->
+    <div class="admin-section">
+      <div class="admin-section-title">Order Number Counter</div>
+      <p style="font-size:12.5px;color:var(--gray-600);margin-bottom:14px;">
+        Set or reset the order number counter. The next order created will use this value.
+      </p>
+      <div style="display:flex;align-items:center;gap:10px;margin-bottom:10px;">
+        <label style="font-size:13px;font-weight:600;color:var(--gray-700);white-space:nowrap;">Current / New value</label>
+        <input type="number" id="soNumberInput" min="1" step="1"
+               style="flex:1;padding:8px 12px;border-radius:6px;border:1.5px solid var(--gray-300);font-size:14px;font-weight:700;text-align:right;">
+      </div>
+      <button onclick="saveSoNumber()" id="saveSoNumberBtn"
+              style="width:100%;padding:10px;background:var(--blue);color:white;border:none;border-radius:6px;font-size:13px;font-weight:700;cursor:pointer;">
+        💾 Set Order Number
+      </button>
+      <div id="soNumberStatus" style="display:none;margin-top:8px;font-size:12.5px;font-weight:600;padding:8px 12px;border-radius:6px;"></div>
+    </div>
+
+    <!-- MLA URL -->
+    <div class="admin-section">
+      <div class="admin-section-title">Master Licence Agreement URL</div>
+      <p style="font-size:12.5px;color:var(--gray-600);margin-bottom:14px;">
+        URL used for the MLA link in the page header and signature section.
+      </p>
+      <input type="url" id="mlaUrlInput"
+             placeholder="https://hosted.ai/legal/..."
+             style="width:100%;padding:8px 12px;border-radius:6px;border:1.5px solid var(--gray-300);font-size:13px;margin-bottom:10px;">
+      <button onclick="saveMlaUrl()" id="saveMlaBtn"
+              style="width:100%;padding:10px;background:var(--blue);color:white;border:none;border-radius:6px;font-size:13px;font-weight:700;cursor:pointer;">
+        💾 Save URL
+      </button>
+      <div id="mlaUrlStatus" style="display:none;margin-top:8px;font-size:12.5px;font-weight:600;padding:8px 12px;border-radius:6px;"></div>
+    </div>
+
+    <!-- Delete All Orders -->
+    <div class="admin-section">
+      <div class="admin-section-title" style="color:var(--red);">⚠ Danger Zone</div>
+      <p style="font-size:12.5px;color:var(--gray-600);margin-bottom:14px;">
+        Permanently delete all saved orders from the database. This cannot be undone.
+      </p>
+      <button onclick="confirmDeleteAllOrders()" id="deleteAllOrdersBtn"
+              style="width:100%;padding:10px;background:#fee2e2;color:var(--red);border:1.5px solid #fecaca;border-radius:6px;font-size:13px;font-weight:700;cursor:pointer;">
+        🗑 Delete All Saved Orders
+      </button>
+      <div id="deleteAllStatus" style="display:none;margin-top:8px;font-size:12.5px;font-weight:600;padding:8px 12px;border-radius:6px;"></div>
+    </div>
+
+  </div><!-- /.admin-panel-body -->
+</div><!-- /#adminPanel -->
+
+<div class="page-header">
+  <div class="page-header-inner">
+
+    <!-- Logo -->
+    <div class="logo-area">
+      <div style="display:flex;align-items:center;gap:8px;">
+        <img src="https://hosted.ai/wp-content/uploads/2025/05/cropped-hostedai-site-icon-270x270.png"
+             alt="hosted·ai logo" style="width:32px;height:32px;border-radius:5px;object-fit:contain;">
+        <h1>hosted·ai</h1>
+      </div>
+      <p>Hosted AI Inc.</p>
+      <p style="margin-top:2px;font-size:10px;color:rgba(255,255,255,.5)">
+        <a id="mlaHeaderLink" href="https://hosted.ai/legal/Master_License_Agreement_v0.01.pdf"
+           style="color:rgba(255,255,255,.6);text-decoration:none;" target="_blank">MLA ↗</a>
+      </p>
+    </div>
+
+    <!-- Fields spread evenly -->
+    <div class="header-fields">
+      <div class="header-field">
+        <label>Sales Order #</label>
+        <input type="text" id="orderNumber" value="—" readonly
+               style="width:90px;text-align:right;font-weight:700;font-size:14px;background:rgba(255,255,255,.05);border:1px solid rgba(255,255,255,.2);color:rgba(255,255,255,.8);cursor:default;"
+               title="Auto-generated order number">
+      </div>
+      <div class="header-field">
+        <label>Contract Date</label>
+        <input type="date" id="contractDate">
+      </div>
+      <div class="header-field">
+        <label>Billing Start</label>
+        <input type="date" id="effectiveDate"
+               onchange="syncBillingStart(); updateCommercialTermsSummary()">
+      </div>
+    </div>
+
+    <!-- Action buttons -->
+    <div class="header-actions no-print">
+      <button onclick="saveOrder()"
+              style="padding:7px 14px;background:rgba(255,255,255,.18);color:white;border:1.5px solid rgba(255,255,255,.4);border-radius:6px;font-size:12.5px;font-weight:700;cursor:pointer;white-space:nowrap;"
+              onmouseover="this.style.background='rgba(255,255,255,.28)'"
+              onmouseout="this.style.background='rgba(255,255,255,.18)'">
+        💾 Save Order
+      </button>
+      <button id="headerAuthBtn" onclick="headerAuthToggle()"
+              style="padding:7px 14px;background:rgba(255,255,255,.08);color:rgba(255,255,255,.85);border:1.5px solid rgba(255,255,255,.25);border-radius:6px;font-size:12.5px;font-weight:600;cursor:pointer;white-space:nowrap;"
+              onmouseover="this.style.background='rgba(255,255,255,.18)'"
+              onmouseout="this.style.background='rgba(255,255,255,.08)'">
+        🔐 Authenticate with CRM
+      </button>
+    </div>
+
+  </div>
+</div>
+
+<div class="gov-note" style="max-width:900px;margin:16px auto 0;padding:11px 32px;">
+  <strong style="font-size:12px;text-transform:uppercase;letter-spacing:.4px;">⚖ Governing Agreement</strong>
+  This Sales Order is governed by and incorporates by reference the
+  <a id="mlaBodyLink" href="https://hosted.ai/legal/Master_License_Agreement_v0.01.pdf" target="_blank">hosted·ai Master Licence Agreement</a>
+  as of the Effective Date. By signing this Order, Customer agrees to be bound by those terms.
+  In any conflict between this Order and the MLA, this Order governs solely with respect to pricing and services described herein.
+</div>
+
+<!-- ================================================================
+     MAIN CONTENT
+================================================================ -->
+<div class="container">
+
+  <!-- ---- 1. CUSTOMER INFORMATION ---- -->
+  <div class="card" id="custCard">
+    <div class="card-header" style="cursor:pointer;user-select:none;justify-content:space-between;" onclick="toggleCard('custCard')">
+      <div><span class="num">1</span> Customer Information</div>
+      <span id="custCardChevron" style="font-size:16px;transition:transform .2s;">▲</span>
+    </div>
+    <div class="card-body" id="custCardBody">
+
+      <!-- Company -->
+      <div style="margin-bottom:6px;font-size:10.5px;font-weight:700;text-transform:uppercase;letter-spacing:.6px;color:var(--gray-500);">Company</div>
+      <div class="two-col" style="margin-bottom:20px;">
+        <div class="full-col" data-custfield="custName">
+          <label style="display:block;font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.5px;color:var(--gray-600);margin-bottom:4px;">
+            Legal Name *
+            <button type="button" onclick="refreshOrgCache()" id="refreshOrgBtn"
+                    class="no-print"
+                    style="float:right;font-size:10px;font-weight:600;color:var(--accent);background:none;border:none;cursor:pointer;padding:0;letter-spacing:0;text-transform:none;">
+              ↺ Refresh list
+            </button>
+          </label>
+          <div style="position:relative;">
+            <input type="text" id="custName" value="" placeholder="Type to search or enter a new company…"
+                   onblur="if (!orgSelectPending) lookupOrderNumber(this.value)"
+                   oninput="orgAutocomplete(this.value)"
+                   onfocus="orgAutocomplete(this.value)"
+                   autocomplete="off">
+            <div id="orgDropdown" style="
+              display:none;position:absolute;top:100%;left:0;right:0;z-index:500;
+              background:white;border:1.5px solid var(--gray-300);border-top:none;
+              border-radius:0 0 7px 7px;box-shadow:0 8px 24px rgba(0,0,0,.10);
+              max-height:220px;overflow-y:auto;"></div>
+          </div>
+        </div>
+        <div class="full-col" data-custfield="custAddress">
+          <label style="display:block;font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.5px;color:var(--gray-600);margin-bottom:4px;">Registered Address *</label>
+          <input type="text" id="custAddress" value="" placeholder="Street, City, Country">
+        </div>
+        <div data-custfield="taxId">
+          <label style="display:block;font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.5px;color:var(--gray-600);margin-bottom:4px;">Tax ID / VAT Number</label>
+          <input type="text" id="taxId" placeholder="e.g. US 12-3456789 · EU VAT GB123456789">
+        </div>
+        <div data-custfield="poNumber">
+          <label style="display:block;font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.5px;color:var(--gray-600);margin-bottom:4px;">PO Number (if applicable)</label>
+          <input type="text" id="poNumber" placeholder="Leave blank if not applicable">
+        </div>
+      </div>
+
+      <!-- Divider -->
+      <div style="border-top:1px solid var(--gray-200);margin-bottom:16px;"></div>
+
+      <!-- Primary Contact -->
+      <div style="margin-bottom:6px;font-size:10.5px;font-weight:700;text-transform:uppercase;letter-spacing:.6px;color:var(--gray-500);">Primary Contact</div>
+      <div class="two-col" style="margin-bottom:20px;">
+        <div data-custfield="primaryName">
+          <label style="display:block;font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.5px;color:var(--gray-600);margin-bottom:4px;">Name *</label>
+          <input type="text" id="primaryName" value="" placeholder="Full name">
+        </div>
+        <div data-custfield="primaryEmail">
+          <label style="display:block;font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.5px;color:var(--gray-600);margin-bottom:4px;">Email *</label>
+          <input type="email" id="primaryEmail" value="" placeholder="email@company.com"
+                 onblur="validateEmail(this)" oninput="clearEmailError(this)">
+          <div id="primaryEmail_err" style="display:none;color:var(--red);font-size:11.5px;margin-top:3px;">Please enter a valid email address.</div>
+        </div>
+        <div data-custfield="primaryPhone">
+          <label style="display:block;font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.5px;color:var(--gray-600);margin-bottom:4px;">Phone</label>
+          <input type="tel" id="primaryPhone" value="" placeholder="+1 (555) 000-0000"
+                 onblur="validatePhone(this)" oninput="clearPhoneError(this)">
+          <div id="primaryPhone_err" style="display:none;color:var(--red);font-size:11.5px;margin-top:3px;">Please enter a valid phone number.</div>
+        </div>
+      </div>
+
+      <!-- Divider -->
+      <div style="border-top:1px solid var(--gray-200);margin-bottom:16px;"></div>
+
+      <!-- Technical Contact -->
+      <div style="margin-bottom:6px;font-size:10.5px;font-weight:700;text-transform:uppercase;letter-spacing:.6px;color:var(--gray-500);">Technical Contact</div>
+      <div class="two-col" style="margin-bottom:20px;">
+        <div data-custfield="techName">
+          <label style="display:block;font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.5px;color:var(--gray-600);margin-bottom:4px;">Name</label>
+          <input type="text" id="techName" value="" placeholder="Full name">
+        </div>
+        <div data-custfield="techEmail">
+          <label style="display:block;font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.5px;color:var(--gray-600);margin-bottom:4px;">Email</label>
+          <input type="email" id="techEmail" value="" placeholder="email@company.com"
+                 onblur="validateEmail(this)" oninput="clearEmailError(this)">
+          <div id="techEmail_err" style="display:none;color:var(--red);font-size:11.5px;margin-top:3px;">Please enter a valid email address.</div>
+        </div>
+        <div data-custfield="techPhone">
+          <label style="display:block;font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.5px;color:var(--gray-600);margin-bottom:4px;">Phone</label>
+          <input type="tel" id="techPhone" value="" placeholder="+1 (555) 000-0000"
+                 onblur="validatePhone(this)" oninput="clearPhoneError(this)">
+          <div id="techPhone_err" style="display:none;color:var(--red);font-size:11.5px;margin-top:3px;">Please enter a valid phone number.</div>
+        </div>
+      </div>
+
+      <!-- Divider -->
+      <div style="border-top:1px solid var(--gray-200);margin-bottom:16px;"></div>
+
+      <!-- Billing -->
+      <div style="margin-bottom:6px;font-size:10.5px;font-weight:700;text-transform:uppercase;letter-spacing:.6px;color:var(--gray-500);">Billing (if different)</div>
+      <div class="two-col">
+        <div data-custfield="billingContact">
+          <label style="display:block;font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.5px;color:var(--gray-600);margin-bottom:4px;">Billing Contact Name</label>
+          <input type="text" id="billingContact" placeholder="Full name">
+        </div>
+        <div data-custfield="billingEmail">
+          <label style="display:block;font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.5px;color:var(--gray-600);margin-bottom:4px;">Billing Contact Email</label>
+          <input type="email" id="billingEmail" placeholder="billing@company.com"
+                 onblur="validateEmail(this)" oninput="clearEmailError(this)">
+          <div id="billingEmail_err" style="display:none;color:var(--red);font-size:11.5px;margin-top:3px;">Please enter a valid email address.</div>
+        </div>
+        <div data-custfield="billingPhone">
+          <label style="display:block;font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.5px;color:var(--gray-600);margin-bottom:4px;">Billing Contact Phone</label>
+          <input type="tel" id="billingPhone" placeholder="+1 (555) 000-0000"
+                 onblur="validatePhone(this)" oninput="clearPhoneError(this)">
+          <div id="billingPhone_err" style="display:none;color:var(--red);font-size:11.5px;margin-top:3px;">Please enter a valid phone number.</div>
+        </div>
+        <div class="full-col" data-custfield="billingAddress">
+          <label style="display:block;font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.5px;color:var(--gray-600);margin-bottom:4px;">Billing Address</label>
+          <input type="text" id="billingAddress" placeholder="Leave blank if same as above">
+        </div>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- ---- 2. ORDER DETAILS ---- -->
+  <div class="card">
+    <div class="card-header">
+      <span class="num">2</span> Order Details
+    </div>
+    <div class="card-body">
+      <div style="margin-bottom:16px;">
+        <label style="display:block;font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.5px;color:var(--gray-600);margin-bottom:6px;">Service Description</label>
+        <input type="text" id="serviceDesc"
+               value="Access to hosted·ai licensed software, deployed on customer infrastructure. Includes standard support."
+               style="font-size:13.5px;">
+      </div>
+
+      <label style="display:block;font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.5px;color:var(--gray-600);margin-bottom:10px;">Service Model *</label>
+      <div class="option-group" id="serviceModelGroup">
+
+        <label class="option-item" onclick="selectModel('poc', this)">
+          <input type="radio" name="serviceModel" value="poc">
+          <div>
+            <div class="option-label">One-off Items, No minimum commitment.</div>
+            <div class="option-desc">Single engagement or one-off items. No minimum commitment.</div>
+          </div>
+        </label>
+
+        <label class="option-item" onclick="selectModel('payg', this)">
+          <input type="radio" name="serviceModel" value="payg">
+          <div>
+            <div class="option-label" id="label_payg">Month-to-Month, Pay-As-You-Go</div>
+            <div class="option-desc" id="desc_payg">$750 monthly minimum. Cancel anytime with written notice.</div>
+          </div>
+        </label>
+
+        <label class="option-item" onclick="selectModel('committed750', this)">
+          <input type="radio" name="serviceModel" value="committed750">
+          <div>
+            <div class="option-label" id="label_committed750">Min. Monthly Commit: $750, 12 Mo. Term</div>
+            <div class="option-desc" id="desc_committed750">5% discount applied to all unit pricing. Minimum 12-month term.</div>
+          </div>
+          <span class="option-badge">Default · 5% off</span>
+        </label>
+
+        <label class="option-item" onclick="selectModel('committed', this)">
+          <input type="radio" name="serviceModel" value="committed">
+          <div>
+            <div class="option-label" id="label_committed">Min. Monthly Commit: $2,500, 12 Mo. Term</div>
+            <div class="option-desc" id="desc_committed">10% discount applied to all unit pricing. Minimum 12-month term.</div>
+          </div>
+          <span class="option-badge" style="background:var(--light-blue);color:var(--blue);">10% off</span>
+        </label>
+
+        <label class="option-item" onclick="selectModel('prepaid', this)">
+          <input type="radio" name="serviceModel" value="prepaid">
+          <div>
+            <div class="option-label" id="label_prepaid">Yearly Upfront Pay $120,000, 12 Mo. Term</div>
+            <div class="option-desc" id="desc_prepaid">20% discount applied to all unit pricing. No monthly minimum. Annual in advance.</div>
+          </div>
+          <span class="option-badge" style="background:var(--light-green);color:var(--green);">20% off</span>
+        </label>
+
+      </div>
+
+      <div style="margin-top:16px;">
+        <label style="display:block;font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.5px;color:var(--gray-600);margin-bottom:4px;">Support Level</label>
+        <select id="supportLevel" onchange="onSupportChange(); updateCommercialTermsSummary()">
+          <option value="standard" selected>Standard</option>
+          <option value="priority">Priority</option>
+          <option value="enterprise">Enterprise</option>
+        </select>
+        <div id="supportNotice" style="display:none;margin-top:10px;background:#FFFBEB;border:1px solid #FDE68A;border-radius:7px;padding:11px 14px;font-size:12.5px;color:#92400E;line-height:1.6;">
+          <strong style="display:block;margin-bottom:4px;">ℹ️ Standard Support Included</strong>
+          Standard Support is included at the current service level. Priority and Enterprise support tiers require a separate Support Agreement that is outside the scope of this Sales Order and will incur additional cost.
+        </div>
+      </div>
+
+      <!-- One-off Items -->
+      <div style="margin-top:20px;">
+        <label style="display:block;font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.5px;color:var(--gray-600);margin-bottom:10px;">One-off Items</label>
+
+        <div id="oneoffRows" style="display:flex;flex-direction:column;gap:8px;margin-bottom:10px;"></div>
+
+        <button type="button" onclick="addOneoffRow()"
+                style="font-size:12px;font-weight:600;color:var(--accent);background:none;border:1px dashed var(--accent);border-radius:5px;padding:5px 14px;cursor:pointer;width:100%;">
+          + Add Item
+        </button>
+
+        <div id="oneoffTotal" style="display:none;margin-top:12px;padding:10px 14px;background:var(--light-blue);border:1px solid var(--mid-blue);border-radius:7px;display:flex;justify-content:space-between;align-items:center;">
+          <span style="font-size:13px;font-weight:700;color:var(--blue);">One-off Total</span>
+          <span id="oneoffTotalVal" style="font-size:16px;font-weight:800;color:var(--blue);">$0.00</span>
+        </div>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- ---- 3. FEES AND BILLING ---- -->
+  <div class="card">
+    <div class="card-header">
+      <span class="num">3</span> Fees &amp; Billing
+    </div>
+    <div class="card-body">
+
+      <!-- Commercial Terms Summary -->
+      <div style="margin-bottom:20px;">
+        <label style="display:block;font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.5px;color:var(--gray-600);margin-bottom:10px;">Commercial Terms</label>
+        <div id="commercialTermsSummary" style="background:var(--gray-50);border:1px solid var(--gray-200);border-radius:7px;padding:14px 16px;display:grid;grid-template-columns:1fr 1fr;gap:10px 24px;">
+          <div>
+            <div style="font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.4px;color:var(--gray-600);margin-bottom:3px;">Service Model</div>
+            <div id="ctServiceModel" style="font-size:13.5px;font-weight:600;color:var(--gray-800);">—</div>
+          </div>
+          <div>
+            <div style="font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.4px;color:var(--gray-600);margin-bottom:3px;">Resource Discount</div>
+            <div id="ctDiscount" style="font-size:13.5px;font-weight:600;color:var(--green);">—</div>
+          </div>
+          <div>
+            <div style="font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.4px;color:var(--gray-600);margin-bottom:3px;">Monthly Credit</div>
+            <div id="ctMMF" style="font-size:13.5px;font-weight:600;color:var(--gray-800);">—</div>
+          </div>
+          <div>
+            <div style="font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.4px;color:var(--gray-600);margin-bottom:3px;">Billing Frequency</div>
+            <div id="ctFreq" style="font-size:13.5px;font-weight:600;color:var(--gray-800);">—</div>
+          </div>
+          <div>
+            <div style="font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.4px;color:var(--gray-600);margin-bottom:3px;">Initial Term</div>
+            <div id="ctTerm" style="font-size:13.5px;font-weight:600;color:var(--gray-800);">—</div>
+          </div>
+          <div>
+            <div style="font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.4px;color:var(--gray-600);margin-bottom:3px;">Renewal</div>
+            <div id="ctRenewal" style="font-size:13.5px;font-weight:600;color:var(--gray-800);">—</div>
+          </div>
+          <div>
+            <div style="font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.4px;color:var(--gray-600);margin-bottom:3px;">Support Level</div>
+            <div id="ctSupport" style="font-size:13.5px;font-weight:600;color:var(--gray-800);">—</div>
+          </div>
+          <div>
+            <div style="font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.4px;color:var(--gray-600);margin-bottom:3px;">Billing Start Date</div>
+            <div id="ctBillingStart" style="font-size:13.5px;font-weight:600;color:var(--gray-800);">—</div>
+          </div>
+        </div>
+        <!-- Hidden inputs retained for JS compatibility -->
+        <div style="display:none;">
+          <div id="mmfGroup">
+            <label class="option-item"><input type="radio" name="mmf" value="750"></label>
+            <label class="option-item selected"><input type="radio" name="mmf" value="other" checked></label>
+            <label class="option-item"><input type="radio" name="mmf" value="none"></label>
+          </div>
+          <input type="number" id="mmfOther" value="750" oninput="updateCalc()">
+          <div id="billingFreqGroup">
+            <label class="option-item"><input type="radio" name="billingFreq" value="annual"></label>
+            <label class="option-item selected"><input type="radio" name="billingFreq" value="monthly" checked></label>
+            <label class="option-item"><input type="radio" name="billingFreq" value="other"></label>
+          </div>
+          <input type="text" id="freqOther">
+        </div>
+      </div>
+
+      <!-- Payment Terms & Currency -->
+      <div class="two-col" style="margin-bottom:20px;">
+        <div>
+          <label style="display:block;font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.5px;color:var(--gray-600);margin-bottom:4px;">Payment Terms</label>
+          <select id="paymentTerms">
+            <option value="net7" selected>Net 7</option>
+            <option value="net14">Net 14</option>
+            <option value="net30">Net 30</option>
+            <option value="net60">Net 60</option>
+            <option value="immediate">Immediate / Prepaid</option>
+          </select>
+        </div>
+        <div>
+          <label style="display:block;font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.5px;color:var(--gray-600);margin-bottom:4px;">Currency</label>
+          <select id="currency">
+            <option value="USD" selected>USD – US Dollar</option>
+            <option value="EUR">EUR – Euro</option>
+            <option value="GBP">GBP – British Pound</option>
+          </select>
+        </div>
+      </div>
+
+      <!-- Unit Pricing -->
+      <div style="margin-bottom:20px;">
+        <label style="display:block;font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.5px;color:var(--gray-600);margin-bottom:8px;">Unit Pricing</label>
+        <table class="pricing-table">
+          <thead>
+            <tr>
+              <th>Item</th>
+              <th>Description</th>
+              <th style="text-align:right;">Base Rate</th>
+              <th style="text-align:right;">Effective Rate</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td><strong>GPU VRAM</strong><br><span style="font-size:11px;color:var(--gray-600)">Allocated</span></td>
+              <td>Per allocated GB of VRAM</td>
+              <td class="price-cell">$0.0005 / GB-h</td>
+              <td class="effective-rate-cell no-discount" id="rate_alloc">$0.0005 / GB-h</td>
+            </tr>
+            <tr>
+              <td><strong>GPU VRAM</strong><br><span style="font-size:11px;color:var(--gray-600)">Utilized</span></td>
+              <td>Per utilized GB of VRAM</td>
+              <td class="price-cell">$0.0030 / GB-h</td>
+              <td class="effective-rate-cell no-discount" id="rate_util">$0.0030 / GB-h</td>
+            </tr>
+          </tbody>
+        </table>
+
+        <!-- Dynamic discount banner -->
+        <div id="discountBanner" class="discount-banner">
+          <span class="discount-badge-big" id="discountPct"></span>
+          <div>
+            <div id="discountMsg"></div>
+            <div class="savings-line" id="discountSavings"></div>
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- ---- 4. TERM AND RENEWAL ---- -->
+  <div class="card">
+    <div class="card-header">
+      <span class="num">4</span> Term &amp; Renewal
+    </div>
+    <div class="card-body">
+
+      <div style="margin-bottom:20px;">
+        <label style="display:block;font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.5px;color:var(--gray-600);margin-bottom:10px;">Initial Term</label>
+        <div id="initialTermDisplay" style="background:var(--gray-50);border:1px solid var(--gray-200);border-radius:7px;padding:13px 16px;font-size:13.5px;font-weight:600;color:var(--gray-800);">—</div>
+        <div style="display:none;">
+          <label class="option-item" onclick="selectTerm('mtm', this)"><input type="radio" name="initialTerm" value="mtm"></label>
+          <label class="option-item" onclick="selectTerm('12m', this)"><input type="radio" name="initialTerm" value="12m"></label>
+          <label class="option-item" onclick="selectTerm('other', this)"><input type="radio" name="initialTerm" value="other"><input type="text" id="termOther"></label>
+        </div>
+      </div>
+
+      <div style="margin-bottom:20px;">
+        <label style="display:block;font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.5px;color:var(--gray-600);margin-bottom:10px;">Renewal</label>
+        <div class="option-group">
+          <label class="option-item" onclick="selectRenewal('auto', this)">
+            <input type="radio" name="renewal" value="auto">
+            <div>
+              <div class="option-label">Auto-renews for successive 12-month periods</div>
+              <div class="option-desc">Either party may opt out with 90 days' written notice prior to renewal date.</div>
+            </div>
+          </label>
+          <label class="option-item" onclick="selectRenewal('none', this)">
+            <input type="radio" name="renewal" value="none">
+            <div><div class="option-label">No auto-renewal</div></div>
+          </label>
+          <label class="option-item" id="renewalNaItem" onclick="return false;"
+                 style="opacity:.4;cursor:not-allowed;">
+            <input type="radio" name="renewal" value="na" disabled>
+            <div><div class="option-label">N/A</div><div class="option-desc">Only applicable for Proof of Concept or one-off items</div></div>
+          </label>
+        </div>
+      </div>
+
+      <!-- Custom Terms -->
+      <div style="margin-bottom:16px;">
+        <label style="display:block;font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.5px;color:var(--gray-600);margin-bottom:6px;">
+          Custom Terms <span style="font-weight:400;text-transform:none;letter-spacing:0;color:var(--gray-400);">(optional — included in PDF if filled)</span>
+        </label>
+        <textarea id="customTerms" rows="4" placeholder="Enter any additional or custom contractual terms here…"
+                  style="width:100%;padding:10px 12px;border-radius:6px;border:1.5px solid var(--gray-300);font-size:13px;color:var(--gray-700);resize:vertical;font-family:inherit;line-height:1.55;"></textarea>
+      </div>
+
+      <div style="background:var(--gray-50);border:1px solid var(--gray-200);border-radius:6px;padding:14px 16px;">
+        <div style="font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.5px;color:var(--gray-600);margin-bottom:6px;">Termination Terms</div>
+        <p id="terminationDisplayBlock" style="font-size:13px;color:var(--gray-400);font-style:italic;">Default termination language (auto-generated based on term &amp; renewal selections).</p>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- ---- 5. SIGNATURES ---- -->
+  <div class="card">
+    <div class="card-header">
+      <span class="num">5</span> Signatures
+    </div>
+    <p class="section-note" style="padding:12px 20px 0;">
+      By signing below, both parties acknowledge and agree to the terms of this Order and the governing Master Licence Agreement.
+      <em>This Sales Order is entered into and effective as of the Effective Date above.</em>
+    </p>
+    <div class="card-body">
+      <div class="sig-grid">
+
+        <!-- Vendor -->
+        <div class="sig-party">
+          <h3>Hosted AI Inc.</h3>
+          <div class="sig-field">
+            <label>Signature</label>
+            <div style="position:relative;">
+              <canvas id="sigVendor" width="340" height="100"
+                style="border:1.5px solid var(--gray-300);border-radius:6px;cursor:crosshair;background:white;touch-action:none;width:100%;display:block;"></canvas>
+              <div style="display:flex;gap:8px;margin-top:6px;">
+                <button type="button" onclick="clearSig('sigVendor')"
+                  class="no-print" style="font-size:11px;padding:4px 10px;border:1px solid var(--gray-300);border-radius:4px;background:white;cursor:pointer;color:var(--gray-600);">✕ Clear</button>
+                <button type="button" onclick="downloadSig('sigVendor','vendor_signature')"
+                  class="no-print" style="font-size:11px;padding:4px 10px;border:1px solid var(--gray-300);border-radius:4px;background:white;cursor:pointer;color:var(--gray-600);">↓ Save</button>
+              </div>
+            </div>
+          </div>
+          <div class="sig-field">
+            <label>Name</label>
+            <input class="sig-line" id="vendorName" type="text" value="Narendar Shankar">
+          </div>
+          <div class="sig-field">
+            <label>Title</label>
+            <input class="sig-line" id="vendorTitle" type="text" value="CCO">
+          </div>
+          <div class="sig-field">
+            <label>Date</label>
+            <input class="sig-line" type="date" id="vendorDate">
+          </div>
+        </div>
+
+        <!-- Customer -->
+        <div class="sig-party">
+          <h3 id="custSigName">Customer</h3>
+          <div class="sig-field">
+            <label>Signature</label>
+            <div style="position:relative;">
+              <canvas id="sigCustomer" width="340" height="100"
+                style="border:1.5px solid var(--gray-300);border-radius:6px;cursor:crosshair;background:white;touch-action:none;width:100%;display:block;"></canvas>
+              <div style="display:flex;gap:8px;margin-top:6px;">
+                <button type="button" onclick="clearSig('sigCustomer')"
+                  class="no-print" style="font-size:11px;padding:4px 10px;border:1px solid var(--gray-300);border-radius:4px;background:white;cursor:pointer;color:var(--gray-600);">✕ Clear</button>
+                <button type="button" onclick="downloadSig('sigCustomer','customer_signature')"
+                  class="no-print" style="font-size:11px;padding:4px 10px;border:1px solid var(--gray-300);border-radius:4px;background:white;cursor:pointer;color:var(--gray-600);">↓ Save</button>
+              </div>
+            </div>
+          </div>
+          <div class="sig-field">
+            <label>Name</label>
+            <input class="sig-line" id="custSigNameInput" type="text" placeholder="Authorised signatory">
+          </div>
+          <div class="sig-field">
+            <label>Title</label>
+            <input class="sig-line" id="custSigTitle" type="text" placeholder="Title">
+          </div>
+          <div class="sig-field">
+            <label>Date</label>
+            <input class="sig-line" type="date" id="custDate">
+          </div>
+        </div>
+
+      </div>
+    </div>
+  </div>
+
+  <!-- ---- ACTION BAR ---- -->
+  <div class="action-bar no-print">
+    <button class="btn btn-outline" id="viewOrdersBtn" onclick="requireAuth(openOrdersPanel, 'Sign in to view saved orders.')">📋 View Orders</button>
+    <button class="btn btn-outline" onclick="requireAuth(openAdminPanel, 'Sign in to access admin settings.')">⚙️ Admin</button>
+    <button class="btn btn-outline" onclick="printWithValidation()">🖨 Print / Save as PDF</button>
+    <button class="btn btn-primary" onclick="resetForm()">↺ Reset Form</button>
+    <button class="btn btn-primary" id="saveBtn" onclick="saveOrder()" style="background:var(--mid-blue);">💾 Save Order</button>
+    <button class="btn btn-success" onclick="markComplete()">✓ Mark as Complete</button>
+  </div>
+  <div id="saveStatus" style="display:none;border-radius:7px;padding:10px 16px;margin-top:8px;font-size:13px;font-weight:600;"></div>
+  <div id="validationToast" style="display:none;background:#FEF2F2;border:1px solid #FECACA;border-radius:7px;padding:12px 16px;margin-top:8px;font-size:13px;color:#991B1B;">
+    <strong style="display:block;margin-bottom:6px;">⚠ Required fields missing</strong>
+    <ul id="validationList" style="margin:0;padding-left:18px;line-height:1.8;"></ul>
+  </div>
+
+  <!-- ---- BILLING ESTIMATOR ---- -->
+  <div class="card" id="estimatorCard">
+    <div class="card-header" style="cursor:pointer;user-select:none;justify-content:space-between;" onclick="toggleEstimator()">
+      <div style="display:flex;align-items:center;gap:10px;">
+        <span class="num">📊</span> Billing Estimator
+      </div>
+      <div style="display:flex;align-items:center;gap:12px;" onclick="event.stopPropagation()">
+        <label style="display:flex;align-items:center;gap:6px;font-size:12px;font-weight:600;color:rgba(255,255,255,.85);cursor:pointer;text-transform:none;letter-spacing:0;">
+          <input type="checkbox" id="estimatorPrintToggle" style="accent-color:white;width:14px;height:14px;"
+                 onchange="toggleEstimatorPrint(this)">
+          Include in print
+        </label>
+        <span id="estimatorChevron" style="font-size:16px;transition:transform .2s;">▲</span>
+      </div>
+    </div>
+    <div class="card-body" id="estimatorBody">
+
+      <div style="margin-bottom:14px;">
+        <label style="display:block;font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.4px;color:var(--gray-600);margin-bottom:6px;">% VRAM Utilisation</label>
+        <div style="display:flex;align-items:center;gap:12px;">
+          <input type="range" id="utilPct" min="0" max="100" value="80" step="1"
+                 style="flex:1;accent-color:var(--accent);" oninput="updateCalc()">
+          <span id="utilPctLabel" style="font-size:15px;font-weight:700;color:var(--blue);width:44px;text-align:right;">80%</span>
+        </div>
+      </div>
+
+      <!-- GPU rows -->
+      <div id="gpuRows" style="display:flex;flex-direction:column;gap:8px;margin-bottom:10px;"></div>
+
+      <button type="button" onclick="addGpuRow()"
+              style="font-size:12px;font-weight:600;color:var(--accent);background:none;border:1px dashed var(--accent);border-radius:5px;padding:5px 14px;cursor:pointer;width:100%;">
+        + Add GPU
+      </button>
+
+      <div id="calcDetails" style="margin-top:14px;background:var(--gray-50);border:1px solid var(--gray-200);border-radius:6px;padding:12px 14px;font-size:12.5px;color:var(--gray-700);display:none;">
+        <div style="font-weight:700;margin-bottom:6px;color:var(--gray-600);font-size:11px;text-transform:uppercase;letter-spacing:.4px;">Detailed Breakdown</div>
+        <div id="detailLines" style="display:flex;flex-direction:column;gap:4px;"></div>
+      </div>
+
+      <div id="calcResults" style="margin-top:12px;">
+        <div class="calc-row">
+          <span class="calc-label">Total provisioned VRAM</span>
+          <span class="calc-value" id="calcProvGB">0.00 GB</span>
+        </div>
+        <div class="calc-row">
+          <span class="calc-label">Availability fee</span>
+          <span class="calc-value" id="calcAlloc">$0.00</span>
+        </div>
+        <div class="calc-row">
+          <span class="calc-label">Consumption fee</span>
+          <span class="calc-value" id="calcUtil">$0.00</span>
+        </div>
+        <div class="calc-row">
+          <span class="calc-label">Monthly credit</span>
+          <span class="calc-value" id="calcMMF">—</span>
+        </div>
+        <div class="calc-row total">
+          <span>Estimated Monthly Bill</span>
+          <span id="calcTotal">$0.00</span>
+        </div>
+
+        <!-- Prepaid balance tracker — shown only for prepaid model -->
+        <div id="prepaidSection" style="display:none;margin-top:16px;">
+          <div style="background:var(--light-green);border:1px solid #6EE7B7;border-radius:7px;padding:13px 15px;">
+            <div style="font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.5px;color:var(--green);margin-bottom:10px;">💳 Prepayment Balance</div>
+            <div style="display:flex;align-items:center;gap:10px;margin-bottom:12px;">
+              <label style="font-size:12.5px;font-weight:600;color:var(--gray-700);white-space:nowrap;">Annual prepayment amount ($)</label>
+              <input type="number" id="prepaidAmount" value="10000" min="10000" step="500"
+                     style="width:130px;font-size:14px;font-weight:700;text-align:right;border-color:#6EE7B7;"
+                     oninput="updateCalc()">
+            </div>
+            <div style="margin-bottom:10px;">
+              <div style="display:flex;justify-content:space-between;font-size:12px;color:var(--gray-600);margin-bottom:4px;">
+                <span>Balance consumed after month <span id="ppMonthsLabel">—</span></span>
+                <span id="ppPctUsed">—</span>
+              </div>
+              <div style="background:rgba(255,255,255,.6);border-radius:99px;height:10px;overflow:hidden;">
+                <div id="ppBar" style="height:100%;border-radius:99px;background:var(--green);width:0%;transition:width .3s;"></div>
+              </div>
+            </div>
+            <div style="overflow-x:auto;">
+              <table style="width:100%;border-collapse:collapse;font-size:12px;">
+                <thead>
+                  <tr style="background:rgba(0,0,0,.06);">
+                    <th style="padding:5px 8px;text-align:left;font-weight:700;color:var(--gray-700);">Month</th>
+                    <th style="padding:5px 8px;text-align:right;font-weight:700;color:var(--gray-700);">Monthly Bill</th>
+                    <th style="padding:5px 8px;text-align:right;font-weight:700;color:var(--gray-700);">From Balance</th>
+                    <th style="padding:5px 8px;text-align:right;font-weight:700;color:var(--gray-700);">Overage Due</th>
+                    <th style="padding:5px 8px;text-align:right;font-weight:700;color:var(--gray-700);">Remaining</th>
+                  </tr>
+                </thead>
+                <tbody id="ppTableBody"></tbody>
+              </table>
+            </div>
+            <div id="ppSurplusNote" style="display:none;margin-top:8px;font-size:12px;color:var(--green);font-weight:600;"></div>
+          </div>
+        </div>
+
+        <div style="font-size:11.5px;color:var(--gray-600);margin-top:8px;font-style:italic;">
+          Prices are illustrative — contact us for a full quote.
+        </div>
+      </div>
+
+      <div class="billing-basis" style="margin-top:16px;">
+        <strong>Billing Basis</strong>
+        Monthly billable amount = <strong>MAX(0, Total Usage Charges − Monthly Credit)</strong>.
+        In committed or prepaid models, usage is applied against the commitment balance; any overage is billed in arrears at applicable unit rates.
+      </div>
+
+    </div>
+  </div>
+
+</div>
+
+<!-- ================================================================
+     JAVASCRIPT
+================================================================ -->
+<script>
+
+// ---- MODEL → FIELDS DEPENDENCY ----
+const MODEL_DEFAULTS = {
+  poc:          { mmf: 'other', freq: 'monthly', term: 'na',  renewal: 'na',   discount: 0,    mmfAmount: 0     },
+  payg:         { mmf: 'other', freq: 'monthly', term: 'mtm', renewal: 'none', discount: 0,    mmfAmount: 750   },
+  committed750: { mmf: 'other', freq: 'monthly', term: '12m', renewal: 'auto', discount: 0.05, mmfAmount: 750   },
+  committed:    { mmf: 'other', freq: 'monthly', term: '12m', renewal: 'auto', discount: 0.10, mmfAmount: 2500  },
+  prepaid:      { mmf: 'other', freq: 'annual',  term: '12m', renewal: 'auto', discount: 0.20, mmfAmount: 10000 },
+};
+
+let currentDiscount = 0;
+let currentMMF = 0;
+
+function selectModel(val, el) {
+  document.querySelectorAll('#serviceModelGroup .option-item').forEach(i => i.classList.remove('selected'));
+  el.classList.add('selected');
+  el.querySelector('input[type=radio]').checked = true;
+
+  const d = MODEL_DEFAULTS[val];
+  currentDiscount = d.discount;
+  currentModel    = val;
+  selectMMF(d.mmf, null, true);
+  document.getElementById('mmfOther').value = d.mmfAmount > 0 ? d.mmfAmount.toFixed(2) : '';
+  selectFreq(d.freq, null, true);
+  selectTerm(d.term, null, true);
+  selectRenewal(d.renewal, null, true);
+
+  // Compute effective rates — use 5 decimal places when discounted so the reduction is visible
+  const rateAlloc = 0.0005 * (1 - d.discount);
+  const rateUtil  = 0.003  * (1 - d.discount);
+  const decimals  = d.discount > 0 ? 5 : 4;
+
+  const allocCell = document.getElementById('rate_alloc');
+  const utilCell  = document.getElementById('rate_util');
+  allocCell.textContent = '$' + rateAlloc.toFixed(decimals) + ' / GB-h';
+  utilCell.textContent  = '$' + rateUtil.toFixed(decimals)  + ' / GB-h';
+
+  // Toggle cell styling
+  if (d.discount > 0) {
+    allocCell.classList.remove('no-discount'); allocCell.classList.add('has-discount');
+    utilCell.classList.remove('no-discount');  utilCell.classList.add('has-discount');
+  } else {
+    allocCell.classList.remove('has-discount'); allocCell.classList.add('no-discount');
+    utilCell.classList.remove('has-discount');  utilCell.classList.add('no-discount');
+  }
+
+  // Discount banner
+  const banner   = document.getElementById('discountBanner');
+  const pctEl    = document.getElementById('discountPct');
+  const msgEl    = document.getElementById('discountMsg');
+  const savEl    = document.getElementById('discountSavings');
+
+  if (d.discount > 0) {
+    const pct = (d.discount * 100);
+    pctEl.textContent = pct + '% off';
+    msgEl.textContent = pct + '% discount applied — effective rates reflect your ' +
+      ({ committed750: 'Min. Monthly Commit $750', committed: 'Committed Usage', prepaid: 'Yearly Upfront Pay' }[val] || val) + ' model.';
+    // Savings example: per 100 GB-h allocated
+    const savedAlloc = (0.0005 * d.discount * 720).toFixed(2);
+    const savedUtil  = (0.003  * d.discount * 720).toFixed(2);
+    savEl.textContent = 'e.g. on 100 GB allocated + 60 GB utilized × 720 h, you save $' +
+      ((0.0005 * d.discount * 100 * 720) + (0.003 * d.discount * 60 * 720)).toFixed(2) + ' / month vs list price.';
+    banner.className = 'discount-banner visible ' + (pct === 20 ? 'green' : 'blue');
+  } else {
+    banner.className = 'discount-banner';
+  }
+
+  updateCalc();
+  updateCommercialTermsSummary();
+}
+
+function updateCommercialTermsSummary() {
+  const modelLabels = {
+    poc:          'One-off Items, No minimum commitment.',
+    payg:         document.getElementById('label_payg')?.textContent         || 'Month-to-Month, Pay-As-You-Go',
+    committed750: document.getElementById('label_committed750')?.textContent  || 'Min. Monthly Commit: $750, 12 Mo. Term',
+    committed:    document.getElementById('label_committed')?.textContent     || 'Min. Monthly Commit: $2,500, 12 Mo. Term',
+    prepaid:      document.getElementById('label_prepaid')?.textContent       || 'Yearly Upfront Pay $120,000, 12 Mo. Term',
+  };
+  const freqLabels   = { annual: 'Annual in advance', monthly: 'Monthly in advance', other: 'Other' };
+  const termLabels   = { mtm: 'Month-to-month', '12m': '12 months', na: 'N/A — one-off item', other: 'Other' };
+  const renewLabels  = { auto: 'Auto-renews (12-month periods)', none: 'No auto-renewal', na: 'N/A' };
+
+  const checkedFreq    = document.querySelector('[name=billingFreq]:checked');
+  const checkedTerm    = document.querySelector('[name=initialTerm]:checked');
+  const checkedRenewal = document.querySelector('[name=renewal]:checked');
+  const mmfAmount      = parseFloat(document.getElementById('mmfOther').value) || 0;
+  const pct            = currentDiscount * 100;
+
+  document.getElementById('ctServiceModel').textContent = modelLabels[currentModel] || '—';
+  document.getElementById('ctDiscount').textContent     = pct > 0 ? pct + '% off' : 'None';
+  document.getElementById('ctDiscount').style.color     = pct > 0 ? 'var(--green)' : 'var(--gray-600)';
+  document.getElementById('ctMMF').textContent          = mmfAmount > 0 ? '$' + mmfAmount.toLocaleString('en-US', {minimumFractionDigits:2}) + ' / month' : 'None';
+  document.getElementById('ctFreq').textContent         = checkedFreq    ? (freqLabels[checkedFreq.value]    || checkedFreq.value)    : '—';
+  document.getElementById('ctTerm').textContent         = checkedTerm    ? (termLabels[checkedTerm.value]    || checkedTerm.value)    : '—';
+  document.getElementById('ctRenewal').textContent      = checkedRenewal ? (renewLabels[checkedRenewal.value] || checkedRenewal.value) : '—';
+
+  // Mirror into Term & Renewal card — use currentModel override for poc
+  const termDisplay = document.getElementById('initialTermDisplay');
+  if (termDisplay) {
+    if (currentModel === 'poc') {
+      termDisplay.textContent = 'N/A — one-off item';
+    } else {
+      termDisplay.textContent = checkedTerm ? (termLabels[checkedTerm.value] || checkedTerm.value) : '—';
+    }
+  }
+
+  // Also fix ctTerm in summary for poc
+  if (currentModel === 'poc') {
+    document.getElementById('ctTerm').textContent = 'N/A — one-off item';
+  }
+
+  // Support level
+  const supportEl = document.getElementById('supportLevel');
+  const supportDisplay = document.getElementById('ctSupport');
+  if (supportEl && supportDisplay) {
+    const txt = supportEl.options[supportEl.selectedIndex]?.text || '—';
+    supportDisplay.textContent = txt.charAt(0).toUpperCase() + txt.slice(1);
+  }
+
+  // Billing start date
+  const billingDateEl = document.getElementById('effectiveDate');
+  const ctBillingStart = document.getElementById('ctBillingStart');
+  if (billingDateEl && ctBillingStart) {
+    const val = billingDateEl.value;
+    ctBillingStart.textContent = val ? new Date(val + 'T00:00:00').toLocaleDateString('en-US', { year:'numeric', month:'long', day:'numeric' }) : '—';
+  }
+}
+
+function selectMMF(val, el, silent) {
+  if (!silent) {
+    document.querySelectorAll('#mmfGroup .option-item').forEach(i => i.classList.remove('selected'));
+    if (el) el.classList.add('selected');
+  } else {
+    document.querySelectorAll('#mmfGroup .option-item').forEach(i => {
+      const r = i.querySelector('input[type=radio]');
+      if (r && r.value === val) { i.classList.add('selected'); r.checked = true; }
+      else i.classList.remove('selected');
+    });
+  }
+  const otherInput = document.getElementById('mmfOther');
+  if (val === 'other') {
+    otherInput.style.display = 'block';
+    currentMMF = parseFloat(otherInput.value) || 0;
+  } else {
+    otherInput.style.display = 'none';
+    currentMMF = val === '750' ? 750 : 0;
+  }
+  updateCalc();
+}
+
+function selectFreq(val, el, silent) {
+  if (!silent) {
+    document.querySelectorAll('#billingFreqGroup .option-item').forEach(i => i.classList.remove('selected'));
+    if (el) el.classList.add('selected');
+  } else {
+    document.querySelectorAll('#billingFreqGroup .option-item').forEach(i => {
+      const r = i.querySelector('input[type=radio]');
+      if (r && r.value === val) { i.classList.add('selected'); r.checked = true; }
+      else i.classList.remove('selected');
+    });
+  }
+  const otherInput = document.getElementById('freqOther');
+  if (otherInput) otherInput.style.display = (val === 'other') ? 'block' : 'none';
+}
+
+function selectTerm(val, el, silent) {
+  if (!silent) {
+    document.querySelectorAll('[name=initialTerm]').forEach(r => {
+      const parent = r.closest('.option-item');
+      if (parent) parent.classList.remove('selected');
+    });
+    if (el) el.classList.add('selected');
+  } else {
+    document.querySelectorAll('[name=initialTerm]').forEach(r => {
+      const parent = r.closest('.option-item');
+      if (r.value === val) { r.checked = true; if (parent) parent.classList.add('selected'); }
+      else { if (parent) parent.classList.remove('selected'); }
+    });
+  }
+  const otherInput = document.getElementById('termOther');
+  if (otherInput) otherInput.style.display = (val === 'other') ? 'block' : 'none';
+
+  // Update the visible Initial Term display
+  const termDisplay = document.getElementById('initialTermDisplay');
+  if (termDisplay) {
+    const labels = { mtm: 'Month-to-month', '12m': '12 months', na: 'N/A — one-off item' };
+    termDisplay.textContent = labels[val] || (val === 'other' ? (document.getElementById('termOther')?.value || 'Other') : val);
+  }
+}
+
+function selectRenewal(val, el, silent) {
+  const naItem  = document.getElementById('renewalNaItem');
+  const naRadio = naItem ? naItem.querySelector('input[type=radio]') : null;
+  const isPoc   = (val === 'na');
+
+  // For each renewal option, enable/disable based on PoC state
+  document.querySelectorAll('[name=renewal]').forEach(r => {
+    const parent = r.closest('.option-item');
+    if (!parent) return;
+    if (r.value === 'na') {
+      // N/A: enabled only for PoC
+      parent.style.opacity = isPoc ? '1' : '.4';
+      parent.style.cursor  = isPoc ? 'default' : 'not-allowed';
+      parent.onclick       = isPoc ? null : function(){ return false; };
+      r.disabled           = !isPoc;
+    } else {
+      // Auto/None: disabled only for PoC
+      parent.style.opacity = isPoc ? '.4' : '1';
+      parent.style.cursor  = isPoc ? 'not-allowed' : 'pointer';
+      r.disabled           = isPoc;
+      if (isPoc) {
+        parent.onclick = function(){ return false; };
+      } else {
+        const renewVal = r.value;
+        parent.onclick = function(){ selectRenewal(renewVal, parent); };
+      }
+    }
+  });
+
+  if (!silent) {
+    document.querySelectorAll('[name=renewal]').forEach(r => {
+      const parent = r.closest('.option-item');
+      if (parent) parent.classList.remove('selected');
+    });
+    if (el) el.classList.add('selected');
+  } else {
+    document.querySelectorAll('[name=renewal]').forEach(r => {
+      const parent = r.closest('.option-item');
+      if (r.value === val) { r.checked = true; if (parent) parent.classList.add('selected'); }
+      else { if (parent) parent.classList.remove('selected'); }
+    });
+  }
+  updateCommercialTermsSummary();
+}
+
+// ---- GPU CATALOGUE (matches hosted.ai/pricing) ----
+const GPU_CATALOGUE = [
+  { name: 'A16',            vram: 48  },
+  { name: 'A30',            vram: 24  },
+  { name: 'A40',            vram: 48  },
+  { name: 'A100-40G',       vram: 40  },
+  { name: 'A100-80G',       vram: 80  },
+  { name: 'A4000',          vram: 16  },
+  { name: 'A5000',          vram: 24  },
+  { name: 'A6000',          vram: 48  },
+  { name: 'B200',           vram: 180 },
+  { name: 'B300',           vram: 288 },
+  { name: 'GH200',          vram: 96  },
+  { name: 'H100',           vram: 80  },
+  { name: 'H200',           vram: 141 },
+  { name: 'L4',             vram: 24  },
+  { name: 'L40',            vram: 48  },
+  { name: 'L40S',           vram: 48  },
+  { name: 'MI300X',         vram: 192 },
+  { name: 'M4000',          vram: 8   },
+  { name: 'P100',           vram: 16  },
+  { name: 'P4000',          vram: 8   },
+  { name: 'P5000',          vram: 16  },
+  { name: 'P6000',          vram: 24  },
+  { name: 'RTX 3070',       vram: 8   },
+  { name: 'RTX 4000',       vram: 24  },
+  { name: 'RTX 4090',       vram: 24  },
+  { name: 'RTX 5000',       vram: 16  },
+  { name: 'RTX 6000 Ada',   vram: 48  },
+  { name: 'RTX Pro 6000',   vram: 96  },
+  { name: 'T4',             vram: 16  },
+  { name: 'V100',           vram: 16  },
+  { name: 'V100-32G',       vram: 32  },
+];
+
+let gpuRowCount = 0;
+
+function gpuOptions() {
+  return GPU_CATALOGUE.map(g =>
+    `<option value="${g.vram}" data-name="${g.name}">${g.name} (${g.vram} GB)</option>`
+  ).join('');
+}
+
+function addGpuRow(defaultGpu, defaultQty) {
+  gpuRowCount++;
+  const id = gpuRowCount;
+  const row = document.createElement('div');
+  row.id = 'gpuRow_' + id;
+  row.style.cssText = 'display:grid;grid-template-columns:1fr 80px 28px;gap:6px;align-items:center;';
+  row.innerHTML = `
+    <select onchange="updateCalc()" style="font-size:13px;">
+      <option value="">— Select GPU —</option>
+      ${gpuOptions()}
+    </select>
+    <input type="number" value="${defaultQty || 1}" min="1" step="1"
+           style="font-size:13px;text-align:center;" oninput="updateCalc()"
+           placeholder="Qty">
+    <button type="button" onclick="removeGpuRow(${id})"
+            style="background:none;border:none;cursor:pointer;color:var(--gray-600);font-size:16px;line-height:1;padding:0;">×</button>
+  `;
+  // pre-select GPU if given
+  if (defaultGpu) {
+    const sel = row.querySelector('select');
+    [...sel.options].forEach(o => { if (o.text.startsWith(defaultGpu)) sel.value = o.value; });
+  }
+  document.getElementById('gpuRows').appendChild(row);
+  updateCalc();
+}
+
+function removeGpuRow(id) {
+  const el = document.getElementById('gpuRow_' + id);
+  if (el) el.remove();
+  updateCalc();
+}
+
+let currentModel = 'payg';
+
+// ---- BILLING CALCULATOR ----
+function updateCalc() {
+  const utilPct = parseFloat(document.getElementById('utilPct').value) / 100;
+  document.getElementById('utilPctLabel').textContent = Math.round(utilPct * 100) + '%';
+
+  const HOURS = 720;
+  const BASE_ALLOC = 0.0005;
+  const BASE_UTIL  = 0.0030;
+  const rateAlloc  = BASE_ALLOC * (1 - currentDiscount);
+  const rateUtil   = BASE_UTIL  * (1 - currentDiscount);
+
+  // Sum VRAM across all GPU rows
+  let totalVRAM = 0;
+  const details = [];
+  document.querySelectorAll('#gpuRows > div').forEach(row => {
+    const sel = row.querySelector('select');
+    const qty = parseFloat(row.querySelector('input[type=number]').value) || 0;
+    const vramPerGpu = parseFloat(sel.value) || 0;
+    if (vramPerGpu && qty) {
+      const rowVRAM = vramPerGpu * qty;
+      totalVRAM += rowVRAM;
+      const gpuName = sel.options[sel.selectedIndex]?.dataset?.name || sel.options[sel.selectedIndex]?.text || '';
+      details.push({ label: `${qty}× ${gpuName}`, vram: rowVRAM });
+    }
+  });
+
+  const availFee    = totalVRAM * rateAlloc * HOURS;
+  const consumedGBh = totalVRAM * utilPct * HOURS;
+  const consumFee   = consumedGBh * rateUtil;
+  const usageTotal  = availFee + consumFee;
+
+  // MMF
+  const selectedMMF = document.querySelector('#mmfGroup .selected input[type=radio]');
+  let mmfVal = 0;
+  if (selectedMMF) {
+    if (selectedMMF.value === '750') mmfVal = 750;
+    else if (selectedMMF.value === 'other') mmfVal = parseFloat(document.getElementById('mmfOther').value) || 0;
+  }
+
+  const monthlyBill = Math.max(0, usageTotal - mmfVal);
+  const fmt = v => '$' + v.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+
+  // Detail lines
+  const detailEl  = document.getElementById('detailLines');
+  const detailBox = document.getElementById('calcDetails');
+  if (details.length) {
+    detailBox.style.display = 'block';
+    detailEl.innerHTML = details.map(d =>
+      `<div style="display:flex;justify-content:space-between;">
+        <span style="color:var(--gray-600);">${d.label} — ${d.vram.toFixed(0)} GB provisioned</span>
+      </div>`
+    ).join('') +
+    `<div style="margin-top:6px;padding-top:6px;border-top:1px dashed var(--gray-200);">
+      <div style="display:flex;justify-content:space-between;"><span>Availability fee</span><span>${totalVRAM.toFixed(2)} GB × $${rateAlloc.toFixed(5)} × ${HOURS} h = ${fmt(availFee)}</span></div>
+      <div style="display:flex;justify-content:space-between;"><span>Consumed GB-h</span><span>${totalVRAM.toFixed(2)} × ${HOURS} h × ${Math.round(utilPct*100)}% = ${consumedGBh.toFixed(2)} GB-h</span></div>
+      <div style="display:flex;justify-content:space-between;"><span>Consumption fee</span><span>${consumedGBh.toFixed(2)} × $${rateUtil.toFixed(5)} = ${fmt(consumFee)}</span></div>
+    </div>`;
+  } else {
+    detailBox.style.display = 'none';
+  }
+
+  document.getElementById('calcProvGB').textContent = totalVRAM.toFixed(2) + ' GB';
+  document.getElementById('calcAlloc').textContent  = fmt(availFee);
+  document.getElementById('calcUtil').textContent   = fmt(consumFee);
+  document.getElementById('calcMMF').textContent    = mmfVal > 0 ? '− ' + fmt(mmfVal) : '—';
+  document.getElementById('calcTotal').textContent  = fmt(monthlyBill);
+
+  // ---- PREPAID DRAWDOWN ----
+  const ppSection = document.getElementById('prepaidSection');
+  if (currentModel === 'prepaid') {
+    ppSection.style.display = 'block';
+    const prepaid = parseFloat(document.getElementById('prepaidAmount').value) || 0;
+    let balance = prepaid;
+    const MONTHS = 12;
+    const tbody = document.getElementById('ppTableBody');
+    tbody.innerHTML = '';
+    let exhaustedAt = null;
+
+    for (let m = 1; m <= MONTHS; m++) {
+      const drawn    = Math.min(balance, monthlyBill);
+      const overage  = Math.max(0, monthlyBill - drawn);
+      balance       -= drawn;
+      if (exhaustedAt === null && balance <= 0 && drawn < monthlyBill) exhaustedAt = m;
+
+      const rowBg = overage > 0 ? 'background:#FEF2F2;' : (m % 2 === 0 ? 'background:rgba(255,255,255,.5);' : '');
+      tbody.innerHTML +=
+        `<tr style="${rowBg}">
+          <td style="padding:4px 8px;color:var(--gray-700);">Month ${m}</td>
+          <td style="padding:4px 8px;text-align:right;font-weight:600;">${fmt(monthlyBill)}</td>
+          <td style="padding:4px 8px;text-align:right;color:var(--green);font-weight:600;">${fmt(drawn)}</td>
+          <td style="padding:4px 8px;text-align:right;color:${overage > 0 ? 'var(--red)' : 'var(--gray-600)'};font-weight:${overage > 0 ? '700' : '400'};">${overage > 0 ? fmt(overage) : '—'}</td>
+          <td style="padding:4px 8px;text-align:right;color:${balance <= 0 ? 'var(--red)' : 'var(--green)'};">${fmt(Math.max(0, balance))}</td>
+        </tr>`;
+    }
+
+    const totalDrawn   = Math.min(prepaid, monthlyBill * MONTHS);
+    const pctUsed      = prepaid > 0 ? Math.min(100, (totalDrawn / prepaid) * 100) : 0;
+    const surplus      = Math.max(0, prepaid - monthlyBill * MONTHS);
+
+    document.getElementById('ppBar').style.width = pctUsed.toFixed(1) + '%';
+    document.getElementById('ppBar').style.background = pctUsed >= 100 ? 'var(--red)' : 'var(--green)';
+    document.getElementById('ppPctUsed').textContent  = pctUsed.toFixed(1) + '% of prepayment consumed';
+    document.getElementById('ppMonthsLabel').textContent = exhaustedAt ? exhaustedAt : '12';
+
+    const surplusNote = document.getElementById('ppSurplusNote');
+    if (surplus > 0) {
+      surplusNote.style.display = 'block';
+      surplusNote.textContent   = `✓ ${fmt(surplus)} prepayment balance remaining after 12 months.`;
+    } else {
+      surplusNote.style.display = 'none';
+    }
+  } else {
+    ppSection.style.display = 'none';
+  }
+}
+
+// ── Auth ──────────────────────────────────────────────────────────────────────
+const WORKER_URL  = 'https://hostedai-order-counter.hostedmoyal.workers.dev';
+let SESSION_KEY   = '';
+let pendingAction = null;   // function to run after successful login
+
+function headerAuthToggle() {
+  if (SESSION_KEY) {
+    // Already logged in — offer to sign out
+    SESSION_KEY = '';
+    updateHeaderAuthBtn();
+    showPopup('Signed out from CRM.');
+  } else {
+    requireAuth(() => {
+      updateHeaderAuthBtn();
+    }, 'Sign in to authenticate with CRM.');
+  }
+}
+
+function updateHeaderAuthBtn() {
+  const btn = document.getElementById('headerAuthBtn');
+  if (!btn) return;
+  if (SESSION_KEY) {
+    btn.textContent = '✓ Authenticated with CRM';
+    btn.style.background   = 'rgba(16,185,129,.25)';
+    btn.style.border       = '1.5px solid rgba(16,185,129,.5)';
+    btn.style.color        = '#6ee7b7';
+    btn.onmouseover = () => btn.style.background = 'rgba(16,185,129,.35)';
+    btn.onmouseout  = () => btn.style.background = 'rgba(16,185,129,.25)';
+  } else {
+    btn.textContent = '🔐 Authenticate with CRM';
+    btn.style.background   = 'rgba(255,255,255,.08)';
+    btn.style.border       = '1.5px solid rgba(255,255,255,.25)';
+    btn.style.color        = 'rgba(255,255,255,.85)';
+    btn.onmouseover = () => btn.style.background = 'rgba(255,255,255,.18)';
+    btn.onmouseout  = () => btn.style.background = 'rgba(255,255,255,.08)';
+  }
+}
+
+function requireAuth(action, hint) {
+  if (SESSION_KEY) { action(); return; }
+  pendingAction = action;
+  document.getElementById('authGateHint').textContent = hint || 'Enter your password to continue.';
+  document.getElementById('passwordInput').value = '';
+  document.getElementById('authError').style.display = 'none';
+  const gate = document.getElementById('authGate');
+  gate.style.display = 'flex';
+  setTimeout(() => document.getElementById('passwordInput').focus(), 50);
+}
+
+function closeAuthGate() {
+  document.getElementById('authGate').style.display = 'none';
+  pendingAction = null;
+}
+
+function attemptLogin() {
+  const pw  = document.getElementById('passwordInput').value.trim();
+  const err = document.getElementById('authError');
+  if (!pw) return;
+
+  fetch(`${WORKER_URL}/peek`, { headers: { 'Authorization': `Bearer ${pw}` } })
+    .then(r => {
+      if (r.ok) {
+        SESSION_KEY = pw;
+        document.getElementById('authGate').style.display = 'none';
+        updateAuthUI();
+        updateHeaderAuthBtn();
+        loadDiscounts();
+        loadMmfDiscounts();
+        loadMlaUrl();
+        if (pendingAction) { pendingAction(); pendingAction = null; }
+      } else {
+        err.style.display = 'block';
+        document.getElementById('passwordInput').value = '';
+        document.getElementById('passwordInput').focus();
+        setTimeout(() => { err.style.display = 'none'; }, 3000);
+      }
+    })
+    .catch(() => {
+      // Worker unreachable — accept key optimistically
+      SESSION_KEY = pw;
+      document.getElementById('authGate').style.display = 'none';
+      updateAuthUI();
+      updateHeaderAuthBtn();
+      if (pendingAction) { pendingAction(); pendingAction = null; }
+    });
+}
+
+document.getElementById('passwordInput')
+  .addEventListener('keydown', e => { if (e.key === 'Enter') attemptLogin(); });
+
+// Close modal on backdrop click
+document.getElementById('authGate')
+  .addEventListener('click', e => { if (e.target === document.getElementById('authGate')) closeAuthGate(); });
+
+function authHeaders() {
+  return { 'Content-Type': 'application/json', 'Authorization': `Bearer ${SESSION_KEY}` };
+}
+
+function updateAuthUI() {
+  // Show lock icon as unlocked in action bar when signed in
+  const viewBtn = document.getElementById('viewOrdersBtn');
+  const saveBtn = document.getElementById('saveBtn');
+  if (viewBtn) viewBtn.textContent = '📋 View Orders';
+  if (saveBtn) saveBtn.title = '';
+}
+
+
+function onSupportChange() {
+  const sel    = document.getElementById('supportLevel');
+  const notice = document.getElementById('supportNotice');
+  if (!notice || !sel) return;
+
+  if (sel.value && sel.value !== 'standard') {
+    notice.style.display = 'block';
+    // Revert to standard after a short delay so user sees the message first
+    setTimeout(() => {
+      sel.value = 'standard';
+      notice.style.display = 'none';
+      updateCommercialTermsSummary();
+    }, 4000);
+  } else {
+    notice.style.display = 'none';
+  }
+}
+
+async function changePassword() {
+  const current  = document.getElementById('pwCurrent').value;
+  const newPw    = document.getElementById('pwNew').value;
+  const confirm  = document.getElementById('pwConfirm').value;
+  const btn      = document.getElementById('changePwBtn');
+  const status   = document.getElementById('pwStatus');
+
+  const showStatus = (msg, success) => {
+    status.style.cssText = `display:block;background:${success ? 'var(--light-green)' : '#FEF2F2'};border:1px solid ${success ? '#6EE7B7' : '#FECACA'};color:${success ? 'var(--green)' : '#991B1B'};border-radius:6px;padding:8px 12px;font-size:12.5px;font-weight:600;`;
+    status.textContent = msg;
+  };
+
+  if (!current || !newPw || !confirm) return showStatus('Please fill all three fields.', false);
+  if (current !== SESSION_KEY)        return showStatus('Current password is incorrect.', false);
+  if (newPw.length < 8)               return showStatus('New password must be at least 8 characters.', false);
+  if (newPw !== confirm)              return showStatus('New passwords do not match.', false);
+
+  btn.disabled = true; btn.textContent = 'Updating…';
+
+  try {
+    const res  = await fetch(`${WORKER_URL}/change-password`, {
+      method:  'POST',
+      headers: authHeaders(),
+      body:    JSON.stringify({ new_password: newPw }),
+    });
+    const data = await res.json();
+    if (res.ok) {
+      SESSION_KEY = newPw;  // update in-session key
+      document.getElementById('pwCurrent').value = '';
+      document.getElementById('pwNew').value     = '';
+      document.getElementById('pwConfirm').value = '';
+      showStatus('✓ Password updated. Run "wrangler secret put API_KEY" to persist the change.', true);
+    } else throw new Error(data.error || 'Failed');
+  } catch (e) {
+    showStatus('✗ ' + e.message, false);
+  } finally {
+    btn.disabled = false; btn.textContent = '🔑 Update Password';
+    setTimeout(() => { status.style.display = 'none'; }, 6000);
+  }
+}
+
+// ── Admin panel ───────────────────────────────────────────────────────────────
+function openAdminPanel() {
+  document.getElementById('adminPanel').classList.add('open');
+  loadDiscounts();
+  loadMmfDiscounts();
+  loadMlaUrl(true);
+  loadSoNumber();
+  loadTerminationText();
+}
+
+function closeAdminPanel() {
+  document.getElementById('adminPanel').classList.remove('open');
+}
+
+async function loadDiscounts(resetToDefaults) {
+  const defaults = { poc: 0, payg: 0, committed750: 5, committed: 10, prepaid: 20 };
+  let discounts  = defaults;
+
+  if (!resetToDefaults && SESSION_KEY) {
+    try {
+      const res = await fetch(`${WORKER_URL}/discounts`, { headers: authHeaders() });
+      if (res.ok) discounts = await res.json();
+    } catch (e) { /* use defaults */ }
+  }
+
+  // Apply to MODEL_DEFAULTS and update inputs
+  for (const [model, pct] of Object.entries(discounts)) {
+    if (MODEL_DEFAULTS[model] !== undefined) {
+      MODEL_DEFAULTS[model].discount = pct / 100;
+    }
+    const input = document.getElementById(`disc_${model}`);
+    const badge = document.getElementById(`disc_${model}_badge`);
+    if (input) input.value = pct;
+    if (badge) { badge.textContent = pct + '%'; badge.style.background = pct > 0 ? 'var(--light-green)' : 'var(--gray-100)'; badge.style.color = pct > 0 ? 'var(--green)' : 'var(--gray-500)'; }
+  }
+
+  // Re-apply to current model if it changed
+  if (MODEL_DEFAULTS[currentModel]) {
+    const d = MODEL_DEFAULTS[currentModel];
+    currentDiscount = d.discount;
+    updateCalc();
+    updateDiscountBanner(currentModel, d);
+    updateCommercialTermsSummary();
+  }
+}
+
+function previewDiscount(model, input) {
+  const pct   = Math.min(50, Math.max(0, parseFloat(input.value) || 0));
+  const badge = document.getElementById(`disc_${model}_badge`);
+  if (badge) { badge.textContent = pct + '%'; badge.style.background = pct > 0 ? 'var(--light-green)' : 'var(--gray-100)'; badge.style.color = pct > 0 ? 'var(--green)' : 'var(--gray-500)'; }
+  // Live-update MODEL_DEFAULTS
+  if (MODEL_DEFAULTS[model]) MODEL_DEFAULTS[model].discount = pct / 100;
+  // If current model is the one being changed, update the form
+  if (model === currentModel) {
+    currentDiscount = pct / 100;
+    updateCalc();
+    updateDiscountBanner(model, MODEL_DEFAULTS[model]);
+    updateCommercialTermsSummary();
+  }
+}
+
+async function saveDiscounts() {
+  const btn    = document.getElementById('saveDiscountsBtn');
+  const status = document.getElementById('discountSaveStatus');
+  const models = ['poc', 'payg', 'committed750', 'committed', 'prepaid'];
+  const payload = {};
+  for (const m of models) {
+    const el = document.getElementById(`disc_${m}`);
+    payload[m] = el ? Math.min(50, Math.max(0, parseFloat(el.value) || 0)) : MODEL_DEFAULTS[m].discount * 100;
+  }
+
+  btn.disabled    = true;
+  btn.textContent = 'Saving…';
+
+  try {
+    const res  = await fetch(`${WORKER_URL}/discounts`, { method: 'PUT', headers: authHeaders(), body: JSON.stringify(payload) });
+    const data = await res.json();
+    if (res.ok) {
+      status.style.cssText = 'display:block;background:var(--light-green);border:1px solid #6EE7B7;color:var(--green);border-radius:6px;padding:8px 12px;margin-top:10px;font-size:12.5px;font-weight:600;';
+      status.textContent   = '✓ Discounts saved and applied.';
+    } else throw new Error(data.error || 'Failed');
+  } catch (e) {
+    status.style.cssText = 'display:block;background:#FEF2F2;border:1px solid #FECACA;color:#991B1B;border-radius:6px;padding:8px 12px;margin-top:10px;font-size:12.5px;font-weight:600;';
+    status.textContent   = '✗ ' + e.message;
+  } finally {
+    btn.disabled    = false;
+    btn.textContent = '💾 Save Discounts';
+    setTimeout(() => { status.style.display = 'none'; }, 4000);
+  }
+}
+
+function updateDiscountBanner(val, d) {
+  const allocCell = document.getElementById('rate_alloc');
+  const utilCell  = document.getElementById('rate_util');
+  const BASE_ALLOC = 0.0005, BASE_UTIL = 0.003;
+  const rateAlloc  = BASE_ALLOC * (1 - d.discount);
+  const rateUtil   = BASE_UTIL  * (1 - d.discount);
+  const decimals   = d.discount > 0 ? 5 : 4;
+  if (allocCell) { allocCell.textContent = '$' + rateAlloc.toFixed(decimals) + ' / GB-h'; allocCell.className = 'effective-rate-cell ' + (d.discount > 0 ? 'has-discount' : 'no-discount'); }
+  if (utilCell)  { utilCell.textContent  = '$' + rateUtil.toFixed(decimals)  + ' / GB-h'; utilCell.className  = 'effective-rate-cell ' + (d.discount > 0 ? 'has-discount' : 'no-discount'); }
+
+  const banner = document.getElementById('discountBanner');
+  const pctEl  = document.getElementById('discountPct');
+  const msgEl  = document.getElementById('discountMsg');
+  const savEl  = document.getElementById('discountSavings');
+  if (!banner) return;
+  const pct = d.discount * 100;
+  if (pct > 0) {
+    pctEl.textContent = pct + '% off';
+    msgEl.textContent = pct + '% discount applied — effective rates reflect your ' + ({ committed750: 'Min. Monthly Commit $750', committed: 'Committed Usage', prepaid: 'Yearly Upfront Pay' }[val] || val) + ' model.';
+    savEl.textContent = 'e.g. on 100 GB allocated + 60 GB utilized × 720 h, you save $' + ((0.0005 * d.discount * 100 * 720) + (0.003 * d.discount * 60 * 720)).toFixed(2) + ' / month vs list price.';
+    banner.className  = 'discount-banner visible ' + (pct >= 20 ? 'green' : 'blue');
+  } else {
+    banner.className = 'discount-banner';
+  }
+}
+
+
+// ── Termination Language ──────────────────────────────────────────────────────
+async function loadTerminationText() {
+  try {
+    const res  = await fetch(`${WORKER_URL}/termination-text`);
+    const data = await res.json();
+    const ta   = document.getElementById('adminTerminationText');
+    if (ta) ta.value = data.text || '';
+    // Also update the visible termination block on the form
+    applyTerminationText(data.text || '');
+  } catch (e) {}
+}
+
+function applyTerminationText(text) {
+  const block = document.getElementById('terminationDisplayBlock');
+  if (!block) return;
+  if (text) {
+    block.textContent = text;
+    block.style.fontStyle = 'normal';
+    block.style.color     = 'var(--gray-700)';
+  } else {
+    block.textContent = 'Default termination language (auto-generated based on term & renewal selections).';
+    block.style.fontStyle = 'italic';
+    block.style.color     = 'var(--gray-400)';
+  }
+}
+
+async function saveTerminationText() {
+  const ta     = document.getElementById('adminTerminationText');
+  const btn    = document.getElementById('saveTerminationBtn');
+  const status = document.getElementById('terminationTextStatus');
+  btn.disabled = true; btn.textContent = 'Saving…';
+  try {
+    const res  = await fetch(`${WORKER_URL}/termination-text`, {
+      method:  'PUT',
+      headers: authHeaders(),
+      body:    JSON.stringify({ text: ta.value }),
+    });
+    const data = await res.json();
+    if (res.ok) {
+      applyTerminationText(ta.value);
+      status.style.cssText = 'display:block;background:var(--light-green);border:1px solid #6EE7B7;color:var(--green);border-radius:6px;padding:8px 12px;font-size:12.5px;font-weight:600;';
+      status.textContent   = ta.value ? '✓ Custom termination language saved.' : '✓ Cleared — default language will be used.';
+    } else throw new Error(data.error || 'Failed');
+  } catch (e) {
+    status.style.cssText = 'display:block;background:#FEF2F2;border:1px solid #FECACA;color:#991B1B;border-radius:6px;padding:8px 12px;font-size:12.5px;font-weight:600;';
+    status.textContent   = '✗ ' + e.message;
+  } finally {
+    btn.disabled = false; btn.textContent = '💾 Save Language';
+    setTimeout(() => { status.style.display = 'none'; }, 4000);
+  }
+}
+
+async function clearTerminationText() {
+  document.getElementById('adminTerminationText').value = '';
+  await saveTerminationText();
+}
+
+// ── Delete All Orders ─────────────────────────────────────────────────────────
+function confirmDeleteAllOrders() {
+  showPopup('Are you sure? This will permanently delete all saved orders.');
+  // Override OK button to perform deletion
+  const popup = document.getElementById('generalPopup');
+  const okBtn = popup.querySelector('button');
+  okBtn.textContent = 'Delete All';
+  okBtn.style.background = 'var(--red)';
+  okBtn.onclick = () => {
+    popup.style.display = 'none';
+    okBtn.textContent = 'OK';
+    okBtn.style.background = 'var(--blue)';
+    okBtn.onclick = closePopup;
+    deleteAllOrders();
+  };
+  // Add cancel button
+  if (!document.getElementById('cancelDeleteBtn')) {
+    const cancel = document.createElement('button');
+    cancel.id = 'cancelDeleteBtn';
+    cancel.textContent = 'Cancel';
+    cancel.style.cssText = 'margin-left:10px;padding:9px 24px;background:white;color:var(--gray-700);border:1.5px solid var(--gray-300);border-radius:6px;font-size:14px;font-weight:600;cursor:pointer;';
+    cancel.onclick = () => {
+      popup.style.display = 'none';
+      okBtn.textContent = 'OK';
+      okBtn.style.background = 'var(--blue)';
+      okBtn.onclick = closePopup;
+      cancel.remove();
+    };
+    okBtn.insertAdjacentElement('afterend', cancel);
+  }
+}
+
+async function deleteAllOrders() {
+  const btn    = document.getElementById('deleteAllOrdersBtn');
+  const status = document.getElementById('deleteAllStatus');
+  btn.disabled = true; btn.textContent = '🗑 Deleting…';
+
+  try {
+    const res  = await fetch(`${WORKER_URL}/reset`, {
+      method:  'POST',
+      headers: authHeaders(),
+      body:    JSON.stringify({ orders: true, counter: false }),
+    });
+    const data = await res.json();
+    if (res.ok) {
+      status.style.cssText = 'display:block;background:var(--light-green);border:1px solid #6EE7B7;color:var(--green);border-radius:6px;padding:8px 12px;font-size:12.5px;font-weight:600;';
+      status.textContent   = `✓ ${data.orders_deleted} order${data.orders_deleted !== 1 ? 's' : ''} deleted.`;
+      invalidateOrgCache();
+    } else throw new Error(data.error || 'Failed');
+  } catch (e) {
+    status.style.cssText = 'display:block;background:#FEF2F2;border:1px solid #FECACA;color:#991B1B;border-radius:6px;padding:8px 12px;font-size:12.5px;font-weight:600;';
+    status.textContent   = '✗ ' + e.message;
+  } finally {
+    btn.disabled = false; btn.textContent = '🗑 Delete All Saved Orders';
+    setTimeout(() => { status.style.display = 'none'; }, 5000);
+  }
+}
+
+// ── Order Number Counter ──────────────────────────────────────────────────────
+async function loadSoNumber() {
+  try {
+    const res  = await fetch(`${WORKER_URL}/so-number`);
+    const data = await res.json();
+    const input = document.getElementById('soNumberInput');
+    if (input && data.order_number !== null && data.order_number !== undefined) {
+      input.value = data.order_number;
+    }
+  } catch (e) {}
+}
+
+async function saveSoNumber() {
+  const input  = document.getElementById('soNumberInput');
+  const btn    = document.getElementById('saveSoNumberBtn');
+  const status = document.getElementById('soNumberStatus');
+  const val    = parseInt(input?.value, 10);
+
+  if (isNaN(val) || val < 1) {
+    status.style.cssText = 'display:block;background:#FEF2F2;border:1px solid #FECACA;color:#991B1B;border-radius:6px;padding:8px 12px;font-size:12.5px;font-weight:600;';
+    status.textContent   = '✗ Please enter a valid number (≥ 1).';
+    return;
+  }
+
+  btn.disabled = true; btn.textContent = 'Saving…';
+
+  try {
+    const res  = await fetch(`${WORKER_URL}/so-number/set`, {
+      method:  'PUT',
+      headers: authHeaders(),
+      body:    JSON.stringify({ value: val }),
+    });
+    const data = await res.json();
+    if (res.ok) {
+      status.style.cssText = 'display:block;background:var(--light-green);border:1px solid #6EE7B7;color:var(--green);border-radius:6px;padding:8px 12px;font-size:12.5px;font-weight:600;';
+      status.textContent   = `✓ Order number set to ${val}. Next order will use this number.`;
+      // Update the header field immediately
+      fetchOrderNumber();
+    } else throw new Error(data.error || 'Failed');
+  } catch (e) {
+    status.style.cssText = 'display:block;background:#FEF2F2;border:1px solid #FECACA;color:#991B1B;border-radius:6px;padding:8px 12px;font-size:12.5px;font-weight:600;';
+    status.textContent   = '✗ ' + e.message;
+  } finally {
+    btn.disabled = false; btn.textContent = '💾 Set Order Number';
+    setTimeout(() => { status.style.display = 'none'; }, 4000);
+  }
+}
+
+// ── MLA URL ───────────────────────────────────────────────────────────────────
+const MLA_DEFAULT = 'https://hosted.ai/legal/Master_License_Agreement_v0.01.pdf';
+
+function applyMlaUrl(url) {
+  const u = url || MLA_DEFAULT;
+  const h = document.getElementById('mlaHeaderLink');
+  const b = document.getElementById('mlaBodyLink');
+  if (h) h.href = u;
+  if (b) b.href = u;
+}
+
+async function loadMlaUrl(fromAdmin) {
+  try {
+    // Public endpoint — no auth needed
+    const headers = fromAdmin && SESSION_KEY ? authHeaders() : { 'Content-Type': 'application/json' };
+    const res  = await fetch(`${WORKER_URL}/mla-url`, { headers });
+    const data = await res.json();
+    const url  = data.url || MLA_DEFAULT;
+    applyMlaUrl(url);
+    const input = document.getElementById('mlaUrlInput');
+    if (input) input.value = url;
+  } catch (e) { applyMlaUrl(MLA_DEFAULT); }
+}
+
+async function saveMlaUrl() {
+  const input  = document.getElementById('mlaUrlInput');
+  const btn    = document.getElementById('saveMlaBtn');
+  const status = document.getElementById('mlaUrlStatus');
+  const url    = input?.value.trim();
+
+  if (!url) return;
+  btn.disabled = true; btn.textContent = 'Saving…';
+
+  try {
+    const res  = await fetch(`${WORKER_URL}/mla-url`, {
+      method:  'PUT',
+      headers: authHeaders(),
+      body:    JSON.stringify({ url }),
+    });
+    const data = await res.json();
+    if (res.ok) {
+      applyMlaUrl(url);
+      status.style.cssText = 'display:block;background:var(--light-green);border:1px solid #6EE7B7;color:var(--green);border-radius:6px;padding:8px 12px;font-size:12.5px;font-weight:600;';
+      status.textContent   = '✓ MLA URL saved and applied.';
+    } else throw new Error(data.error || 'Failed');
+  } catch (e) {
+    status.style.cssText = 'display:block;background:#FEF2F2;border:1px solid #FECACA;color:#991B1B;border-radius:6px;padding:8px 12px;font-size:12.5px;font-weight:600;';
+    status.textContent   = '✗ ' + e.message;
+  } finally {
+    btn.disabled = false; btn.textContent = '💾 Save URL';
+    setTimeout(() => { status.style.display = 'none'; }, 4000);
+  }
+}
+
+// ── Commitment amount (MMF) discounts ─────────────────────────────────────────
+const MMF_BASE = { poc: 0, payg: 750, committed750: 750, committed: 2500, prepaid: 10000 };
+
+function previewMmfDiscount(model, input) {
+  const base  = MMF_BASE[model] || 0;
+  const disc  = Math.min(base, Math.max(0, parseFloat(input.value) || 0));
+  const net   = base - disc;
+  const badge = document.getElementById(`mmf_disc_${model}_badge`);
+  if (badge) {
+    badge.textContent      = '$' + net.toLocaleString();
+    badge.style.background = disc > 0 ? 'var(--light-green)' : 'var(--gray-100)';
+    badge.style.color      = disc > 0 ? 'var(--green)'       : 'var(--gray-500)';
+  }
+  if (MODEL_DEFAULTS[model]) MODEL_DEFAULTS[model].mmfAmount = net;
+  updateOptionLabel(model, net, disc);
+  if (model === currentModel) {
+    document.getElementById('mmfOther').value = net.toFixed(2);
+    updateCalc();
+    updateCommercialTermsSummary();
+  }
+}
+
+function updateOptionLabel(model, net, disc) {
+  const fmtNet = '$' + net.toLocaleString();
+  const labelEl = document.getElementById(`label_${model}`);
+  const descEl  = document.getElementById(`desc_${model}`);
+  if (!labelEl) return;
+
+  const labelTemplates = {
+    payg:         `Month-to-Month, Pay-As-You-Go`,
+    committed750: `Min. Monthly Commit: ${fmtNet}, 12 Mo. Term`,
+    committed:    `Min. Monthly Commit: ${fmtNet}, 12 Mo. Term`,
+    prepaid:      `Yearly Upfront Pay $${(net * 12).toLocaleString()}, 12 Mo. Term`,
+  };
+  const descTemplates = {
+    payg:         `${fmtNet} monthly minimum. Cancel anytime with written notice.`,
+    committed750: descEl?.textContent.replace(/\$[\d,]+(?= monthly)/, fmtNet) || descEl?.textContent,
+    committed:    descEl?.textContent.replace(/\$[\d,]+(?= monthly)/, fmtNet) || descEl?.textContent,
+    prepaid:      descEl?.textContent || '',
+  };
+
+  if (labelTemplates[model]) labelEl.textContent = labelTemplates[model];
+  if (descEl && descTemplates[model]) {
+    if (model === 'payg') descEl.textContent = descTemplates[model];
+  }
+}
+
+async function loadMmfDiscounts(resetToDefaults) {
+  const defaults = { poc: 0, payg: 0, committed750: 0, committed: 0, prepaid: 0 };
+  let discounts  = defaults;
+
+  if (!resetToDefaults && SESSION_KEY) {
+    try {
+      const res = await fetch(`${WORKER_URL}/mmf-discounts`, { headers: authHeaders() });
+      if (res.ok) discounts = await res.json();
+    } catch (e) { /* use defaults */ }
+  }
+
+  for (const [model, disc] of Object.entries(discounts)) {
+    const base  = MMF_BASE[model] || 0;
+    const net   = base - disc;
+    const input = document.getElementById(`mmf_disc_${model}`);
+    const badge = document.getElementById(`mmf_disc_${model}_badge`);
+    if (input) input.value = disc;
+    if (badge) {
+      badge.textContent      = '$' + net.toLocaleString();
+      badge.style.background = disc > 0 ? 'var(--light-green)' : 'var(--gray-100)';
+      badge.style.color      = disc > 0 ? 'var(--green)'       : 'var(--gray-500)';
+    }
+    if (MODEL_DEFAULTS[model]) MODEL_DEFAULTS[model].mmfAmount = net;
+    updateOptionLabel(model, net, disc);
+  }
+
+  if (MODEL_DEFAULTS[currentModel]) {
+    document.getElementById('mmfOther').value = MODEL_DEFAULTS[currentModel].mmfAmount.toFixed(2);
+    updateCalc();
+    updateCommercialTermsSummary();
+  }
+}
+
+async function saveMmfDiscounts() {
+  const btn    = document.getElementById('saveMmfDiscountsBtn');
+  const status = document.getElementById('mmfDiscountSaveStatus');
+  const models = ['poc', 'payg', 'committed750', 'committed', 'prepaid'];
+  const payload = {};
+  for (const m of models) {
+    const el   = document.getElementById(`mmf_disc_${m}`);
+    const base = MMF_BASE[m] || 0;
+    payload[m] = el ? Math.min(base, Math.max(0, parseFloat(el.value) || 0)) : 0;
+  }
+
+  btn.disabled    = true;
+  btn.textContent = 'Saving…';
+
+  try {
+    const res  = await fetch(`${WORKER_URL}/mmf-discounts`, { method: 'PUT', headers: authHeaders(), body: JSON.stringify(payload) });
+    const data = await res.json();
+    if (res.ok) {
+      status.style.cssText = 'display:block;background:var(--light-green);border:1px solid #6EE7B7;color:var(--green);border-radius:6px;padding:8px 12px;font-size:12.5px;font-weight:600;';
+      status.textContent   = '✓ Commitment discounts saved and applied.';
+    } else throw new Error(data.error || 'Failed');
+  } catch (e) {
+    status.style.cssText = 'display:block;background:#FEF2F2;border:1px solid #FECACA;color:#991B1B;border-radius:6px;padding:8px 12px;font-size:12.5px;font-weight:600;';
+    status.textContent   = '✗ ' + e.message;
+  } finally {
+    btn.disabled    = false;
+    btn.textContent = '💾 Save Commitment Discounts';
+    setTimeout(() => { status.style.display = 'none'; }, 4000);
+  }
+}
+
+function openOrdersPanel() {
+  document.getElementById('ordersPanel').classList.add('open');
+  loadOrders();
+}
+
+function closeOrdersPanel() {
+  document.getElementById('ordersPanel').classList.remove('open');
+}
+
+async function loadOrders() {
+  const list = document.getElementById('ordersList');
+  list.innerHTML = '<div style="color:var(--gray-600);font-size:13px;text-align:center;padding:40px 0;">Loading…</div>';
+  try {
+    const res  = await fetch(`${WORKER_URL}/orders`, { headers: authHeaders() });
+    const data = await res.json();
+    if (!res.ok) throw new Error(data.error || 'Failed');
+
+    if (!data.orders || data.orders.length === 0) {
+      list.innerHTML = '<div style="color:var(--gray-600);font-size:13px;text-align:center;padding:40px 0;">No saved orders yet.</div>';
+      return;
+    }
+
+    list.innerHTML = data.orders.map(o => `
+      <div class="order-card" onclick="loadOrderIntoForm('${o.order_number}')">
+        <button class="order-card-del" onclick="event.stopPropagation();deleteOrder('${o.order_number}',this)" title="Delete">🗑</button>
+        <div class="order-card-num">Order #${o.order_number}</div>
+        <div class="order-card-cust">${o.customer || '<em style="color:var(--gray-600)">No customer name</em>'}</div>
+        <div class="order-card-meta">
+          ${o.model || '—'} &nbsp;·&nbsp;
+          ${o.date  || '—'} &nbsp;·&nbsp;
+          Saved ${o.saved_at ? new Date(o.saved_at).toLocaleDateString() : '—'}
+        </div>
+      </div>`
+    ).join('');
+  } catch (e) {
+    list.innerHTML = `<div style="color:var(--red);font-size:13px;text-align:center;padding:20px;">${e.message}</div>`;
+  }
+}
+
+async function loadOrderIntoForm(orderNo) {
+  try {
+    const res  = await fetch(`${WORKER_URL}/orders/${orderNo}`, { headers: authHeaders() });
+    const o    = await res.json();
+    if (!res.ok) throw new Error(o.error || 'Not found');
+
+    // Customer
+    setValue('custName',      o.customer_name);
+    setValue('custAddress',   o.customer_address);
+    setValue('poNumber',      o.po_number);
+    setValue('taxId',         o.tax_id);
+    setValue('primaryName',   o.primary_contact);
+    setValue('primaryEmail',  o.primary_email);
+    setValue('primaryPhone',  o.primary_phone);
+    setValue('techName',      o.tech_contact);
+    setValue('techEmail',     o.tech_email);
+    setValue('techPhone',     o.tech_phone);
+    setValue('billingContact',o.billing_contact);
+    setValue('billingEmail',  o.billing_email);
+    setValue('billingPhone',  o.billing_phone);
+    setValue('billingAddress',o.billing_address);
+
+    // Order meta
+    setValue('orderNumber',   o.order_number);
+    setValue('contractDate',  o.contract_date);
+    setValue('effectiveDate', o.billing_start);
+    syncBillingStart();
+
+    // Service
+    setValue('serviceDesc',   o.service_description);
+    setValue('customTerms',   o.custom_terms);
+    loadOneoffItems(o.oneoff_items);
+    // Restore signatures
+    if (o.sig_vendor)   loadSigDataUrl('sigVendor',   o.sig_vendor);
+    if (o.sig_customer) loadSigDataUrl('sigCustomer', o.sig_customer);
+    setValue('vendorName',       o.vendor_name);
+    setValue('vendorTitle',      o.vendor_title);
+    setValue('custSigNameInput', o.cust_sig_name);
+    setValue('custSigTitle',     o.cust_sig_title);
+    setValue('vendorDate',       o.vendor_date);
+    setValue('custDate',         o.cust_date);
+    setValue('supportLevel',  o.support_level);
+    onSupportChange();
+
+    // Service model
+    if (o.service_model) {
+      const modelItem = document.querySelector(
+        `#serviceModelGroup .option-item input[value="${o.service_model}"]`
+      )?.closest('.option-item');
+      if (modelItem) selectModel(o.service_model, modelItem);
+    }
+
+    // Payment
+    setValue('paymentTerms', o.payment_terms);
+    setValue('currency',     o.currency);
+
+    // Estimator
+    const utilPct = o.vram_utilization_pct ?? o.vram_utilisation_pct ?? 0;
+    if (utilPct !== undefined) {
+      setValue('utilPct', utilPct);
+      const lbl = document.getElementById('utilPctLabel');
+      if (lbl) lbl.textContent = utilPct + '%';
+    }
+
+    // GPU rows
+    if (o.gpus && o.gpus.length) {
+      document.getElementById('gpuRows').innerHTML = '';
+      gpuRowCount = 0;
+      o.gpus.forEach(g => addGpuRow(g.gpu, g.qty));
+    }
+
+    updateCalc();
+    updateCommercialTermsSummary();
+    closeOrdersPanel();
+
+    // Flash confirmation
+    const status = document.getElementById('saveStatus');
+    status.style.cssText = 'display:block;background:var(--light-blue);border:1px solid var(--mid-blue);color:var(--blue);border-radius:7px;padding:10px 16px;margin-top:8px;font-size:13px;font-weight:600;';
+    status.textContent   = `📂 Order #${orderNo} loaded`;
+    setTimeout(() => { status.style.display = 'none'; }, 3000);
+
+  } catch (e) {
+    alert('Could not load order: ' + e.message);
+  }
+}
+
+async function deleteOrder(orderNo, btn) {
+  if (!confirm(`Delete Order #${orderNo}? This cannot be undone.`)) return;
+  btn.textContent = '…';
+  try {
+    const res = await fetch(`${WORKER_URL}/orders/${orderNo}`, {
+      method: 'DELETE', headers: authHeaders()
+    });
+    if (res.ok) loadOrders();
+    else {
+      const d = await res.json();
+      alert('Delete failed: ' + (d.error || 'Unknown error'));
+      btn.textContent = '🗑';
+    }
+  } catch (e) {
+    alert('Delete failed: ' + e.message);
+    btn.textContent = '🗑';
+  }
+}
+
+function setValue(id, val) {
+  const el = document.getElementById(id);
+  if (el && val !== undefined && val !== null) el.value = val;
+}
+
+
+function collectOrderData() {
+  // GPU rows
+  const gpus = [];
+  document.querySelectorAll('#gpuRows > div').forEach(row => {
+    const sel  = row.querySelector('select');
+    const qty  = row.querySelector('input[type=number]')?.value;
+    const vram = sel?.value;
+    const name = sel?.options[sel.selectedIndex]?.dataset?.name || '';
+    if (vram && qty) gpus.push({ gpu: name, vram_gb: parseFloat(vram), qty: parseInt(qty) });
+  });
+
+  const checkedFreq    = document.querySelector('[name=billingFreq]:checked')?.value  || '';
+  const checkedTerm    = document.querySelector('[name=initialTerm]:checked')?.value  || '';
+  const checkedRenewal = document.querySelector('[name=renewal]:checked')?.value      || '';
+
+  return {
+    order_number:    document.getElementById('orderNumber')?.value,
+    contract_date:   document.getElementById('contractDate')?.value,
+    billing_start:   document.getElementById('effectiveDate')?.value,
+
+    // Customer
+    customer_name:   document.getElementById('custName')?.value,
+    customer_address:document.getElementById('custAddress')?.value,
+    po_number:       document.getElementById('poNumber')?.value,
+    tax_id:          document.getElementById('taxId')?.value,
+    primary_contact: document.getElementById('primaryName')?.value,
+    primary_email:   document.getElementById('primaryEmail')?.value,
+    primary_phone:   document.getElementById('primaryPhone')?.value,
+    tech_contact:    document.getElementById('techName')?.value,
+    tech_email:      document.getElementById('techEmail')?.value,
+    tech_phone:      document.getElementById('techPhone')?.value,
+    billing_contact: document.getElementById('billingContact')?.value,
+    billing_email:   document.getElementById('billingEmail')?.value,
+    billing_phone:   document.getElementById('billingPhone')?.value,
+    billing_address: document.getElementById('billingAddress')?.value,
+
+    // Service
+    service_description: document.getElementById('serviceDesc')?.value,
+    custom_terms:        document.getElementById('customTerms')?.value?.trim() || '',
+    oneoff_items:        collectOneoffItems(),
+    sig_vendor:          getSigDataUrl('sigVendor'),
+    sig_customer:        getSigDataUrl('sigCustomer'),
+    vendor_name:         document.getElementById('vendorName')?.value,
+    vendor_title:        document.getElementById('vendorTitle')?.value,
+    cust_sig_name:       document.getElementById('custSigNameInput')?.value,
+    cust_sig_title:      document.getElementById('custSigTitle')?.value,
+    vendor_date:         document.getElementById('vendorDate')?.value,
+    cust_date:           document.getElementById('custDate')?.value,
+    service_model:       currentModel,
+    support_level:       document.getElementById('supportLevel')?.value,
+
+    // Commercial terms
+    discount_pct:    currentDiscount * 100,
+    monthly_credit:  parseFloat(document.getElementById('mmfOther')?.value) || 0,
+    billing_frequency: checkedFreq,
+    initial_term:    checkedTerm,
+    renewal:         checkedRenewal,
+    payment_terms:   document.getElementById('paymentTerms')?.value,
+    currency:        document.getElementById('currency')?.value,
+
+    // Estimator
+    vram_utilization_pct: parseFloat(document.getElementById('utilPct')?.value) || 0,
+    gpus,
+    est_total_vram:       document.getElementById('calcProvGB')?.textContent,
+    est_avail_fee:        document.getElementById('calcAlloc')?.textContent,
+    est_consumption_fee:  document.getElementById('calcUtil')?.textContent,
+    est_monthly_credit:   document.getElementById('calcMMF')?.textContent,
+
+    // Computed bill
+    estimated_monthly_bill: document.getElementById('calcTotal')?.textContent,
+    estimator_in_print:     document.getElementById('estimatorPrintToggle')?.checked || false,
+  };
+}
+
+function closeSaveChoiceModal() {
+  document.getElementById('saveChoiceModal').style.display = 'none';
+}
+
+async function saveOrder() {
+  if (!checkOrderNumber()) return;
+  if (!validateMandatoryFields()) return;
+  // Show save destination choice
+  document.getElementById('saveChoiceModal').style.display = 'flex';
+}
+
+async function saveChoiceCRM() {
+  closeSaveChoiceModal();
+  if (!SESSION_KEY) {
+    requireAuth(() => performSave('crm'), 'Sign in to save to CRM & Database.');
+    return;
+  }
+  await performSave('crm');
+}
+
+async function saveChoiceLocal() {
+  closeSaveChoiceModal();
+  await performSave('local');
+}
+
+async function performSave(destination) {
+  const btn    = document.getElementById('saveBtn');
+  const status = document.getElementById('saveStatus');
+  const order  = collectOrderData();
+  const orderNo = order.order_number;
+
+  if (destination === 'local') {
+    btn.disabled    = true;
+    btn.textContent = '⏳ Generating PDF…';
+    try {
+      const res = await fetch(`${WORKER_URL}/generate-pdf`, {
+        method:  'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body:    JSON.stringify(order),
+      });
+      if (!res.ok) throw new Error('PDF generation failed');
+      const blob = await res.blob();
+      const url  = URL.createObjectURL(blob);
+      const a    = document.createElement('a');
+      a.href     = url;
+      a.download = `Sales_Order_${orderNo}.pdf`;
+      a.click();
+      URL.revokeObjectURL(url);
+      status.style.cssText = 'display:block;background:var(--light-green);border:1px solid #6EE7B7;color:var(--green);border-radius:7px;padding:10px 16px;margin-top:8px;font-size:13px;font-weight:600;';
+      status.textContent   = `✓ Sales_Order_${orderNo}.pdf downloaded.`;
+      setTimeout(() => { status.style.display = 'none'; }, 5000);
+    } catch (e) {
+      status.style.cssText = 'display:block;background:#FEF2F2;border:1px solid #FECACA;color:#991B1B;border-radius:7px;padding:10px 16px;margin-top:8px;font-size:13px;font-weight:600;';
+      status.textContent   = `✗ PDF generation failed: ${e.message}`;
+      setTimeout(() => { status.style.display = 'none'; }, 5000);
+    } finally {
+      btn.disabled    = false;
+      btn.textContent = '💾 Save Order';
+    }
+    return;
+  }
+
+  // CRM save (original flow)
+  btn.disabled    = true;
+  btn.textContent = '💾 Saving…';
+
+  try {
+    let res = await fetch(`${WORKER_URL}/orders`, {
+      method:  'POST',
+      headers: authHeaders(),
+      body:    JSON.stringify(order),
+    });
+
+    if (res.status === 409) {
+      res = await fetch(`${WORKER_URL}/orders/${encodeURIComponent(orderNo)}`, {
+        method:  'PUT',
+        headers: authHeaders(),
+        body:    JSON.stringify(order),
+      });
+    }
+
+    const data = await res.json();
+
+    if (res.ok) {
+      // Update order number with the real Pipedrive deal ID if available
+      if (data.pipedrive?.deal_id) {
+        setOrderNumber(data.pipedrive.deal_id, 'white', 'Order number updated to Pipedrive deal ID');
+        order.order_number = data.pipedrive.deal_id;
+        invalidateOrgCache();  // refresh org list next time
+      }
+      const pdLog  = data.pipedrive?.log ? ` [${data.pipedrive.log.join(' → ')}]` : '';
+      const pdMsg = data.pipedrive?.success
+        ? ` · Pipedrive: "${data.pipedrive.file_name}" attached to deal #${data.pipedrive.deal_id} ✓`
+        : data.pipedrive?.skipped
+          ? ' · Pipedrive not configured'
+          : ` · Pipedrive sync failed: ${data.pipedrive?.error || 'unknown'}${pdLog}`;
+      status.style.cssText = 'display:block;background:var(--light-green);border:1px solid #6EE7B7;color:var(--green);border-radius:7px;padding:10px 16px;margin-top:8px;font-size:13px;font-weight:600;';
+      status.textContent   = `✓ Order #${orderNo} saved — ${data.saved_at || data.updated_at || new Date().toISOString()}${pdMsg}`;
+      btn.textContent      = '✓ Saved';
+      btn.style.background = 'var(--green)';
+      // Refresh order number to show next value
+      setTimeout(() => fetchOrderNumber(), 500);
+    } else {
+      throw new Error((data.error || 'Unknown error') + (data.detail ? ': ' + data.detail : ''));
+    }
+  } catch (err) {
+    status.style.cssText = 'display:block;background:#FEF2F2;border:1px solid #FECACA;color:#991B1B;border-radius:7px;padding:10px 16px;margin-top:8px;font-size:13px;font-weight:600;';
+    status.textContent   = `✗ Save failed: ${err.message}`;
+    btn.textContent      = '💾 Save Order';
+    btn.style.background = 'var(--mid-blue)';
+  } finally {
+    btn.disabled = false;
+    setTimeout(() => {
+      if (btn.textContent === '✓ Saved') {
+        btn.textContent      = '💾 Save Order';
+        btn.style.background = 'var(--mid-blue)';
+      }
+    }, 4000);
+  }
+}
+
+
+window.addEventListener('beforeprint', () => {
+  document.querySelectorAll('[data-custfield]').forEach(wrapper => {
+    const input = wrapper.querySelector('input');
+    if (input && !input.value.trim()) {
+      wrapper.dataset.hiddenForPrint = 'true';
+      wrapper.style.display = 'none';
+    }
+  });
+});
+window.addEventListener('afterprint', () => {
+  document.querySelectorAll('[data-custfield]').forEach(wrapper => {
+    if (wrapper.dataset.hiddenForPrint) {
+      wrapper.style.display = '';
+      delete wrapper.dataset.hiddenForPrint;
+    }
+  });
+});
+
+// ---- COLLAPSIBLE CARDS ----
+function toggleCard(cardId) {
+  const body    = document.getElementById(cardId + 'Body');
+  const chevron = document.getElementById(cardId + 'Chevron');
+  if (!body) return;
+  const collapsed = body.style.display === 'none';
+  body.style.display            = collapsed ? '' : 'none';
+  if (chevron) chevron.style.transform = collapsed ? 'rotate(0deg)' : 'rotate(180deg)';
+}
+
+// ---- BILLING ESTIMATOR COLLAPSE / PRINT ----
+let estimatorCollapsed = false;
+
+function toggleEstimator() {
+  estimatorCollapsed = !estimatorCollapsed;
+  const body    = document.getElementById('estimatorBody');
+  const chevron = document.getElementById('estimatorChevron');
+  body.style.display    = estimatorCollapsed ? 'none' : '';
+  chevron.style.transform = estimatorCollapsed ? 'rotate(180deg)' : 'rotate(0deg)';
+}
+
+function toggleEstimatorPrint(cb) {
+  const card = document.getElementById('estimatorCard');
+  if (cb.checked) {
+    card.classList.remove('no-print');
+  } else {
+    card.classList.add('no-print');
+  }
+}
+
+
+function syncBillingStart() {
+  const eff = document.getElementById('effectiveDate').value;
+  const bs  = document.getElementById('billingStart');
+  if (eff && bs) bs.value = eff;
+}
+
+// ---- CUSTOMER NAME → SIGNATURE HEADING ----
+document.getElementById('custName').addEventListener('input', function() {
+  document.getElementById('custSigName').textContent = this.value || 'Customer';
+});
+
+// ---- RESET ----
+function resetForm() {
+  if (confirm('Reset all fields to defaults?')) location.reload();
+}
+
+// ---- MARK COMPLETE ----
+// ---- EMAIL VALIDATION ----
+const EMAIL_RE = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+
+function validateEmail(input) {
+  const val = input.value.trim();
+  const err = document.getElementById(input.id + '_err');
+  if (!err) return true;
+  if (val && !EMAIL_RE.test(val)) {
+    input.style.borderColor = 'var(--red)';
+    err.style.display = 'block';
+    return false;
+  }
+  input.style.borderColor = '';
+  err.style.display = 'none';
+  return true;
+}
+
+function clearEmailError(input) {
+  const err = document.getElementById(input.id + '_err');
+  if (!err) return;
+  if (EMAIL_RE.test(input.value.trim()) || !input.value.trim()) {
+    input.style.borderColor = '';
+    err.style.display = 'none';
+  }
+}
+
+// ---- PHONE VALIDATION ----
+// Accepts formats: +1 (555) 000-0000, +44 7911 123456, 555-000-0000, (555)000-0000, etc.
+const PHONE_RE = /^\+?[\d\s\-().]{7,20}$/;
+
+function validatePhone(input) {
+  const val = input.value.trim();
+  const err = document.getElementById(input.id + '_err');
+  if (!err) return true;
+  if (val && !PHONE_RE.test(val)) {
+    input.style.borderColor = 'var(--red)';
+    err.style.display = 'block';
+    return false;
+  }
+  input.style.borderColor = '';
+  err.style.display = 'none';
+  return true;
+}
+
+function clearPhoneError(input) {
+  const err = document.getElementById(input.id + '_err');
+  if (!err) return;
+  if (PHONE_RE.test(input.value.trim()) || !input.value.trim()) {
+    input.style.borderColor = '';
+    err.style.display = 'none';
+  }
+}
+
+
+const MANDATORY_FIELDS = [
+  { id: 'custName',     label: 'Customer Legal Name'   },
+  { id: 'custAddress',  label: 'Registered Address'    },
+  { id: 'primaryName',  label: 'Primary Contact Name'  },
+  { id: 'primaryEmail', label: 'Primary Contact Email' },
+];
+
+function validateMandatoryFields() {
+  const missing = MANDATORY_FIELDS.filter(f => !document.getElementById(f.id)?.value.trim());
+  const toast = document.getElementById('validationToast');
+  const list  = document.getElementById('validationList');
+
+  // Clear previous highlights
+  MANDATORY_FIELDS.forEach(f => {
+    const el = document.getElementById(f.id);
+    if (el) el.style.borderColor = '';
+  });
+
+  if (missing.length === 0) {
+    // Also validate phone format if filled
+    const phoneEl = document.getElementById('primaryPhone');
+    if (phoneEl && phoneEl.value.trim() && !PHONE_RE.test(phoneEl.value.trim())) {
+      phoneEl.style.borderColor = 'var(--red)';
+      const perr = document.getElementById('primaryPhone_err');
+      if (perr) perr.style.display = 'block';
+      toast.style.display = 'block';
+      list.innerHTML = '<li>Primary Contact Phone — invalid format</li>';
+      phoneEl.focus();
+      return false;
+    }
+    // Also validate email format
+    const emailEl = document.getElementById('primaryEmail');
+    if (emailEl && emailEl.value.trim() && !EMAIL_RE.test(emailEl.value.trim())) {
+      emailEl.style.borderColor = 'var(--red)';
+      const err = document.getElementById('primaryEmail_err');
+      if (err) err.style.display = 'block';
+      toast.style.display = 'block';
+      list.innerHTML = '<li>Primary Contact Email — invalid format</li>';
+      emailEl.focus();
+      return false;
+    }
+    toast.style.display = 'none';
+    return true;
+  }
+
+  // Highlight empty fields and show toast
+  missing.forEach(f => {
+    const el = document.getElementById(f.id);
+    if (el) el.style.borderColor = 'var(--red)';
+  });
+  list.innerHTML = missing.map(f => `<li>${f.label}</li>`).join('');
+  toast.style.display = 'block';
+  toast.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+
+  // Scroll to first missing field
+  const firstMissing = document.getElementById(missing[0].id);
+  if (firstMissing) firstMissing.focus();
+
+  return false;
+}
+
+// ---- ORG AUTOCOMPLETE ----
+let orgCache         = null;
+let orgSelectPending = false;   // flag to block blur firing before selection completes
+
+async function orgAutocomplete(query) {
+  if (!SESSION_KEY) return;
+  const dropdown = document.getElementById('orgDropdown');
+  const q        = (query || '').trim();
+
+  // If 2+ chars typed, search Pipedrive directly (bypasses cache, finds any org)
+  if (q.length >= 2) {
+    try {
+      dropdown.innerHTML = '<div style="padding:10px 14px;font-size:13px;color:var(--gray-500);">Searching…</div>';
+      dropdown.style.display = 'block';
+      const res  = await fetch(`${WORKER_URL}/orgs?search=${encodeURIComponent(q)}`, { headers: authHeaders() });
+      const data = await res.json();
+      renderOrgDropdown(data.orgs || [], dropdown);
+    } catch (e) { dropdown.style.display = 'none'; }
+    return;
+  }
+
+  // Empty/short query — use cached full list
+  if (!orgCache) {
+    dropdown.innerHTML = '<div style="padding:10px 14px;font-size:13px;color:var(--gray-500);">Loading…</div>';
+    dropdown.style.display = 'block';
+    try {
+      const res  = await fetch(`${WORKER_URL}/orgs`, { headers: authHeaders() });
+      const data = await res.json();
+      orgCache   = data.orgs || [];
+    } catch (e) { orgCache = []; }
+  }
+
+  const matches = orgCache.slice(0, 30);
+  renderOrgDropdown(matches, dropdown);
+}
+
+function renderOrgDropdown(matches, dropdown) {
+  if (!matches.length) { dropdown.style.display = 'none'; return; }
+
+  dropdown.innerHTML = matches.map((o, i) => `
+    <div class="org-option" data-idx="${i}"
+         style="padding:10px 14px;font-size:13.5px;cursor:pointer;
+                border-bottom:1px solid var(--gray-100);display:flex;flex-direction:column;gap:2px;">
+      <span style="font-weight:600;color:var(--gray-800);">${o.name}</span>
+      ${o.primary_contact ? `<span style="font-size:11.5px;color:var(--gray-500);">${o.primary_contact}${o.primary_email ? ' · ' + o.primary_email : ''}</span>` : ''}
+      ${o.address ? `<span style="font-size:11px;color:var(--gray-400);">${o.address}</span>` : ''}
+    </div>`
+  ).join('');
+
+  dropdown.querySelectorAll('.org-option').forEach((el, i) => {
+    el.addEventListener('mouseover', () => el.style.background = 'var(--light-blue)');
+    el.addEventListener('mouseout',  () => el.style.background = '');
+    el.addEventListener('mousedown', (e) => {
+      e.preventDefault();
+      orgSelectPending = true;
+      selectOrg(matches[i]);
+    });
+  });
+
+  dropdown.style.display = 'block';
+}
+
+function selectOrg(o) {
+  document.getElementById('custName').value = o.name;
+  document.getElementById('orgDropdown').style.display = 'none';
+  orgSelectPending = false;
+
+  const set = (id, val) => { const el = document.getElementById(id); if (el && val) el.value = val; };
+
+  // Immediately populate what we have from the cache
+  set('custAddress',    o.address);
+  set('techEmail',      o.tech_contact_email);
+  set('techPhone',      o.tech_contact_phone);
+  set('billingEmail',   o.billing_email);
+  set('billingPhone',   o.billing_phone);
+  // techName and billingContact are Person-type fields resolved lazily via /org-persons
+
+  // Fetch persons + full org details for remaining fields
+  if (o.id && SESSION_KEY) {
+    fetch(`${WORKER_URL}/org-persons?id=${o.id}`, { headers: authHeaders() })
+      .then(r => r.json())
+      .then(data => {
+        // Tech contact fields from org custom fields
+        if (data.tech_contact_name)  set('techName',       data.tech_contact_name);
+        if (data.tech_contact_email) set('techEmail',      data.tech_contact_email);
+        if (data.tech_contact_phone) set('techPhone',      data.tech_contact_phone);
+        if (data.billing_contact)    set('billingContact', data.billing_contact);
+        if (data.billing_email)      set('billingEmail',   data.billing_email);
+        if (data.billing_phone)      set('billingPhone',   data.billing_phone);
+
+        // Primary person → primary contact fields
+        const p = data.persons?.[0];
+        if (p) {
+          set('primaryName',  p.name);
+          set('primaryEmail', p.email);
+          set('primaryPhone', p.phone);
+          ['primaryEmail','primaryPhone'].forEach(id => {
+            const el = document.getElementById(id);
+            if (el) el.style.borderColor = '';
+            const err = document.getElementById(id + '_err');
+            if (err) err.style.display = 'none';
+          });
+        }
+      })
+      .catch(() => {});
+  }
+
+  lookupOrderNumber(o.name);
+  updateCommercialTermsSummary();
+}
+
+// Close dropdown when clicking outside
+document.addEventListener('click', e => {
+  if (e.target.id !== 'custName') {
+    const dd = document.getElementById('orgDropdown');
+    if (dd) dd.style.display = 'none';
+  }
+});
+
+function invalidateOrgCache() { orgCache = null; }
+
+async function refreshOrgCache() {
+  const btn = document.getElementById('refreshOrgBtn');
+  if (btn) { btn.textContent = '↺ Refreshing…'; btn.disabled = true; }
+  orgCache = null;
+  await orgAutocomplete(document.getElementById('custName')?.value || '');
+  if (btn) { btn.textContent = '↺ Refresh list'; btn.disabled = false; }
+}
+
+// ---- E-SIGNATURE PADS ----
+const sigPads = {};
+
+function initSigPad(canvasId) {
+  const canvas = document.getElementById(canvasId);
+  if (!canvas) return;
+  const ctx    = canvas.getContext('2d');
+  const pad    = { canvas, ctx, drawing: false, hasContent: false };
+  sigPads[canvasId] = pad;
+
+  ctx.strokeStyle = '#1e3a5f';
+  ctx.lineWidth   = 2;
+  ctx.lineCap     = 'round';
+  ctx.lineJoin    = 'round';
+
+  const pos = (e) => {
+    const r = canvas.getBoundingClientRect();
+    const scaleX = canvas.width  / r.width;
+    const scaleY = canvas.height / r.height;
+    const src = e.touches ? e.touches[0] : e;
+    return { x: (src.clientX - r.left) * scaleX, y: (src.clientY - r.top) * scaleY };
+  };
+
+  const start = (e) => { e.preventDefault(); pad.drawing = true; const p = pos(e); ctx.beginPath(); ctx.moveTo(p.x, p.y); };
+  const draw  = (e) => { e.preventDefault(); if (!pad.drawing) return; const p = pos(e); ctx.lineTo(p.x, p.y); ctx.stroke(); pad.hasContent = true; };
+  const stop  = ()  => { pad.drawing = false; };
+
+  canvas.addEventListener('mousedown',  start);
+  canvas.addEventListener('mousemove',  draw);
+  canvas.addEventListener('mouseup',    stop);
+  canvas.addEventListener('mouseleave', stop);
+  canvas.addEventListener('touchstart', start, { passive: false });
+  canvas.addEventListener('touchmove',  draw,  { passive: false });
+  canvas.addEventListener('touchend',   stop);
+}
+
+function clearSig(canvasId) {
+  const pad = sigPads[canvasId];
+  if (!pad) return;
+  pad.ctx.clearRect(0, 0, pad.canvas.width, pad.canvas.height);
+  pad.hasContent = false;
+}
+
+function getSigDataUrl(canvasId) {
+  const pad = sigPads[canvasId];
+  if (!pad || !pad.hasContent) return null;
+  return pad.canvas.toDataURL('image/png');
+}
+
+function loadSigDataUrl(canvasId, dataUrl) {
+  const pad = sigPads[canvasId];
+  if (!pad || !dataUrl) return;
+  const img = new Image();
+  img.onload = () => {
+    pad.ctx.clearRect(0, 0, pad.canvas.width, pad.canvas.height);
+    pad.ctx.drawImage(img, 0, 0);
+    pad.hasContent = true;
+  };
+  img.src = dataUrl;
+}
+
+function downloadSig(canvasId, filename) {
+  const url = getSigDataUrl(canvasId);
+  if (!url) { showPopup('Please draw a signature first.'); return; }
+  const a = document.createElement('a');
+  a.href     = url;
+  a.download = filename + '.png';
+  a.click();
+}
+
+// ---- ONE-OFF ITEMS ----
+let oneoffRowCount = 0;
+let oneoffItemNames = [];   // cached from Worker KV
+
+async function loadOneoffItemNames() {
+  if (!SESSION_KEY || oneoffItemNames.length) return;
+  try {
+    const res  = await fetch(`${WORKER_URL}/oneoff-items`, { headers: authHeaders() });
+    const data = await res.json();
+    oneoffItemNames = data.items || [];
+  } catch (e) { oneoffItemNames = []; }
+}
+
+function buildDatalist() {
+  let dl = document.getElementById('oneoffDatalist');
+  if (!dl) {
+    dl = document.createElement('datalist');
+    dl.id = 'oneoffDatalist';
+    document.body.appendChild(dl);
+  }
+  dl.innerHTML = oneoffItemNames.map(n => `<option value="${n}">`).join('');
+}
+
+async function addOneoffRow(name, qty, cost) {
+  await loadOneoffItemNames();
+  buildDatalist();
+
+  oneoffRowCount++;
+  const id  = oneoffRowCount;
+  const row = document.createElement('div');
+  row.id = `oneoffRow_${id}`;
+  row.style.cssText = 'display:grid;grid-template-columns:1fr 80px 110px 100px 28px;gap:6px;align-items:center;';
+  row.innerHTML = `
+    <input type="text" list="oneoffDatalist" placeholder="Item description"
+           value="${name || ''}" style="font-size:13px;" oninput="calcOneoffRow(${id})">
+    <input type="number" placeholder="Qty" value="${qty || 1}" min="1" step="1"
+           style="font-size:13px;text-align:center;" oninput="calcOneoffRow(${id})">
+    <input type="number" placeholder="Unit cost" value="${cost || ''}" min="0" step="0.01"
+           style="font-size:13px;text-align:right;" oninput="calcOneoffRow(${id})">
+    <div id="oneoffRowTotal_${id}"
+         style="font-size:13px;font-weight:700;color:var(--blue);text-align:right;padding-right:4px;">$0.00</div>
+    <button type="button" onclick="removeOneoffRow(${id})"
+            style="background:none;border:none;cursor:pointer;color:var(--gray-600);font-size:16px;line-height:1;padding:0;">×</button>
+  `;
+  document.getElementById('oneoffRows').appendChild(row);
+  calcOneoffRow(id);
+}
+
+function calcOneoffRow(id) {
+  const row  = document.getElementById(`oneoffRow_${id}`);
+  if (!row) return;
+  const inputs = row.querySelectorAll('input');
+  const qty    = parseFloat(inputs[1].value) || 0;
+  const cost   = parseFloat(inputs[2].value) || 0;
+  const total  = qty * cost;
+  const tot    = document.getElementById(`oneoffRowTotal_${id}`);
+  if (tot) tot.textContent = '$' + total.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+  updateOneoffTotal();
+
+  // Save item name to known list
+  const itemName = inputs[0].value.trim();
+  if (itemName && SESSION_KEY && !oneoffItemNames.includes(itemName)) {
+    oneoffItemNames.push(itemName);
+    buildDatalist();
+    // Persist to Worker KV
+    fetch(`${WORKER_URL}/oneoff-items`, {
+      method:  'POST',
+      headers: authHeaders(),
+      body:    JSON.stringify({ items: oneoffItemNames }),
+    }).catch(() => {});
+  }
+}
+
+function removeOneoffRow(id) {
+  const el = document.getElementById(`oneoffRow_${id}`);
+  if (el) el.remove();
+  updateOneoffTotal();
+}
+
+function updateOneoffTotal() {
+  let total = 0;
+  document.querySelectorAll('#oneoffRows > div').forEach(row => {
+    const inputs = row.querySelectorAll('input');
+    const qty    = parseFloat(inputs[1]?.value) || 0;
+    const cost   = parseFloat(inputs[2]?.value) || 0;
+    total += qty * cost;
+  });
+  const totalBox = document.getElementById('oneoffTotal');
+  const totalVal = document.getElementById('oneoffTotalVal');
+  if (totalVal) totalVal.textContent = '$' + total.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+  if (totalBox) totalBox.style.display = total > 0 ? 'flex' : 'none';
+}
+
+function collectOneoffItems() {
+  const items = [];
+  document.querySelectorAll('#oneoffRows > div').forEach(row => {
+    const inputs = row.querySelectorAll('input');
+    const name   = inputs[0]?.value.trim();
+    const qty    = parseFloat(inputs[1]?.value) || 0;
+    const cost   = parseFloat(inputs[2]?.value) || 0;
+    if (name || qty || cost) items.push({ name, qty, cost, total: qty * cost });
+  });
+  return items;
+}
+
+async function loadOneoffItems(items) {
+  document.getElementById('oneoffRows').innerHTML = '';
+  oneoffRowCount = 0;
+  for (const i of (items || [])) {
+    await addOneoffRow(i.name, i.qty, i.cost);
+  }
+  updateOneoffTotal();
+}
+
+// ---- ORDER NUMBER LOOKUP ----
+async function lookupOrderNumber(companyName) {
+  // Order number comes from /so-number on page load — no per-company lookup needed
+  // Just trigger org-persons fetch for contact auto-fill (handled by selectOrg)
+}
+
+function setOrderNumber(value, color, hint) {
+  const numEl = document.getElementById('orderNumber');
+  numEl.value            = value;
+  numEl.style.color      = color || 'white';
+  numEl.style.background = 'rgba(255,255,255,.1)';
+  numEl.style.border     = '1px solid rgba(255,255,255,.3)';
+  if (hint) {
+    numEl.title = hint;
+    // Brief flash on the header field
+    numEl.style.borderColor = 'rgba(255,255,255,.7)';
+    setTimeout(() => { numEl.style.borderColor = 'rgba(255,255,255,.3)'; }, 1500);
+  }
+  updateCommercialTermsSummary();
+}
+
+
+function showPopup(message) {
+  const popup = document.getElementById('generalPopup');
+  const msg   = document.getElementById('generalPopupMsg');
+  msg.textContent = message;
+  popup.style.display = 'flex';
+  setTimeout(() => popup.style.display = 'none', 3000);
+}
+
+function closePopup() {
+  document.getElementById('generalPopup').style.display = 'none';
+}
+
+function checkOrderNumber() {
+  const orderNumEl = document.getElementById('orderNumber');
+  if (!orderNumEl || !orderNumEl.value || orderNumEl.value === '—' || orderNumEl.value === '…' || orderNumEl.value.trim() === '') {
+    showPopup('Please fill order number');
+    orderNumEl.style.border = '1px solid orange';
+    setTimeout(() => { orderNumEl.style.border = ''; }, 4000);
+    return false;
+  }
+  return true;
+}
+
+function printWithValidation() {
+  if (!checkOrderNumber()) return;
+  if (validateMandatoryFields()) window.print();
+}
+
+function markComplete() {
+  if (!checkOrderNumber()) return;
+  if (!validateMandatoryFields()) return;
+  const btn = event.target;
+  btn.textContent = '✓ Order Ready to Sign';
+  btn.style.background = '#15803D';
+  setTimeout(() => window.print(), 300);
+}
+
+// ---- CLEAR VALIDATION ON INPUT ----
+document.addEventListener('DOMContentLoaded', () => {
+  MANDATORY_FIELDS.forEach(f => {
+    const el = document.getElementById(f.id);
+    if (el) el.addEventListener('input', () => {
+      el.style.borderColor = '';
+      // Hide toast if all are now filled
+      if (MANDATORY_FIELDS.every(f2 => document.getElementById(f2.id)?.value.trim())) {
+        document.getElementById('validationToast').style.display = 'none';
+      }
+    });
+  });
+});
+// ---- INIT ----
+window.addEventListener('DOMContentLoaded', async () => {
+  const paygItem = document.querySelector('#serviceModelGroup .option-item:nth-child(3)');
+  if (paygItem) selectModel('committed750', paygItem);
+  selectRenewal('none', null, true);
+
+  addGpuRow('H100', 1);
+  updateCommercialTermsSummary();
+
+  document.getElementById('estimatorBody').style.display = 'none';
+  document.getElementById('estimatorChevron').style.transform = 'rotate(180deg)';
+  estimatorCollapsed = true;
+  document.getElementById('estimatorCard').classList.add('no-print');
+
+  const today = new Date().toISOString().split('T')[0];
+  document.getElementById('vendorDate').value    = today;
+  document.getElementById('contractDate').value  = today;
+  document.getElementById('effectiveDate').value = today;
+  syncBillingStart();
+  updateCommercialTermsSummary();
+
+  // Init e-signature pads
+  initSigPad('sigVendor');
+  initSigPad('sigCustomer');
+
+  // Load MLA URL and termination text for all users (public endpoints)
+  loadMlaUrl();
+  loadTerminationText();
+
+  // Order number: fetch from Worker if authenticated, else leave as — for manual entry
+  await fetchOrderNumber();
+});
+
+async function initApp() {
+  // Re-fetch order number after login to get latest value
+  await fetchOrderNumber();
+}
+
+async function fetchOrderNumber() {
+  try {
+    const res  = await fetch(`${WORKER_URL}/so-number`);
+    const data = await res.json();
+    const numEl = document.getElementById('orderNumber');
+    if (data.order_number !== null && data.order_number !== undefined) {
+      numEl.value            = data.order_number;
+      numEl.setAttribute('readonly', true);
+      numEl.style.color      = 'white';
+      numEl.style.background = 'rgba(255,255,255,.1)';
+      numEl.style.border     = '1px solid rgba(255,255,255,.3)';
+      numEl.title            = 'Order number from Pipedrive SalesOrderNumber';
+    } else {
+      numEl.value = '—';
+      numEl.removeAttribute('readonly');
+      numEl.title            = 'Could not fetch order number — enter manually';
+      numEl.style.color      = 'rgba(255,255,255,.6)';
+      numEl.style.background = 'rgba(255,255,255,.05)';
+      numEl.style.border     = '1px solid rgba(255,255,255,.2)';
+    }
+  } catch (e) {
+    const numEl = document.getElementById('orderNumber');
+    numEl.value = '—';
+    numEl.removeAttribute('readonly');
+    numEl.style.color      = 'rgba(255,255,255,.6)';
+    numEl.style.background = 'rgba(255,255,255,.05)';
+    numEl.style.border     = '1px solid rgba(255,165,0,.6)';
+  }
+}
+
+</script>
+</body>
+</html>

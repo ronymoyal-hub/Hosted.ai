@@ -1,0 +1,741 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>GPU Efficiency Calculator — hosted.ai</title>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@tabler/icons-webfont@2.44.0/tabler-icons.min.css">
+<style>
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+:root {
+  --bg: #ffffff; --bg2: #f6f8fa; --bg3: #f0f6ff;
+  --text: #1a1a1a; --text2: #57606a; --text3: #8b949e;
+  --border: rgba(0,0,0,0.12); --border2: rgba(0,0,0,0.2);
+  --blue: #185FA5; --blue-light: #E6F1FB; --blue-mid: #378ADD;
+  --green: #3B6D11; --green-light: #EAF3DE; --green-mid: #639922;
+  --red: #A32D2D; --red-light: #FCEBEB; --red-mid: #E24B4A;
+  --amber: #854F0B; --amber-mid: #EF9F27;
+  --radius: 8px; --radius-lg: 12px;
+  --page-pad: clamp(1rem, 4vw, 2rem);
+  --font-base: clamp(13px, 1.5vw, 15px);
+}
+@media (prefers-color-scheme: dark) {
+  :root {
+    --bg: #0d1117; --bg2: #161b22; --bg3: #1a2332;
+    --text: #e6edf3; --text2: #8b949e; --text3: #6e7681;
+    --border: rgba(255,255,255,0.1); --border2: rgba(255,255,255,0.2);
+    --blue-light: #0c2d4a; --green-light: #122208; --red-light: #2d0f0f;
+  }
+}
+html { font-size: var(--font-base); }
+body { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Helvetica, Arial, sans-serif; background: var(--bg2); color: var(--text); min-height: 100vh; }
+.page { max-width: 1100px; margin: 0 auto; padding: var(--page-pad) var(--page-pad) 4rem; }
+
+/* ── Header ── */
+header { display: flex; align-items: flex-start; justify-content: space-between; gap: 12px; margin-bottom: 1.5rem; padding-bottom: 1.1rem; border-bottom: 0.5px solid var(--border); flex-wrap: wrap; }
+.logo { font-size: clamp(15px, 2.5vw, 19px); font-weight: 600; color: var(--text); }
+.logo span { color: var(--blue-mid); }
+.logo-sub { font-size: clamp(11px, 1.3vw, 13px); color: var(--text3); margin-top: 2px; }
+.tabs { display: flex; gap: 6px; flex-wrap: wrap; }
+.tab-btn { font-size: clamp(11px, 1.3vw, 13px); padding: 5px clamp(10px, 2vw, 16px); border-radius: var(--radius); border: 0.5px solid var(--border2); background: transparent; color: var(--text2); cursor: pointer; transition: all 0.15s; font-family: inherit; white-space: nowrap; }
+.tab-btn:hover { background: var(--bg3); }
+.tab-btn.active { background: var(--blue-light); color: var(--blue); border-color: transparent; font-weight: 500; }
+
+/* ── Main grid: sidebar + content ── */
+.grid {
+  display: grid;
+  grid-template-columns: minmax(300px, 380px) 1fr;
+  gap: clamp(10px, 2vw, 20px);
+  align-items: start;
+}
+@media (max-width: 780px) { .grid { grid-template-columns: 1fr; } }
+
+/* ── Cards ── */
+.card { background: var(--bg); border: 0.5px solid var(--border); border-radius: var(--radius-lg); padding: clamp(0.75rem, 2vw, 1.1rem) clamp(0.85rem, 2vw, 1.35rem); }
+.section-label { font-size: clamp(9px, 1.1vw, 11px); font-weight: 600; letter-spacing: 0.07em; text-transform: uppercase; color: var(--text3); margin-bottom: 10px; }
+
+/* ── Sliders ── */
+.slider-row { display: grid; grid-template-columns: 130px 1fr 72px; align-items: center; gap: 10px; margin-bottom: 9px; }
+.slider-row label { font-size: 12px; color: var(--text2); line-height: 1.3; }
+.slider-row input[type=range] { min-width: 0; accent-color: var(--blue-mid); cursor: pointer; width: 100%; }
+.num-input {
+  width: 72px; height: 28px; padding: 0 6px;
+  font-size: 12px; font-weight: 500; font-family: inherit;
+  color: var(--text); background: var(--bg2);
+  border: 0.5px solid var(--border2); border-radius: var(--radius);
+  text-align: right; outline: none; transition: border-color 0.15s;
+}
+.num-input:focus { border-color: var(--blue-mid); background: var(--bg); }
+.num-input::-webkit-inner-spin-button, .num-input::-webkit-outer-spin-button { opacity: 0.4; }
+
+/* ── Preset buttons ── */
+.presets { display: flex; gap: 6px; flex-wrap: wrap; margin-top: 4px; }
+.pre-btn { font-size: clamp(10px, 1.2vw, 12px); padding: 4px clamp(8px, 1.5vw, 12px); border-radius: var(--radius); border: 0.5px solid var(--border2); background: transparent; color: var(--text2); cursor: pointer; font-family: inherit; transition: all 0.15s; }
+.pre-btn:hover { background: var(--bg2); }
+.pre-btn.active { background: var(--blue-light); color: var(--blue); border-color: transparent; font-weight: 500; }
+
+/* ── Metric cards ── */
+.metrics { display: grid; grid-template-columns: repeat(3, 1fr); gap: clamp(6px, 1.5vw, 10px); margin-bottom: clamp(8px, 1.5vw, 14px); }
+@media (max-width: 480px) { .metrics { grid-template-columns: 1fr 1fr; } }
+.metric { background: var(--bg2); border-radius: var(--radius); padding: clamp(0.6rem, 1.5vw, 0.85rem) clamp(0.6rem, 1.5vw, 1rem); }
+.metric .lbl { font-size: clamp(10px, 1.1vw, 12px); color: var(--text3); line-height: 1.3; }
+.metric .val { font-size: clamp(16px, 2.5vw, 22px); font-weight: 500; margin-top: 3px; }
+.metric .sub { font-size: clamp(10px, 1.1vw, 12px); margin-top: 3px; color: var(--text3); }
+
+/* ── Chart legend ── */
+.chart-header { display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 8px; gap: 8px; flex-wrap: wrap; }
+.chart-legend { display: flex; gap: clamp(8px, 1.5vw, 14px); font-size: clamp(10px, 1.1vw, 12px); color: var(--text2); flex-wrap: wrap; }
+.legend-sq { width: 10px; height: 10px; border-radius: 2px; display: inline-block; vertical-align: middle; margin-right: 3px; }
+.chart-wrap { position: relative; width: 100%; }
+
+/* ── Insight box ── */
+.insight { border-left: 3px solid var(--red-mid); background: var(--red-light); padding: 10px 14px; border-radius: 0 var(--radius) var(--radius) 0; margin-top: 12px; }
+.insight.good { border-left-color: var(--green-mid); background: var(--green-light); }
+.insight p { font-size: clamp(11px, 1.3vw, 13px); color: var(--red); line-height: 1.55; }
+.insight.good p { color: var(--green); }
+
+.divider { border: none; border-top: 0.5px solid var(--border); margin: 10px 0; }
+footer { text-align: center; font-size: clamp(10px, 1.1vw, 12px); color: var(--text3); margin-top: 2.5rem; padding-top: 1.25rem; border-top: 0.5px solid var(--border); }
+
+/* ── Chassis panel ── */
+.chassis-panel { margin-top: clamp(10px, 1.5vw, 16px); }
+.chassis-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(180px, 1fr)); gap: 8px; margin-bottom: 12px; }
+.chassis-btn { display: flex; flex-direction: column; align-items: flex-start; gap: 2px; padding: 10px 12px; border-radius: var(--radius); border: 0.5px solid var(--border2); background: var(--bg); cursor: pointer; font-family: inherit; text-align: left; transition: all 0.15s; }
+.chassis-btn:hover { background: var(--bg3); border-color: var(--blue-mid); }
+.chassis-btn.active { background: var(--blue-light); border-color: var(--blue); }
+.chassis-btn .cb-name { font-size: 12px; font-weight: 600; color: var(--text); }
+.chassis-btn .cb-sub { font-size: 10px; color: var(--text3); }
+.chassis-btn.active .cb-name { color: var(--blue); }
+.chassis-breakdown { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; margin-top: 10px; }
+@media (max-width: 600px) { .chassis-breakdown { grid-template-columns: 1fr; } }
+.cb-row { display: flex; justify-content: space-between; align-items: center; padding: 5px 0; border-bottom: 0.5px solid var(--border); font-size: 12px; }
+.cb-row:last-child { border-bottom: none; }
+.cb-row .cb-lbl { color: var(--text2); }
+.cb-row .cb-val { font-weight: 500; color: var(--text); }
+.power-bar-wrap { margin: 6px 0 2px; }
+.power-bar-track { height: 6px; background: var(--border); border-radius: 3px; overflow: hidden; margin-top: 3px; }
+.power-bar-fill { height: 100%; border-radius: 3px; transition: width 0.3s ease; }
+.chassis-total-card { background: var(--bg2); border-radius: var(--radius); padding: 12px 14px; }
+.chassis-total-card .ct-val { font-size: 22px; font-weight: 500; margin-top: 2px; }
+.chassis-total-card .ct-lbl { font-size: 11px; color: var(--text3); }
+.chassis-warning { font-size: 11px; color: var(--amber); margin-top: 6px; padding: 6px 10px; background: #FFF8ED; border-radius: var(--radius); border: 0.5px solid #F0C070; }
+@media (prefers-color-scheme: dark) { .chassis-warning { background: #2a1f00; border-color: #7a5800; } }
+</style>
+</head>
+<body>
+<div class="page">
+
+<header>
+  <div>
+    <div class="logo">GPU efficiency calculator <span>· hosted.ai</span></div>
+    <div class="logo-sub">Understand the real cost of GPU utilisation</div>
+  </div>
+  <div class="tabs">
+    <button class="tab-btn active" id="tab-power" onclick="setTab('power')">Power</button>
+    <button class="tab-btn" id="tab-cost" onclick="setTab('cost')">Cost</button>
+    <button class="tab-btn" id="tab-compare" onclick="setTab('compare')">Scenarios</button>
+  </div>
+</header>
+
+<div class="grid">
+
+  <div class="card">
+    <div class="section-label">GPU preset</div>
+    <div style="font-size:clamp(9px,1vw,10px);color:var(--text3);margin-bottom:5px;letter-spacing:0.04em;">AMPERE / HOPPER / ADA</div>
+    <div class="presets" style="margin-bottom:8px;">
+      <button class="pre-btn" id="pre-a100" onclick="preset(400,65,'a100')">A100 SXM</button>
+      <button class="pre-btn active" id="pre-h100" onclick="preset(700,90,'h100')">H100 SXM</button>
+      <button class="pre-btn" id="pre-h200" onclick="preset(700,95,'h200')">H200 SXM</button>
+      <button class="pre-btn" id="pre-l40" onclick="preset(300,45,'l40')">L40S</button>
+    </div>
+    <div style="font-size:clamp(9px,1vw,10px);color:var(--text3);margin-bottom:5px;letter-spacing:0.04em;">BLACKWELL</div>
+    <div class="presets" style="margin-bottom:10px;">
+      <button class="pre-btn" id="pre-b100" onclick="preset(700,95,'b100')">B100</button>
+      <button class="pre-btn" id="pre-b200" onclick="preset(1000,120,'b200')">B200</button>
+      <button class="pre-btn" id="pre-b300" onclick="preset(1400,160,'b300')">B300 Ultra</button>
+      <button class="pre-btn" id="pre-gb200" onclick="preset(1200,140,'gb200')">GB200</button>
+    </div>
+    <div id="gpu-spec-badge" style="font-size:clamp(10px,1.1vw,11px);color:var(--text2);line-height:1.6;padding:8px 10px;background:var(--bg2);border-radius:var(--radius);border:0.5px solid var(--border);margin-bottom:10px;">
+      <span style="font-weight:500;color:var(--text);">Hopper</span><span style="margin:0 5px;color:var(--text3);">·</span>80GB HBM3<span style="margin:0 5px;color:var(--text3);">·</span>700W TDP<span style="display:block;margin-top:2px;font-style:italic;color:var(--text3);">Industry baseline for AI training</span>
+    </div>
+    <hr class="divider">
+    <div class="section-label">Fleet parameters</div>
+    <div class="slider-row">
+      <label>Number of GPUs</label>
+      <input type="range" id="s-gpus" min="1" max="200" value="10" step="1" oninput="syncFromSlider('gpus')">
+      <input type="number" class="num-input" id="n-gpus" min="1" max="200" value="10" step="1" oninput="syncFromInput('gpus')">
+    </div>
+    <div class="slider-row">
+      <label>Current utilisation</label>
+      <input type="range" id="s-util" min="5" max="100" value="40" step="1" oninput="syncFromSlider('util')">
+      <input type="number" class="num-input" id="n-util" min="5" max="100" value="40" step="1" oninput="syncFromInput('util')" style="width:72px;">
+    </div>
+    <div class="slider-row">
+      <label>Target utilisation</label>
+      <input type="range" id="s-target" min="5" max="100" value="85" step="1" oninput="syncFromSlider('target')">
+      <input type="number" class="num-input" id="n-target" min="5" max="100" value="85" step="1" oninput="syncFromInput('target')">
+    </div>
+    <div class="slider-row">
+      <label>Electricity ¢/kWh</label>
+      <input type="range" id="s-kwh" min="0" max="30" value="12" step="1" oninput="syncFromSlider('kwh')">
+      <input type="number" class="num-input" id="n-kwh" min="0" max="30" value="12" step="1" oninput="syncFromInput('kwh')">
+    </div>
+    <div class="slider-row">
+      <label>Idle power (W)</label>
+      <input type="range" id="s-idle" min="50" max="200" value="90" step="5" oninput="syncFromSlider('idle')">
+      <input type="number" class="num-input" id="n-idle" min="50" max="200" value="90" step="5" oninput="syncFromInput('idle')">
+    </div>
+    <div class="slider-row">
+      <label>Peak TDP (W)</label>
+      <input type="range" id="s-tdp" min="300" max="1500" value="700" step="50" oninput="syncFromSlider('tdp')">
+      <input type="number" class="num-input" id="n-tdp" min="300" max="1500" value="700" step="50" oninput="syncFromInput('tdp')">
+    </div>
+  </div>
+
+  <div>
+    <div class="metrics" id="panel-power">
+      <div class="metric"><div class="lbl">Current power draw</div><div class="val" id="m-curpow" style="color:#378ADD">—</div><div class="sub" id="m-curpow-sub">fleet total</div></div>
+      <div class="metric"><div class="lbl">At target utilisation</div><div class="val" id="m-tgtpow" style="color:#639922">—</div><div class="sub" id="m-tgtpow-sub">fleet total</div></div>
+      <div class="metric"><div class="lbl">Idle floor waste</div><div class="val" id="m-waste" style="color:#E24B4A">—</div><div class="sub" id="m-waste-pct" style="color:#A32D2D">of total draw</div></div>
+    </div>
+    <div class="metrics" id="panel-cost" style="display:none">
+      <div class="metric"><div class="lbl">Annual cost (current)</div><div class="val" id="m-curcost" style="color:#378ADD">—</div><div class="sub">electricity only</div></div>
+      <div class="metric"><div class="lbl">Annual cost (target)</div><div class="val" id="m-tgtcost" style="color:#639922">—</div><div class="sub">electricity only</div></div>
+      <div class="metric"><div class="lbl">Annual savings</div><div class="val" id="m-savings" style="color:#3B6D11">—</div><div class="sub" id="m-savings-pct">reduction</div></div>
+    </div>
+    <div class="metrics" id="panel-compare" style="display:none">
+      <div class="metric"><div class="lbl">GPUs @ current util</div><div class="val" id="m-gpus-cur" style="color:#E24B4A">—</div><div class="sub">to match throughput</div></div>
+      <div class="metric"><div class="lbl">GPUs @ target util</div><div class="val" id="m-gpus-tgt" style="color:#639922">—</div><div class="sub">to match throughput</div></div>
+      <div class="metric"><div class="lbl">Hardware overhead</div><div class="val" id="m-overhead" style="color:#BA7517">—</div><div class="sub">extra GPUs wasted</div></div>
+    </div>
+
+    <div class="card" style="margin-bottom:clamp(8px,1.5vw,14px);">
+      <div class="chart-header">
+        <div class="section-label" style="margin:0;">Power vs utilisation</div>
+        <div class="chart-legend">
+          <span><span class="legend-sq" style="background:#378ADD;"></span>1× GPU</span>
+          <span><span class="legend-sq" style="background:#E24B4A;opacity:0.7;"></span>2× GPU combined</span>
+          <span><span class="legend-sq" style="background:#639922;"></span>Your fleet pts</span>
+        </div>
+      </div>
+      <div class="chart-wrap" style="height:clamp(150px,22vw,220px);"><canvas id="powerChart" role="img" aria-label="Power vs utilisation curve">GPU power draw from idle to TDP.</canvas></div>
+    </div>
+
+    <div class="card">
+      <div class="chart-header">
+        <div class="section-label" style="margin:0;">Annual electricity cost by utilisation</div>
+        <div style="font-size:clamp(10px,1.1vw,12px);color:var(--text3);" id="fleet-label">10 GPUs · $0.12/kWh</div>
+      </div>
+      <div class="chart-wrap" style="height:clamp(120px,18vw,170px);"><canvas id="costChart" role="img" aria-label="Annual cost by utilisation level">Cost vs utilisation for configured fleet.</canvas></div>
+    </div>
+
+    <div id="insight-box"></div>
+  </div>
+</div>
+
+<!-- ── Chassis & System Power Panel ── -->
+<div class="card chassis-panel">
+  <div class="section-label">Server chassis &amp; system power breakdown</div>
+  <p style="font-size:12px;color:var(--text2);margin-bottom:12px;line-height:1.5;">
+    GPU TDP is only part of total system power. Select a chassis to see how CPUs, NVSwitch fabric, memory, networking, and PSU losses stack up — and how the total fluctuates with GPU utilisation.
+  </p>
+
+  <div class="chassis-grid" id="chassis-grid"><!-- populated by JS --></div>
+
+  <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:10px;margin-bottom:14px;" id="chassis-totals">
+    <div class="chassis-total-card">
+      <div class="ct-lbl">Total system power (current util)</div>
+      <div class="ct-val" id="ct-cur" style="color:var(--blue-mid);">—</div>
+      <div style="font-size:11px;color:var(--text3);margin-top:2px;" id="ct-cur-sub"></div>
+    </div>
+    <div class="chassis-total-card">
+      <div class="ct-lbl">Total system power (target util)</div>
+      <div class="ct-val" id="ct-tgt" style="color:var(--green-mid);">—</div>
+      <div style="font-size:11px;color:var(--text3);margin-top:2px;" id="ct-tgt-sub"></div>
+    </div>
+    <div class="chassis-total-card">
+      <div class="ct-lbl">Non-GPU overhead (fixed)</div>
+      <div class="ct-val" id="ct-overhead" style="color:var(--amber-mid);">—</div>
+      <div style="font-size:11px;color:var(--text3);margin-top:2px;" id="ct-overhead-sub">always-on regardless of util</div>
+    </div>
+  </div>
+
+  <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;" id="chassis-detail-wrap">
+    <div>
+      <div class="section-label" style="margin-bottom:8px;">Power component breakdown (per chassis)</div>
+      <div id="chassis-bars"><!-- bars injected by JS --></div>
+    </div>
+    <div>
+      <div class="section-label" style="margin-bottom:8px;">System power vs GPU utilisation</div>
+      <div style="position:relative;height:180px;"><canvas id="chassisChart" role="img" aria-label="Total system power vs GPU utilisation">Total server power including non-GPU components.</canvas></div>
+    </div>
+  </div>
+
+  <div id="chassis-warning-box"></div>
+</div>
+
+<footer>Built with hosted.ai &nbsp;·&nbsp; hello@hosted.ai &nbsp;·&nbsp; hosted.ai</footer>
+</div>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.js"></script>
+<script>
+let activeTab = 'power';
+let pChart, cChart;
+
+function gpuPower(u, idle, tdp) {
+  const t = u / 100;
+  return idle + (tdp - idle) * (t < 0.3 ? t * 1.6 : 0.48 + (t - 0.3) * 0.74);
+}
+function fmt(n) {
+  if (n >= 1000000) return '$' + (n/1000000).toFixed(1) + 'M';
+  if (n >= 1000) return '$' + Math.round(n/1000) + 'k';
+  return '$' + Math.round(n);
+}
+function fmtKW(w) {
+  if (w >= 1000000) return (w/1000000).toFixed(1) + ' GW';
+  if (w >= 1000) return (w/1000).toFixed(1) + ' kW';
+  return Math.round(w) + ' W';
+}
+
+function syncFromSlider(key) {
+  const s = document.getElementById('s-' + key);
+  const n = document.getElementById('n-' + key);
+  if (n) n.value = s.value;
+  update();
+}
+function syncFromInput(key) {
+  const n = document.getElementById('n-' + key);
+  const s = document.getElementById('s-' + key);
+  let v = parseFloat(n.value);
+  if (isNaN(v)) return;
+  v = Math.min(parseFloat(s.max), Math.max(parseFloat(s.min), v));
+  s.value = v;
+  n.value = v;
+  update();
+}
+function setSliderAndInput(key, val) {
+  const s = document.getElementById('s-' + key);
+  const n = document.getElementById('n-' + key);
+  if (s) s.value = val;
+  if (n) n.value = val;
+}
+
+function setTab(tab) {
+  activeTab = tab;
+  ['power','cost','compare'].forEach(t => {
+    document.getElementById('panel-'+t).style.display = t === tab ? 'grid' : 'none';
+    document.getElementById('tab-'+t).classList.toggle('active', t === tab);
+  });
+}
+
+const GPU_SPECS = {
+  'a100':  { tdp:400,  idle:65,  vram:'80GB HBM2e',  arch:'Ampere',        note:'Drop-in friendly; still widely deployed' },
+  'h100':  { tdp:700,  idle:90,  vram:'80GB HBM3',   arch:'Hopper',        note:'Industry baseline for AI training' },
+  'h200':  { tdp:700,  idle:95,  vram:'141GB HBM3e', arch:'Hopper',        note:'Same TDP as H100, far more memory bandwidth' },
+  'l40':   { tdp:300,  idle:45,  vram:'48GB GDDR6',  arch:'Ada Lovelace',  note:'Air-cooled; inference & rendering workloads' },
+  'b100':  { tdp:700,  idle:95,  vram:'192GB HBM3e', arch:'Blackwell',     note:'Drop-in H100 board replacement, same TDP' },
+  'b200':  { tdp:1000, idle:120, vram:'192GB HBM3e', arch:'Blackwell',     note:'Liquid cooling recommended; 4x H100 inference' },
+  'b300':  { tdp:1400, idle:160, vram:'288GB HBM3e', arch:'Blackwell Ultra', note:'Liquid cooling mandatory — highest TDP GPU available' },
+  'gb200': { tdp:1200, idle:140, vram:'384GB HBM3e', arch:'Blackwell',     note:'Grace-Blackwell Superchip (2 GPU + 1 Grace CPU)' },
+};
+
+function preset(tdp, idle, key) {
+  setSliderAndInput('tdp', tdp);
+  setSliderAndInput('idle', idle);
+  const allKeys = ['h100','a100','h200','l40','b100','b200','b300','gb200'];
+  allKeys.forEach(k => { const el = document.getElementById('pre-'+k); if (el) el.classList.toggle('active', k === key); });
+  const spec = GPU_SPECS[key];
+  const badge = document.getElementById('gpu-spec-badge');
+  if (badge && spec) {
+    badge.innerHTML =
+      '<span style="font-weight:500;color:var(--text);">' + spec.arch + '</span>' +
+      '<span style="margin:0 5px;color:var(--text3);">·</span>' + spec.vram +
+      '<span style="margin:0 5px;color:var(--text3);">·</span>' + spec.tdp + 'W TDP' +
+      '<span style="display:block;margin-top:2px;font-style:italic;color:var(--text3);">' + spec.note + '</span>';
+  }
+  update();
+}
+
+function update() {
+  const gpus   = +document.getElementById('s-gpus').value;
+  const util   = +document.getElementById('s-util').value;
+  const target = +document.getElementById('s-target').value;
+  const kwh    = +document.getElementById('s-kwh').value / 100;
+  const idle   = +document.getElementById('s-idle').value;
+  const tdp    = +document.getElementById('s-tdp').value;
+
+  const curPow1   = gpuPower(util, idle, tdp);
+  const tgtPow1   = gpuPower(target, idle, tdp);
+  const curTotal  = curPow1 * gpus;
+  const tgtTotal  = tgtPow1 * gpus;
+  const idleTotal = idle * gpus;
+  const wastePct  = Math.round(idleTotal / curTotal * 100);
+
+  document.getElementById('m-curpow').textContent     = fmtKW(curTotal);
+  document.getElementById('m-curpow-sub').textContent = Math.round(curPow1) + 'W x ' + gpus + ' GPUs';
+  document.getElementById('m-tgtpow').textContent     = fmtKW(tgtTotal);
+  document.getElementById('m-tgtpow-sub').textContent = Math.round(tgtPow1) + 'W x ' + gpus + ' GPUs';
+  document.getElementById('m-waste').textContent      = fmtKW(idleTotal);
+  document.getElementById('m-waste-pct').textContent  = wastePct + '% of draw — always on';
+
+  const hrs     = 8760;
+  const curCost = curTotal / 1000 * hrs * kwh;
+  const tgtCost = tgtTotal / 1000 * hrs * kwh;
+  const savings = curCost - tgtCost;
+  const savPct  = Math.round(savings / curCost * 100);
+
+  document.getElementById('m-curcost').textContent     = fmt(curCost);
+  document.getElementById('m-tgtcost').textContent     = fmt(tgtCost);
+  document.getElementById('m-savings').textContent     = fmt(savings);
+  document.getElementById('m-savings-pct').textContent = savPct + '% reduction';
+
+  const gpusCur = Math.ceil(gpus * 100 / util);
+  const gpusTgt = Math.ceil(gpus * 100 / target);
+  document.getElementById('m-gpus-cur').textContent = gpusCur;
+  document.getElementById('m-gpus-tgt').textContent = gpusTgt;
+  document.getElementById('m-overhead').textContent = '+' + (gpusCur - gpusTgt) + ' GPUs';
+
+  document.getElementById('fleet-label').textContent = gpus + ' GPUs · $' + kwh.toFixed(2) + '/kWh';
+
+  const ib = document.getElementById('insight-box');
+  if (util < 60) {
+    const ep = Math.round((gpuPower(util,idle,tdp)*2 - gpuPower(100,idle,tdp)) / gpuPower(100,idle,tdp) * 100);
+    ib.innerHTML = '<div class="insight" style="margin-top:12px;"><p><strong>Power overhead warning:</strong> At ' + util + '% utilisation, running 2x GPUs consumes ~' + ep + '% more power than 1x GPU at 100% for equal throughput. Your fleet\'s idle floor alone costs ' + fmt(idleTotal/1000*hrs*kwh) + '/yr.</p></div>';
+  } else {
+    ib.innerHTML = '<div class="insight good" style="margin-top:12px;"><p><strong>Good utilisation:</strong> At ' + util + '% your fleet is in efficient territory. Pushing to ' + target + '% saves ' + fmt(savings) + '/yr in electricity — before accounting for hardware consolidation savings.</p></div>';
+  }
+
+  updatePowerChart(util, target, idle, tdp);
+  updateCostChart(gpus, kwh, idle, tdp);
+  updateChassis();
+}
+
+function tickFontSize() {
+  return window.innerWidth < 480 ? 9 : 10;
+}
+
+function updatePowerChart(util, target, idle, tdp) {
+  const labels = Array.from({length:51}, (_,i) => i*2);
+  const single = labels.map(u => gpuPower(u, idle, tdp));
+  const dual   = single.map(v => v * 2);
+  const pts    = [{x: util+'%', y: gpuPower(util,idle,tdp)}, {x: target+'%', y: gpuPower(target,idle,tdp)}];
+
+  if (pChart) {
+    pChart.data.labels = labels.map(l => l+'%');
+    pChart.data.datasets[0].data = single;
+    pChart.data.datasets[1].data = dual;
+    pChart.data.datasets[2].data = pts;
+    pChart.update('none'); return;
+  }
+  pChart = new Chart(document.getElementById('powerChart'), {
+    type: 'line',
+    data: { labels: labels.map(l=>l+'%'), datasets: [
+      { label:'1x GPU', data:single, borderColor:'#378ADD', backgroundColor:'rgba(55,138,221,0.08)', fill:true, tension:0.4, borderWidth:2, pointRadius:0 },
+      { label:'2x GPU', data:dual,   borderColor:'#E24B4A', backgroundColor:'rgba(226,75,74,0.05)', fill:true, tension:0.4, borderWidth:1.5, borderDash:[4,3], pointRadius:0 },
+      { label:'Your fleet', data:pts, borderColor:'#639922', backgroundColor:'#639922', pointRadius:6, pointStyle:'circle', showLine:false, type:'scatter' }
+    ]},
+    options: { responsive:true, maintainAspectRatio:false,
+      plugins:{ legend:{display:false}, tooltip:{callbacks:{label:ctx=>ctx.dataset.label+': '+Math.round(ctx.parsed.y)+'W'}} },
+      scales:{
+        x:{ ticks:{color:'#888', font:{size:tickFontSize()}, maxTicksLimit:7}, grid:{color:'rgba(128,128,128,0.1)'} },
+        y:{ ticks:{color:'#888', font:{size:tickFontSize()}, callback:v=>v+'W'}, grid:{color:'rgba(128,128,128,0.1)'}, min:0 }
+      }
+    }
+  });
+}
+
+function updateCostChart(gpus, kwh, idle, tdp) {
+  const utils  = [20,30,40,50,60,70,80,90,100];
+  const costs  = utils.map(u => gpuPower(u,idle,tdp)/1000*8760*kwh*gpus);
+  const curU   = +document.getElementById('s-util').value;
+  const tgtU   = +document.getElementById('s-target').value;
+  const colors = utils.map(u => u <= curU ? '#E24B4A' : (u <= tgtU ? '#EF9F27' : '#B5D4F4'));
+
+  if (cChart) {
+    cChart.data.datasets[0].data = costs;
+    cChart.data.datasets[0].backgroundColor = colors;
+    cChart.update('none'); return;
+  }
+  cChart = new Chart(document.getElementById('costChart'), {
+    type:'bar',
+    data:{ labels:utils.map(u=>u+'%'), datasets:[{label:'Annual cost',data:costs,backgroundColor:colors,borderRadius:3,borderSkipped:false}] },
+    options:{ responsive:true, maintainAspectRatio:false,
+      plugins:{legend:{display:false},tooltip:{callbacks:{label:ctx=>'$'+Math.round(ctx.parsed.y).toLocaleString()}}},
+      scales:{
+        x:{ticks:{color:'#888',font:{size:tickFontSize()}},grid:{display:false}},
+        y:{ticks:{color:'#888',font:{size:tickFontSize()},callback:v=>'$'+(v/1000).toFixed(0)+'k'},grid:{color:'rgba(128,128,128,0.1)'},min:0}
+      }
+    }
+  });
+}
+
+window.addEventListener('resize', () => {
+  if (pChart) { pChart.options.scales.x.ticks.font.size = tickFontSize(); pChart.options.scales.y.ticks.font.size = tickFontSize(); pChart.update('none'); }
+  if (cChart) { cChart.options.scales.x.ticks.font.size = tickFontSize(); cChart.options.scales.y.ticks.font.size = tickFontSize(); cChart.update('none'); }
+});
+
+// ── Chassis data ───────────────────────────────────────────────────────────────
+// All values in Watts. "gpuSlots" = number of GPU slots in this server.
+// Non-GPU fixed components: cpu, nvswitch, memory, networking, storage, fans, psu_loss
+// GPU power scales with utilisation via gpuPower(); everything else is fixed or slightly load-scaled.
+const CHASSIS = {
+  'dgx-a100': {
+    name: 'DGX A100',
+    sub: '8× A100 SXM · 4U',
+    gpuSlots: 8, gpuKey: 'a100',
+    cpu:        { label: '2× AMD EPYC 7742 (CPUs)',   idle: 120, max: 280 },
+    nvswitch:   { label: '6× NVSwitch v2 fabric',     idle: 60,  max: 100 },
+    memory:     { label: 'DDR4 2TB system RAM',        idle: 40,  max: 60  },
+    networking: { label: '8× ConnectX-6 HDR IB NICs', idle: 50,  max: 80  },
+    storage:    { label: 'NVMe SSD array',             idle: 15,  max: 20  },
+    fans:       { label: 'Cooling fans',               idle: 80,  max: 250 },
+    psu_loss:   { label: 'PSU conversion loss (~7%)',  idle: 30,  max: 80  },
+    totalMax: 6500, cooling: 'Air', rack: '4U',
+  },
+  'dgx-h100': {
+    name: 'DGX H100',
+    sub: '8× H100 SXM · 4U',
+    gpuSlots: 8, gpuKey: 'h100',
+    cpu:        { label: '2× Intel Xeon Platinum 8480C', idle: 130, max: 350 },
+    nvswitch:   { label: '4× NVSwitch v3 fabric',        idle: 70,  max: 110 },
+    memory:     { label: 'DDR5 2TB system RAM',           idle: 45,  max: 70  },
+    networking: { label: '8× ConnectX-7 400G IB NICs',   idle: 60,  max: 100 },
+    storage:    { label: 'NVMe SSD array',                idle: 15,  max: 25  },
+    fans:       { label: 'Cooling fans',                  idle: 100, max: 350 },
+    psu_loss:   { label: 'PSU conversion loss (~7%)',     idle: 40,  max: 100 },
+    totalMax: 10200, cooling: 'Air + rear-door HX', rack: '4U',
+  },
+  'dgx-h200': {
+    name: 'DGX H200',
+    sub: '8× H200 SXM · 4U',
+    gpuSlots: 8, gpuKey: 'h200',
+    cpu:        { label: '2× Intel Xeon Platinum 8480C', idle: 130, max: 350 },
+    nvswitch:   { label: '4× NVSwitch v3 fabric',        idle: 70,  max: 115 },
+    memory:     { label: 'DDR5 2TB system RAM',           idle: 45,  max: 70  },
+    networking: { label: '8× ConnectX-7 400G IB NICs',   idle: 60,  max: 100 },
+    storage:    { label: 'NVMe SSD array',                idle: 15,  max: 25  },
+    fans:       { label: 'Cooling fans',                  idle: 100, max: 350 },
+    psu_loss:   { label: 'PSU conversion loss (~7%)',     idle: 40,  max: 100 },
+    totalMax: 10200, cooling: 'Air + rear-door HX', rack: '4U',
+  },
+  'dgx-b200': {
+    name: 'DGX B200',
+    sub: '8× B200 · 4U · liquid',
+    gpuSlots: 8, gpuKey: 'b200',
+    cpu:        { label: '2× Intel Xeon Platinum 8570',  idle: 150, max: 420 },
+    nvswitch:   { label: '2× NVSwitch v5 fabric',        idle: 80,  max: 130 },
+    memory:     { label: 'DDR5 4TB system RAM',           idle: 55,  max: 85  },
+    networking: { label: '8× ConnectX-7 400G IB NICs',   idle: 60,  max: 100 },
+    storage:    { label: 'NVMe SSD array',                idle: 20,  max: 30  },
+    fans:       { label: 'Liquid cooling pumps/fans',     idle: 120, max: 300 },
+    psu_loss:   { label: 'PSU conversion loss (~7%)',     idle: 55,  max: 120 },
+    totalMax: 14300, cooling: 'Direct liquid cooling', rack: '4U',
+  },
+  'dgx-b300': {
+    name: 'DGX B300',
+    sub: '8× B300 Ultra · 4U · liquid',
+    gpuSlots: 8, gpuKey: 'b300',
+    cpu:        { label: '2× Intel Xeon 6776P (64c)',    idle: 160, max: 500 },
+    nvswitch:   { label: '2× NVSwitch v5 fabric',        idle: 85,  max: 140 },
+    memory:     { label: 'DDR5 4TB system RAM',           idle: 55,  max: 85  },
+    networking: { label: '8× ConnectX-8 800G IB NICs',   idle: 80,  max: 140 },
+    storage:    { label: 'NVMe SSD array',                idle: 20,  max: 30  },
+    fans:       { label: 'Liquid cooling pumps/fans',     idle: 130, max: 320 },
+    psu_loss:   { label: 'PSU conversion loss (~7%)',     idle: 60,  max: 130 },
+    totalMax: 14000, cooling: 'Mandatory liquid cooling', rack: '4U',
+  },
+  'hgx-b200': {
+    name: 'HGX B200',
+    sub: '8× B200 · OEM platform',
+    gpuSlots: 8, gpuKey: 'b200',
+    cpu:        { label: '2× Host CPUs (OEM varies)',    idle: 140, max: 380 },
+    nvswitch:   { label: '2× NVSwitch v5 fabric',        idle: 80,  max: 130 },
+    memory:     { label: 'DDR5 system RAM (OEM varies)', idle: 50,  max: 80  },
+    networking: { label: 'Host NICs',                    idle: 50,  max: 90  },
+    storage:    { label: 'NVMe SSD array',               idle: 20,  max: 30  },
+    fans:       { label: 'Cooling (OEM varies)',         idle: 110, max: 280 },
+    psu_loss:   { label: 'PSU conversion loss',          idle: 50,  max: 110 },
+    totalMax: 13500, cooling: 'Liquid recommended', rack: '4U',
+  },
+  'gb200-nvl72': {
+    name: 'GB200 NVL72',
+    sub: '72× B200 GPU · full rack',
+    gpuSlots: 72, gpuKey: 'gb200',
+    cpu:        { label: '36× Grace CPUs (integrated)',  idle: 800, max: 5000 },
+    nvswitch:   { label: 'NVLink Switch 5th gen fabric', idle: 500, max: 1200 },
+    memory:     { label: 'Coherent HBM3e + LPDDR5',      idle: 200, max: 400  },
+    networking: { label: '18× ConnectX-8 800G NICs',     idle: 200, max: 500  },
+    storage:    { label: 'NVMe SSD array',               idle: 40,  max: 60   },
+    fans:       { label: 'DLC-2 liquid cooling system',  idle: 1500,max: 4000 },
+    psu_loss:   { label: 'PSU conversion loss (~8%)',    idle: 500, max: 1500 },
+    totalMax: 120000, cooling: 'Integrated DLC-2 mandatory', rack: '72U full rack',
+  },
+};
+
+let selectedChassis = 'dgx-h100';
+let chassisChart = null;
+
+function buildChassisButtons() {
+  const grid = document.getElementById('chassis-grid');
+  grid.innerHTML = '';
+  Object.entries(CHASSIS).forEach(([key, ch]) => {
+    const btn = document.createElement('button');
+    btn.className = 'chassis-btn' + (key === selectedChassis ? ' active' : '');
+    btn.id = 'cbtn-' + key;
+    btn.innerHTML = '<span class="cb-name">' + ch.name + '</span><span class="cb-sub">' + ch.sub + '</span>';
+    btn.onclick = () => { selectedChassis = key; buildChassisButtons(); updateChassis(); };
+    grid.appendChild(btn);
+  });
+}
+
+function fmtW2(w) {
+  if (w >= 1000) return (w/1000).toFixed(1) + ' kW';
+  return Math.round(w) + ' W';
+}
+
+function updateChassis() {
+  const ch      = CHASSIS[selectedChassis];
+  const userGPUs = +document.getElementById('s-gpus').value;
+  const util     = +document.getElementById('s-util').value;
+  const target   = +document.getElementById('s-target').value;
+  const idle_g   = +document.getElementById('s-idle').value;
+  const tdp_g    = +document.getElementById('s-tdp').value;
+
+  // How many chassis units are needed to host userGPUs?
+  const numChassis = Math.max(1, Math.ceil(userGPUs / ch.gpuSlots));
+  // Actual GPUs populated = userGPUs (may be less than numChassis * gpuSlots)
+  const activeGPUs = userGPUs;
+
+  // GPU power: per-GPU power × actual GPU count
+  const gpuCur = gpuPower(util,   idle_g, tdp_g) * activeGPUs;
+  const gpuTgt = gpuPower(target, idle_g, tdp_g) * activeGPUs;
+  const gpuMax = tdp_g * activeGPUs;
+
+  // Non-GPU components scale by number of chassis units (each chassis has its own CPUs, switches, fans…)
+  const t  = util   / 100;
+  const tt = target / 100;
+  const comps = ['cpu','nvswitch','memory','networking','storage','fans','psu_loss'];
+
+  function compPowerUnit(comp, frac) {
+    return ch[comp].idle + (ch[comp].max - ch[comp].idle) * frac;
+  }
+  function compPowerFleet(comp, frac) {
+    return compPowerUnit(comp, frac) * numChassis;
+  }
+
+  const nonGpuCur  = comps.reduce((s, c) => s + compPowerFleet(c, t),  0);
+  const nonGpuTgt  = comps.reduce((s, c) => s + compPowerFleet(c, tt), 0);
+  const nonGpuIdle = comps.reduce((s, c) => s + ch[c].idle * numChassis, 0);
+
+  const totalCur = gpuCur + nonGpuCur;
+  const totalTgt = gpuTgt + nonGpuTgt;
+
+  // Summary cards
+  document.getElementById('ct-cur').textContent     = fmtW2(totalCur);
+  document.getElementById('ct-cur-sub').textContent =
+    activeGPUs + ' GPUs across ' + numChassis + ' chassis · GPU: ' + fmtW2(gpuCur) + ' + overhead: ' + fmtW2(nonGpuCur);
+  document.getElementById('ct-tgt').textContent     = fmtW2(totalTgt);
+  document.getElementById('ct-tgt-sub').textContent =
+    'GPU: ' + fmtW2(gpuTgt) + ' + overhead: ' + fmtW2(nonGpuTgt);
+  document.getElementById('ct-overhead').textContent     = fmtW2(nonGpuIdle);
+  document.getElementById('ct-overhead-sub').textContent =
+    numChassis + ' chassis × ' + fmtW2(comps.reduce((s,c) => s + ch[c].idle, 0)) + '/chassis · ' +
+    Math.round(nonGpuIdle / Math.max(totalCur, 1) * 100) + '% of total';
+
+  // Bars — show per-fleet totals
+  const barsEl = document.getElementById('chassis-bars');
+  const allComponents = [
+    { key: 'gpu', label: 'GPUs (' + activeGPUs + '× across ' + numChassis + ' chassis)', power: gpuCur, color: '#378ADD' },
+    ...comps.map(c => ({
+      key: c,
+      label: ch[c].label + (numChassis > 1 ? ' ×' + numChassis : ''),
+      power: compPowerFleet(c, t),
+      color: c === 'cpu' ? '#9B59B6' : c === 'nvswitch' ? '#E24B4A' : c === 'fans' ? '#EF9F27' :
+             c === 'networking' ? '#639922' : c === 'psu_loss' ? '#8B949E' : '#5DA0C8'
+    }))
+  ];
+  const barTotal = allComponents.reduce((s, x) => s + x.power, 0);
+  barsEl.innerHTML = allComponents.map(comp => {
+    const pct  = Math.round(comp.power / Math.max(barTotal, 1) * 100);
+    const barW = Math.round(comp.power / Math.max(barTotal, 1) * 100);
+    return '<div class="power-bar-wrap">' +
+      '<div style="display:flex;justify-content:space-between;font-size:11px;">' +
+        '<span style="color:var(--text2);">' + comp.label + '</span>' +
+        '<span style="font-weight:500;color:var(--text);">' + fmtW2(comp.power) +
+        ' <span style="color:var(--text3);font-weight:400;">(' + pct + '%)</span></span>' +
+      '</div>' +
+      '<div class="power-bar-track"><div class="power-bar-fill" style="width:' + barW + '%;background:' + comp.color + ';"></div></div>' +
+    '</div>';
+  }).join('');
+
+  // Warnings
+  const warnEl = document.getElementById('chassis-warning-box');
+  const warnings = [];
+  if (ch.cooling.toLowerCase().includes('mandatory') || (ch.cooling.toLowerCase().includes('liquid') && !ch.cooling.toLowerCase().includes('optional'))) {
+    warnings.push('⚠ ' + ch.name + ' requires liquid cooling infrastructure (' + ch.cooling + ').');
+  }
+  if (numChassis > 1) {
+    warnings.push('ℹ ' + activeGPUs + ' GPUs require ' + numChassis + ' × ' + ch.name + ' chassis (' + ch.gpuSlots + ' GPU slots each). Non-GPU overhead multiplied accordingly.');
+  }
+  if (totalCur > 15000) {
+    warnings.push('⚠ Fleet total exceeds 15 kW — requires high-density rack PDU infrastructure and specialised cooling.');
+  }
+  const perChassisPower = (gpuPower(util, idle_g, tdp_g) * ch.gpuSlots) + comps.reduce((s,c) => s + compPowerUnit(c,t), 0);
+  if (perChassisPower > ch.totalMax * 0.95) {
+    warnings.push('⚠ Per-chassis power (' + fmtW2(perChassisPower) + ') is near the ' + ch.name + ' rated limit of ' + fmtW2(ch.totalMax) + '.');
+  }
+  warnEl.innerHTML = warnings.map(w => '<div class="chassis-warning" style="margin-top:6px;">' + w + '</div>').join('');
+
+  updateChassisChart(ch, userGPUs, numChassis, idle_g, tdp_g, comps);
+}
+
+function updateChassisChart(ch, userGPUs, numChassis, idle_g, tdp_g, comps) {
+  const utils = Array.from({length: 21}, (_, i) => i * 5);
+  function compPowerUnit(comp, frac) { return ch[comp].idle + (ch[comp].max - ch[comp].idle) * frac; }
+  const totalPower = utils.map(u => {
+    const frac   = u / 100;
+    const gpu    = gpuPower(u, idle_g, tdp_g) * userGPUs;
+    const nonGpu = comps.reduce((s, c) => s + compPowerUnit(c, frac) * numChassis, 0);
+    return gpu + nonGpu;
+  });
+  const gpuOnly  = utils.map(u => gpuPower(u, idle_g, tdp_g) * userGPUs);
+  const overhead = utils.map((_, i) => totalPower[i] - gpuOnly[i]);
+
+  if (chassisChart) {
+    chassisChart.data.labels = utils.map(u => u + '%');
+    chassisChart.data.datasets[0].data = totalPower;
+    chassisChart.data.datasets[1].data = gpuOnly;
+    chassisChart.data.datasets[2].data = overhead;
+    chassisChart.update('none');
+    return;
+  }
+  chassisChart = new Chart(document.getElementById('chassisChart'), {
+    type: 'line',
+    data: {
+      labels: utils.map(u => u + '%'),
+      datasets: [
+        { label: 'Total system', data: totalPower, borderColor: '#378ADD', backgroundColor: 'rgba(55,138,221,0.1)', fill: true, tension: 0.4, borderWidth: 2.5, pointRadius: 0 },
+        { label: 'GPU only',     data: gpuOnly,    borderColor: '#E24B4A', fill: false, tension: 0.4, borderWidth: 1.5, borderDash: [4,3], pointRadius: 0 },
+        { label: 'Non-GPU overhead', data: overhead, borderColor: '#EF9F27', fill: false, tension: 0.4, borderWidth: 1.5, borderDash: [2,3], pointRadius: 0 },
+      ]
+    },
+    options: {
+      responsive: true, maintainAspectRatio: false,
+      plugins: {
+        legend: { display: true, position: 'top', labels: { font: { size: 10 }, boxWidth: 10, padding: 8 } },
+        tooltip: { callbacks: { label: ctx => ctx.dataset.label + ': ' + fmtW2(ctx.parsed.y) } }
+      },
+      scales: {
+        x: { ticks: { color: '#888', font: { size: 10 }, maxTicksLimit: 6 }, grid: { color: 'rgba(128,128,128,0.1)' } },
+        y: { ticks: { color: '#888', font: { size: 10 }, callback: v => fmtW2(v) }, grid: { color: 'rgba(128,128,128,0.1)' }, min: 0 }
+      }
+    }
+  });
+}
+
+buildChassisButtons();
+
+update();
+</script>
+</body>
+</html>

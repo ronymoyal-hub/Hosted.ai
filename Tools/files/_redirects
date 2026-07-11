@@ -1,0 +1,16 @@
+# Amplify routing configuration for hosted.ai multi-page tools
+
+# Main pages
+/                    /index.html                200
+/home                /index.html                200
+
+# TCO Calculator (support both old and new names)
+/tco-calculator      /tco-calculator.html       200
+/tco                 /AI_Cloud_TCO_Model.html   200
+
+# CSP Dashboard (support both old and new names)
+/csp-dashboard       /csp-dashboard.html        200
+/dashboard           /CSP_Mesh_Packet_Dashboard_v2.html  200
+
+# Catch-all for 404s
+/*                   /index.html                200
