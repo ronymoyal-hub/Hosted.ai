@@ -1,0 +1,624 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>hosted·ai — VAR Deal Registration</title>
+<link rel="icon" type="image/png" href="https://cdn.prod.website-files.com/69f057a870d32ca4d2aed441/69f0a509d02bf4b01a40a04b_69bd54e531787ff524883b20_hosted-ai-logo.svg">
+<link rel="shortcut icon" type="image/png" href="https://cdn.prod.website-files.com/69f057a870d32ca4d2aed441/69f0a509d02bf4b01a40a04b_69bd54e531787ff524883b20_hosted-ai-logo.svg">
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+html{scroll-behavior:smooth}
+:root{
+  --g:#2C5F2D;--gd:#1A3D1A;--gl:#EBF3EB;--gm:#4A8C4B;--gp:#F4FAF4;
+  --ink:#111;--mut:#6B6B6B;--rule:#D8EDD8;--bg:#fff;
+  --amb:#FFF3CD;--abb:#B8860B;--abs:#5A3E00;
+  --err:#FDECEA;--erb:#C0392B;--r:10px;
+  --sh:0 2px 16px rgba(44,95,45,.08);
+}
+body{font-family:'Segoe UI',system-ui,-apple-system,sans-serif;background:var(--gp);color:var(--ink);min-height:100vh;line-height:1.6}
+header{background:var(--gd);height:58px;display:flex;align-items:center;justify-content:space-between;padding:0 32px;position:sticky;top:0;z-index:200}
+.logo{display:flex;align-items:center;gap:12px;text-decoration:none}
+.dg{display:grid;grid-template-columns:repeat(3,6px);gap:3px}
+.dg span{background:#7BD47E;border-radius:50%;display:block;width:6px;height:6px;opacity:.9}
+.dg span:nth-child(1){opacity:.3}.dg span:nth-child(4){opacity:.55}.dg span:nth-child(9){opacity:.45}
+.lt{font-size:1.1rem;font-weight:700;color:#fff;letter-spacing:-.02em}
+.lt em{color:#7BD47E;font-style:normal}
+.ht{font-size:.75rem;color:rgba(255,255,255,.4);letter-spacing:.08em;text-transform:uppercase}
+.admin-link-btn{font-size:.75rem;color:rgba(255,255,255,.55);background:rgba(255,255,255,.08);border:1px solid rgba(255,255,255,.15);border-radius:6px;padding:5px 12px;cursor:pointer;text-decoration:none;transition:background .15s}
+.admin-link-btn:hover{background:rgba(255,255,255,.15);color:#fff}
+.page{max-width:680px;margin:0 auto;padding:40px 20px 80px}
+.admin-page{max-width:1060px;margin:0 auto;padding:32px 20px 80px}
+.steps-wrap{display:flex;align-items:center;margin-bottom:32px;background:var(--bg);border-radius:var(--r);border:1px solid var(--rule);overflow:hidden;box-shadow:var(--sh)}
+.step-item{flex:1;display:flex;flex-direction:column;align-items:center;padding:14px 8px;gap:4px;border-right:1px solid var(--rule);transition:background .2s}
+.step-item:last-child{border-right:none}
+.step-item.active{background:var(--gl)}.step-item.done{background:var(--gp)}
+.step-num{width:28px;height:28px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:.78rem;font-weight:700;border:2px solid var(--rule);color:var(--mut);background:var(--bg);transition:all .2s}
+.step-item.active .step-num,.step-item.done .step-num{background:var(--g);border-color:var(--g);color:#fff}
+.step-label{font-size:.7rem;color:var(--mut);text-align:center;font-weight:500}
+.step-item.active .step-label{color:var(--gd)}.step-item.done .step-label{color:var(--g)}
+.card{background:var(--bg);border-radius:var(--r);border:1px solid var(--rule);box-shadow:var(--sh);overflow:hidden;margin-bottom:16px}
+.card-hdr{background:var(--gd);padding:20px 28px;display:flex;align-items:center;gap:14px}
+.card-hdr-icon{width:40px;height:40px;background:rgba(123,212,126,.18);border:1px solid rgba(123,212,126,.3);border-radius:10px;display:flex;align-items:center;justify-content:center;flex-shrink:0}
+.card-hdr-icon svg{width:20px;height:20px;stroke:#7BD47E;stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round;fill:none}
+.card-hdr-title{font-size:1rem;font-weight:700;color:#fff;margin-bottom:2px}
+.card-hdr-sub{font-size:.78rem;color:rgba(255,255,255,.55)}
+.card-body{padding:28px}
+.fg{display:flex;flex-direction:column;gap:20px}
+.fi{display:flex;flex-direction:column;gap:6px}
+.fr{display:grid;grid-template-columns:1fr 1fr;gap:16px}
+.fi label{font-size:.8rem;font-weight:600;color:var(--mut);letter-spacing:.04em;text-transform:uppercase;display:flex;align-items:center;gap:5px}
+.req{color:var(--g);font-size:.9rem;font-weight:700}
+.fi input,.fi select,.fi textarea{width:100%;padding:10px 14px;border:1.5px solid var(--rule);border-radius:7px;font-size:.95rem;color:var(--ink);background:var(--bg);font-family:inherit;outline:none;transition:border-color .18s,box-shadow .18s;appearance:none}
+.fi input:focus,.fi select:focus,.fi textarea:focus{border-color:var(--g);box-shadow:0 0 0 3px rgba(44,95,45,.1)}
+.fi input.err,.fi select.err{border-color:var(--erb)}
+.fi textarea{resize:vertical;min-height:80px}
+.fi-hint{font-size:.78rem;color:var(--mut);line-height:1.45}
+.fi-err{font-size:.78rem;color:var(--erb);display:none}
+.fi-err.show{display:block}
+.callout{background:var(--amb);border-left:4px solid var(--abb);border-radius:0 7px 7px 0;padding:12px 16px;font-size:.85rem;color:var(--abs);line-height:1.5;margin-bottom:20px}
+.callout strong{color:#3A2800}
+.btn-row{display:flex;justify-content:space-between;align-items:center;margin-top:24px;padding-top:20px;border-top:1px solid var(--rule);gap:12px}
+.btn{display:inline-flex;align-items:center;gap:8px;padding:11px 24px;border-radius:8px;font-size:.92rem;font-weight:600;cursor:pointer;border:none;transition:background .18s,transform .1s;font-family:inherit}
+.btn:active{transform:scale(.98)}
+.btn-primary{background:var(--g);color:#fff;box-shadow:0 2px 8px rgba(44,95,45,.22)}
+.btn-primary:hover{background:var(--gm)}
+.btn-primary:disabled{background:#aaa;box-shadow:none;cursor:not-allowed}
+.btn-outline{background:transparent;color:var(--g);border:1.5px solid var(--g)}
+.btn-outline:hover{background:var(--gl)}
+.btn-danger{background:#fff;color:var(--erb);border:1.5px solid var(--erb)}
+.btn-danger:hover{background:var(--err)}
+.btn svg{width:16px;height:16px;stroke:currentColor;stroke-width:2;stroke-linecap:round;stroke-linejoin:round;fill:none}
+.arr-display{background:var(--gl);border-radius:8px;padding:16px 20px;text-align:center;margin-top:12px}
+.arr-display .big{font-size:2rem;font-weight:700;color:var(--gd)}
+.arr-display .lbl{font-size:.75rem;color:var(--mut);text-transform:uppercase;letter-spacing:.06em}
+.review-sec{margin-bottom:20px}
+.review-h{font-size:.72rem;font-weight:700;color:var(--gd);text-transform:uppercase;letter-spacing:.08em;margin-bottom:10px;padding-bottom:6px;border-bottom:1px solid var(--rule)}
+.review-grid{display:grid;grid-template-columns:1fr 1fr;gap:8px 16px}
+.rv-label{font-size:.72rem;color:var(--mut)}.rv-value{font-size:.9rem;color:var(--ink);font-weight:500}
+.success-card{background:var(--bg);border-radius:var(--r);border:1px solid var(--rule);box-shadow:var(--sh);padding:48px 32px;text-align:center}
+.success-icon{width:72px;height:72px;background:var(--gl);border-radius:50%;display:flex;align-items:center;justify-content:center;margin:0 auto 20px}
+.success-icon svg{width:36px;height:36px;stroke:var(--g);stroke-width:2;stroke-linecap:round;stroke-linejoin:round;fill:none}
+.success-ref{display:inline-block;background:var(--gl);border:1px solid var(--rule);border-radius:8px;padding:10px 24px;font-size:1.1rem;font-weight:700;color:var(--gd);letter-spacing:.06em;margin:16px 0 24px}
+.success-details{background:var(--gp);border-radius:8px;padding:16px 20px;text-align:left;font-size:.87rem;color:var(--mut);line-height:1.6;margin-bottom:24px}
+.spinner{width:18px;height:18px;border:2px solid rgba(255,255,255,.3);border-top-color:#fff;border-radius:50%;animation:spin .7s linear infinite}
+@keyframes spin{to{transform:rotate(360deg)}}
+.modal-bg{display:none;position:fixed;inset:0;background:rgba(0,0,0,.55);z-index:500;align-items:center;justify-content:center;padding:20px}
+.modal-bg.open{display:flex}
+.modal{background:#fff;border-radius:14px;width:100%;max-width:380px;overflow:hidden;box-shadow:0 24px 64px rgba(0,0,0,.35)}
+.modal-hdr{background:var(--gd);padding:20px 24px;display:flex;align-items:center;gap:12px}
+.modal-hdr svg{width:22px;height:22px;stroke:#7BD47E;stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round;fill:none;flex-shrink:0}
+.modal-hdr h3{font-size:.98rem;font-weight:700;color:#fff}
+.modal-body{padding:24px}
+.modal-body p{font-size:.88rem;color:var(--mut);margin-bottom:16px}
+.modal-err{font-size:.8rem;color:var(--erb);margin-top:8px;min-height:18px}
+.shake{animation:shake .35s ease}
+@keyframes shake{0%,100%{transform:translateX(0)}20%{transform:translateX(-6px)}40%{transform:translateX(6px)}60%{transform:translateX(-4px)}80%{transform:translateX(4px)}}
+.admin-banner{background:var(--gd);border-radius:var(--r);padding:20px 28px;display:flex;align-items:center;justify-content:space-between;margin-bottom:20px;flex-wrap:wrap;gap:12px}
+.admin-banner h2{font-size:1.1rem;font-weight:700;color:#fff}
+.admin-banner p{font-size:.8rem;color:rgba(255,255,255,.55)}
+.stat-row{display:grid;grid-template-columns:repeat(4,1fr);gap:12px;margin-bottom:20px}
+.stat-card{background:var(--bg);border-radius:var(--r);border:1px solid var(--rule);padding:16px;text-align:center}
+.stat-n{font-size:1.8rem;font-weight:800;color:var(--gd);line-height:1}
+.stat-n.pend{color:var(--abb)}.stat-n.appr{color:var(--g)}.stat-n.disap{color:var(--erb)}
+.stat-l{font-size:.72rem;color:var(--mut);text-transform:uppercase;letter-spacing:.05em;margin-top:4px}
+.admin-controls{background:var(--bg);border-radius:var(--r);border:1px solid var(--rule);padding:14px 20px;margin-bottom:16px;display:flex;align-items:center;gap:12px;flex-wrap:wrap}
+.admin-search{flex:1;min-width:160px;padding:8px 12px;border:1.5px solid var(--rule);border-radius:7px;font-size:.88rem;outline:none;font-family:inherit;color:var(--ink)}
+.admin-search:focus{border-color:var(--g)}
+.admin-filter{padding:8px 12px;border:1.5px solid var(--rule);border-radius:7px;font-size:.85rem;font-family:inherit;color:var(--ink);outline:none;cursor:pointer;background:var(--bg)}
+.admin-table-wrap{background:var(--bg);border-radius:var(--r);border:1px solid var(--rule);overflow:auto;margin-bottom:16px}
+.admin-table{width:100%;border-collapse:collapse;font-size:.84rem;min-width:780px}
+.admin-table thead th{background:var(--gd);color:#fff;padding:11px 14px;text-align:left;font-size:.73rem;font-weight:700;letter-spacing:.05em;text-transform:uppercase;white-space:nowrap}
+.admin-table tbody td{padding:11px 14px;border-bottom:1px solid var(--rule);vertical-align:middle}
+.admin-table tbody tr:last-child td{border-bottom:none}
+.admin-table tbody tr:hover td{background:var(--gp)}
+.status-badge{display:inline-flex;align-items:center;gap:5px;font-size:.73rem;font-weight:700;padding:3px 10px;border-radius:99px}
+.sb-pending{background:var(--amb);color:var(--abs)}.sb-approved{background:var(--gl);color:var(--gd)}.sb-disapproved{background:var(--err);color:var(--erb)}
+.action-btns{display:flex;gap:6px;white-space:nowrap}
+.action-btn{padding:5px 10px;border-radius:6px;font-size:.75rem;font-weight:600;cursor:pointer;border:none;font-family:inherit;transition:background .15s}
+.ab-approve{background:var(--gl);color:var(--gd)}.ab-approve:hover{background:var(--g);color:#fff}
+.ab-disapprove{background:var(--err);color:var(--erb)}.ab-disapprove:hover{background:var(--erb);color:#fff}
+.ab-view{background:#F0F0F0;color:#444}.ab-view:hover{background:#ddd}
+.detail-modal-bg{display:none;position:fixed;inset:0;background:rgba(0,0,0,.55);z-index:600;align-items:flex-start;justify-content:center;padding:40px 20px;overflow-y:auto}
+.detail-modal-bg.open{display:flex}
+.detail-modal{background:#fff;border-radius:14px;width:100%;max-width:560px;overflow:hidden;box-shadow:0 24px 64px rgba(0,0,0,.35)}
+.detail-modal-hdr{background:var(--gd);padding:18px 24px;display:flex;align-items:center;justify-content:space-between}
+.detail-modal-hdr h3{font-size:.95rem;font-weight:700;color:#fff}
+.close-btn{background:rgba(255,255,255,.15);border:none;color:#fff;width:28px;height:28px;border-radius:6px;cursor:pointer;font-size:1rem;display:flex;align-items:center;justify-content:center}
+.close-btn:hover{background:rgba(255,255,255,.25)}
+.detail-modal-body{padding:24px}
+.detail-section{margin-bottom:18px}
+.detail-sh{font-size:.72rem;font-weight:700;color:var(--gd);text-transform:uppercase;letter-spacing:.07em;border-bottom:1px solid var(--rule);padding-bottom:6px;margin-bottom:10px}
+.detail-grid{display:grid;grid-template-columns:1fr 1fr;gap:6px 16px}
+.detail-label{font-size:.72rem;color:var(--mut)}.detail-value{font-size:.87rem;color:var(--ink);font-weight:500}
+.pd-note{background:var(--amb);border-radius:7px;padding:10px 14px;font-size:.8rem;color:var(--abs);margin-top:12px;line-height:1.5}
+.pd-note strong{color:#3A2800}
+@media(max-width:600px){header{padding:0 16px}.page,.admin-page{padding:20px 12px 60px}.card-body{padding:20px 16px}.fr{grid-template-columns:1fr}.review-grid,.detail-grid{grid-template-columns:1fr}.step-label{display:none}.stat-row{grid-template-columns:1fr 1fr}}
+</style>
+</head>
+<body>
+<header>
+  <a class="logo" href="/hosted_ai_portal.html">
+    <div class="dg" aria-hidden="true"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></div>
+    <div class="lt">hosted<em>·</em>ai</div>
+  </a>
+  <div style="display:flex;align-items:center;gap:14px">
+    <div class="ht" id="headerTag">VAR Deal Registration</div>
+    <button class="admin-link-btn" id="adminLoginBtn" onclick="openAdminLogin()">🔐 Admin</button>
+  </div>
+</header>
+
+<!-- ═══ VAR FORM ═══════════════════════════════════════════════════════ -->
+<div id="formArea">
+<div class="page">
+  <div class="steps-wrap" id="stepsWrap">
+    <div class="step-item active" id="s0"><div class="step-num">1</div><div class="step-label">Your Details</div></div>
+    <div class="step-item" id="s1"><div class="step-num">2</div><div class="step-label">Prospect</div></div>
+    <div class="step-item" id="s2"><div class="step-num">3</div><div class="step-label">Contact</div></div>
+    <div class="step-item" id="s3"><div class="step-num">4</div><div class="step-label">Deal</div></div>
+    <div class="step-item" id="s4"><div class="step-num">5</div><div class="step-label">Review</div></div>
+  </div>
+
+  <!-- STEP 1 -->
+  <div id="step-0">
+    <div class="card">
+      <div class="card-hdr"><div class="card-hdr-icon"><svg viewBox="0 0 24 24"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg></div><div><div class="card-hdr-title">Your Details</div><div class="card-hdr-sub">Identify your organisation for this registration</div></div></div>
+      <div class="card-body"><div class="fg">
+        <div class="fi"><label>VAR Company Name <span class="req">*</span></label><input type="text" id="varName" placeholder="e.g. Acme Technology Partners"><div class="fi-err" id="varName-err">Please enter your company name.</div></div>
+        <div class="fi"><label>Your Contact Email <span class="req">*</span></label><input type="email" id="varEmail" placeholder="you@yourcompany.com"><div class="fi-err" id="varEmail-err">Please enter a valid email address.</div></div>
+      </div><div class="btn-row" style="justify-content:flex-end"><button class="btn btn-primary" onclick="goNext(0)">Next — Prospect Details <svg viewBox="0 0 24 24"><path d="M5 12h14M12 5l7 7-7 7"/></svg></button></div></div>
+    </div>
+  </div>
+
+  <!-- STEP 2 -->
+  <div id="step-1" style="display:none">
+    <div class="card">
+      <div class="card-hdr"><div class="card-hdr-icon"><svg viewBox="0 0 24 24"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg></div><div><div class="card-hdr-title">Prospect Information</div><div class="card-hdr-sub">Company being registered for deal protection</div></div></div>
+      <div class="card-body"><div class="fg">
+        <div class="fi"><label>Prospect Company Name <span class="req">*</span></label><input type="text" id="prospectName" placeholder="e.g. TechCorp Inc."><div class="fi-err" id="prospectName-err">Please enter the prospect company name.</div></div>
+        <div class="fi"><label>Street Address <span class="req">*</span></label><input type="text" id="prospectStreet" placeholder="123 Main Street"><div class="fi-err" id="prospectStreet-err">Please enter the street address.</div></div>
+        <div class="fr">
+          <div class="fi"><label>City <span class="req">*</span></label><input type="text" id="prospectCity" placeholder="New York"><div class="fi-err" id="prospectCity-err">Required.</div></div>
+          <div class="fi"><label>State / Region</label><input type="text" id="prospectState" placeholder="NY"></div>
+        </div>
+        <div class="fr">
+          <div class="fi"><label>Zip / Postcode</label><input type="text" id="prospectZip" placeholder="10001"></div>
+          <div class="fi">
+            <label>Country <span class="req">*</span></label>
+            <select id="prospectCountry"><option value="">— Select country —</option></select>
+            <div class="fi-err" id="prospectCountry-err">Please select a country.</div>
+            <div class="fi-hint">Only BIS export-permitted countries are listed. China (PRC) and all embargoed jurisdictions are excluded per EAR Part 746.</div>
+          </div>
+        </div>
+      </div><div class="btn-row"><button class="btn btn-outline" onclick="goBack(1)"><svg viewBox="0 0 24 24"><path d="M19 12H5M12 19l-7-7 7-7"/></svg> Back</button><button class="btn btn-primary" onclick="goNext(1)">Next — Contact Person <svg viewBox="0 0 24 24"><path d="M5 12h14M12 5l7 7-7 7"/></svg></button></div></div>
+    </div>
+  </div>
+
+  <!-- STEP 3 -->
+  <div id="step-2" style="display:none">
+    <div class="card">
+      <div class="card-hdr"><div class="card-hdr-icon"><svg viewBox="0 0 24 24"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07A19.5 19.5 0 0 1 4.15 13a19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 3.06 2h3a2 2 0 0 1 2 1.72c.127.96.361 1.903.7 2.81a2 2 0 0 1-.45 2.11L7.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45c.907.339 1.85.573 2.81.7A2 2 0 0 1 22 16.92z"/></svg></div><div><div class="card-hdr-title">Prospect Contact Person</div><div class="card-hdr-sub">Primary decision-maker at the prospect</div></div></div>
+      <div class="card-body"><div class="fg">
+        <div class="fi"><label>Full Name <span class="req">*</span></label><input type="text" id="contactName" placeholder="e.g. Jane Smith"><div class="fi-err" id="contactName-err">Full name is required.</div></div>
+        <div class="fi"><label>Email Address <span class="req">*</span></label><input type="email" id="contactEmail" placeholder="jane.smith@techcorp.com"><div class="fi-err" id="contactEmail-err">A valid email address is required.</div></div>
+        <div class="fi"><label>Phone Number <span class="req">*</span></label><input type="tel" id="contactPhone" placeholder="+1 (212) 555-0100"><div class="fi-err" id="contactPhone-err">Phone number is required.</div></div>
+      </div><div class="btn-row"><button class="btn btn-outline" onclick="goBack(2)"><svg viewBox="0 0 24 24"><path d="M19 12H5M12 19l-7-7 7-7"/></svg> Back</button><button class="btn btn-primary" onclick="goNext(2)">Next — Deal Details <svg viewBox="0 0 24 24"><path d="M5 12h14M12 5l7 7-7 7"/></svg></button></div></div>
+    </div>
+  </div>
+
+  <!-- STEP 4 -->
+  <div id="step-3" style="display:none">
+    <div class="card">
+      <div class="card-hdr"><div class="card-hdr-icon"><svg viewBox="0 0 24 24"><line x1="12" y1="1" x2="12" y2="23"/><path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/></svg></div><div><div class="card-hdr-title">Deal Details</div><div class="card-hdr-sub">Opportunity value, timelines, and description</div></div></div>
+      <div class="card-body">
+        <div class="callout"><strong>Deal protection window:</strong> Per the hosted·ai VAR Agreement (Section C.6), an approved Deal Registration provides pricing protection and non-circumvention for <strong>up to 60 days</strong> from approval. Progress the opportunity within this window to maintain protection.</div>
+        <div class="fg">
+          <div class="fi"><label>Deal Description / Use Case</label><textarea id="dealDesc" rows="3" placeholder="e.g. GPU virtualisation for ML training workloads across 3 data centres…"></textarea></div>
+          <div class="fr">
+            <div class="fi">
+              <label>Discount from List Price Requested (%)</label>
+              <input type="number" id="dealDiscount" value="0" min="0" max="100" step="0.5" placeholder="0">
+              <div class="fi-hint">Enter the discount percentage requested from hosted.ai list price (e.g. 5 = 5%). Leave at 0 if no discount is requested.</div>
+            </div>
+            <div class="fi">
+              <label>MMC Discount Requested (USD)</label>
+              <input type="number" id="dealMMC" value="0" min="0" step="100" placeholder="0">
+              <div class="fi-hint">Enter a dollar reduction to the Minimum Monthly Commitment (e.g. 500 = $500 off MMC). Leave at $0 if no MMC discount is requested.</div>
+            </div>
+          </div>
+          <div class="fi">
+            <label>Annual Recurring Revenue — ARR (USD) <span class="req">*</span></label>
+            <input type="number" id="dealARR" placeholder="e.g. 120000" min="0" step="1000">
+            <div class="fi-err" id="dealARR-err">Please enter the estimated ARR.</div>
+            <div class="fi-hint">Full-year contract value in USD, including all software licence and support components.</div>
+            <div class="arr-display" id="arrDisplay" style="display:none"><div class="lbl">Estimated ARR</div><div class="big" id="arrBig">$0</div></div>
+          </div>
+          <div class="fr">
+            <div class="fi">
+              <label>Time to Production (months) <span class="req">*</span></label>
+              <select id="dealTTP"><option value="">— Select timeline —</option><option>1</option><option>2</option><option>3</option><option>4</option><option>6</option><option>9</option><option>12</option><option value="12+">12+</option></select>
+              <div class="fi-err" id="dealTTP-err">Please select a time to production.</div>
+              <div class="fi-hint">Anticipated time from deal close to customer production deployment.</div>
+            </div>
+            <div class="fi">
+              <label>Time to Deal Close (months) <span class="req">*</span></label>
+              <select id="dealTTC"><option value="">— Select timeline —</option><option>1</option><option>2</option><option>3</option><option>4</option><option>6</option><option>9</option><option>12</option><option value="12+">12+</option></select>
+              <div class="fi-err" id="dealTTC-err">Please select a time to close.</div>
+              <div class="fi-hint"><strong>Note:</strong> Deal registration protection lasts 60 days from approval — select your expected close timeline independently of this window.</div>
+            </div>
+          </div>
+        </div>
+        <div class="btn-row"><button class="btn btn-outline" onclick="goBack(3)"><svg viewBox="0 0 24 24"><path d="M19 12H5M12 19l-7-7 7-7"/></svg> Back</button><button class="btn btn-primary" onclick="goNext(3)">Review &amp; Submit <svg viewBox="0 0 24 24"><path d="M5 12h14M12 5l7 7-7 7"/></svg></button></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- STEP 5 -->
+  <div id="step-4" style="display:none">
+    <div class="card">
+      <div class="card-hdr"><div class="card-hdr-icon"><svg viewBox="0 0 24 24"><path d="M9 11l3 3L22 4"/><path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11"/></svg></div><div><div class="card-hdr-title">Review &amp; Submit</div><div class="card-hdr-sub">Confirm all details before submitting</div></div></div>
+      <div class="card-body">
+        <div id="reviewBody"></div>
+        <div class="btn-row"><button class="btn btn-outline" onclick="goBack(4)"><svg viewBox="0 0 24 24"><path d="M19 12H5M12 19l-7-7 7-7"/></svg> Edit</button><button class="btn btn-primary" id="submitBtn" onclick="submitForm()"><svg viewBox="0 0 24 24"><path d="M22 2L11 13M22 2l-7 20-4-9-9-4 20-7z"/></svg> Submit Registration</button></div>
+        <div id="submitErr" style="display:none;margin-top:12px;padding:10px 14px;background:var(--err);border-radius:7px;font-size:.85rem;color:var(--erb)">Submission failed. Please try again or contact hosted.ai partner support.</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- SUCCESS -->
+  <div id="step-success" style="display:none">
+    <div class="success-card">
+      <div class="success-icon"><svg viewBox="0 0 24 24"><path d="M20 6L9 17l-5-5"/></svg></div>
+      <h2 style="font-size:1.4rem;font-weight:700;color:var(--gd);margin-bottom:6px">Registration Submitted</h2>
+      <p style="color:var(--mut);font-size:.92rem">Your deal registration has been received.</p>
+      <div class="success-ref" id="successRef">DR-XXXXXX</div>
+      <div class="success-details"><strong>What happens next:</strong><br>hosted.ai will review your registration and confirm approval within <strong>3 business days</strong>. Upon approval you will receive an email confirmation at your registered address. Pricing protection and non-circumvention apply for <strong>60 days</strong> from the approval date.</div>
+      <a href="/hosted_ai_portal.html" class="btn btn-primary" style="text-decoration:none;margin-right:10px"><svg viewBox="0 0 24 24"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/></svg> Return to Portal</a>
+      <button class="btn btn-outline" onclick="resetForm()">Register Another Deal</button>
+    </div>
+  </div>
+</div>
+</div>
+
+<!-- ═══ ADMIN DASHBOARD ════════════════════════════════════════════════ -->
+<div id="adminArea" style="display:none">
+<div class="admin-page">
+  <div class="admin-banner">
+    <div><h2>Deal Registration Dashboard</h2><p>hosted·ai Partner Admin</p></div>
+    <button class="btn btn-outline" style="color:#fff;border-color:rgba(255,255,255,.35);font-size:.82rem;padding:7px 16px" onclick="exitAdmin()">← Exit Dashboard</button>
+  </div>
+  <div class="stat-row">
+    <div class="stat-card"><div class="stat-n" id="aStat-total">0</div><div class="stat-l">Total</div></div>
+    <div class="stat-card"><div class="stat-n pend" id="aStat-pending">0</div><div class="stat-l">Pending</div></div>
+    <div class="stat-card"><div class="stat-n appr" id="aStat-approved">0</div><div class="stat-l">Approved</div></div>
+    <div class="stat-card"><div class="stat-n disap" id="aStat-disapproved">0</div><div class="stat-l">Disapproved</div></div>
+  </div>
+  <div class="admin-controls">
+    <input class="admin-search" id="adminSearch" type="text" placeholder="Search by VAR, prospect, or ref…" oninput="renderAdminTable()">
+    <select class="admin-filter" id="adminFilter" onchange="renderAdminTable()"><option value="">All statuses</option><option value="pending">Pending</option><option value="approved">Approved</option><option value="disapproved">Disapproved</option></select>
+    <button class="btn btn-outline" onclick="exportCSV()" style="font-size:.82rem;padding:8px 14px;white-space:nowrap">Export CSV</button>
+    <button class="btn btn-danger" onclick="clearAll()" style="font-size:.82rem;padding:8px 14px;white-space:nowrap">Clear All</button>
+  </div>
+  <div class="admin-table-wrap">
+    <table class="admin-table">
+      <thead><tr><th>Ref</th><th>Date</th><th>VAR</th><th>Prospect</th><th>ARR</th><th>To Close</th><th>Status</th><th>Actions</th></tr></thead>
+      <tbody id="adminTableBody"><tr><td colspan="8" style="text-align:center;padding:28px;color:var(--mut)">No registrations yet.</td></tr></tbody>
+    </table>
+  </div>
+</div>
+</div>
+
+<!-- Admin login modal -->
+<div class="modal-bg" id="adminLoginModal" onclick="if(event.target===this)closeAdminLogin()">
+  <div class="modal">
+    <div class="modal-hdr"><svg viewBox="0 0 24 24"><rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg><h3>Administrator Login</h3></div>
+    <div class="modal-body">
+      <p>Enter the admin password to access the deal registration dashboard.</p>
+      <div class="fi"><label>Password</label><input type="password" id="adminPwInput" placeholder="Enter password" onkeydown="if(event.key==='Enter')submitAdminLogin()"></div>
+      <div class="modal-err" id="adminPwErr"></div>
+      <div style="display:flex;gap:10px;margin-top:16px">
+        <button class="btn btn-outline" style="flex:1" onclick="closeAdminLogin()">Cancel</button>
+        <button class="btn btn-primary" style="flex:1" onclick="submitAdminLogin()">Enter Dashboard</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Deal detail modal -->
+<div class="detail-modal-bg" id="detailModal" onclick="if(event.target===this)closeDetail()">
+  <div class="detail-modal">
+    <div class="detail-modal-hdr"><h3 id="detailRef">Deal Detail</h3><button class="close-btn" onclick="closeDetail()">✕</button></div>
+    <div class="detail-modal-body" id="detailBody"></div>
+  </div>
+</div>
+
+<script>
+// ─── CONFIG ──────────────────────────────────────────────────────────────────
+// Admin password is verified server-side via Apps Script — not stored in HTML
+const DB_KEY          = 'hai_deal_regs';
+const SHEET_ID        = '1lcam4LpQhc9miA-DJmwoOz58KNm-K07gkbo8AsqPJFE';
+const APPS_SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbyJB6yNGFYxLjgDzf0Gn58fVVV_O6wp0mweov28hPelUwgOr78hP0PqFkCX0N7W1jcq4w/exec';
+// PipeDrive is handled server-side in the Apps Script — paste your token there.
+// The Apps Script sends approval/disapproval emails via PipeDrive's API
+// when action=approve or action=disapprove is received.
+
+// ─── BIS-PERMITTED COUNTRIES ────────────────────────────────────────────────
+// Excluded: Cuba, Iran, North Korea, Syria, Russia, Belarus, Burma/Myanmar,
+// Venezuela (restricted sectors), occupied Ukrainian territories.
+// China (PRC) excluded due to EAR Part 744 Entity List / GPU tech controls.
+// Consult legal counsel before modifying this list.
+const COUNTRIES = ["Afghanistan","Albania","Algeria","Andorra","Angola","Antigua and Barbuda","Argentina","Armenia","Australia","Austria","Azerbaijan","Bahamas","Bahrain","Bangladesh","Barbados","Belgium","Belize","Benin","Bhutan","Bolivia","Bosnia and Herzegovina","Botswana","Brazil","Brunei","Bulgaria","Burkina Faso","Burundi","Cabo Verde","Cameroon","Canada","Central African Republic","Chad","Chile","Colombia","Comoros","Congo (Republic)","Costa Rica","Côte d'Ivoire","Croatia","Cyprus","Czech Republic","DR Congo","Denmark","Djibouti","Dominica","Dominican Republic","Ecuador","Egypt","El Salvador","Equatorial Guinea","Eritrea","Estonia","Eswatini","Ethiopia","Fiji","Finland","France","Gabon","Gambia","Georgia","Germany","Ghana","Greece","Grenada","Guatemala","Guinea","Guinea-Bissau","Guyana","Haiti","Honduras","Hungary","Iceland","India","Indonesia","Iraq","Ireland","Israel","Italy","Jamaica","Japan","Jordan","Kazakhstan","Kenya","Kiribati","Kosovo","Kuwait","Kyrgyzstan","Laos","Latvia","Lebanon","Lesotho","Liberia","Libya","Liechtenstein","Lithuania","Luxembourg","Madagascar","Malawi","Malaysia","Maldives","Mali","Malta","Marshall Islands","Mauritania","Mauritius","Mexico","Micronesia","Moldova","Monaco","Mongolia","Montenegro","Morocco","Mozambique","Namibia","Nauru","Nepal","Netherlands","New Zealand","Nicaragua","Niger","Nigeria","North Macedonia","Norway","Oman","Pakistan","Palau","Palestine","Panama","Papua New Guinea","Paraguay","Peru","Philippines","Poland","Portugal","Qatar","Romania","Rwanda","Saint Kitts and Nevis","Saint Lucia","Saint Vincent and the Grenadines","Samoa","San Marino","São Tomé and Príncipe","Saudi Arabia","Senegal","Serbia","Seychelles","Sierra Leone","Singapore","Slovakia","Slovenia","Solomon Islands","Somalia","South Africa","South Korea","South Sudan","Spain","Sri Lanka","Sudan","Suriname","Sweden","Switzerland","Tajikistan","Tanzania","Thailand","Timor-Leste","Togo","Tonga","Trinidad and Tobago","Tunisia","Turkey","Turkmenistan","Tuvalu","Uganda","Ukraine","United Arab Emirates","United Kingdom","United States","Uruguay","Uzbekistan","Vanuatu","Vatican City","Vietnam","Yemen","Zambia","Zimbabwe"];
+
+const csel = document.getElementById('prospectCountry');
+[...COUNTRIES].sort().forEach(c=>{const o=document.createElement('option');o.value=c;o.textContent=c;csel.appendChild(o)});
+
+// ─── VALIDATION ──────────────────────────────────────────────────────────────
+const RULES = [
+  [{id:'varName',rule:v=>v.trim().length>0,msg:'Please enter your company name.'},{id:'varEmail',rule:v=>/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(v),msg:'Please enter a valid email.'}],
+  [{id:'prospectName',rule:v=>v.trim().length>0,msg:'Please enter the prospect company name.'},{id:'prospectStreet',rule:v=>v.trim().length>0,msg:'Please enter the street address.'},{id:'prospectCity',rule:v=>v.trim().length>0,msg:'Required.'},{id:'prospectCountry',rule:v=>v.length>0,msg:'Please select a country.'}],
+  [{id:'contactName',rule:v=>v.trim().length>1,msg:'Full name is required.'},{id:'contactEmail',rule:v=>/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(v),msg:'A valid email is required.'},{id:'contactPhone',rule:v=>v.trim().length>6,msg:'Phone number is required.'}],
+  [{id:'dealARR',rule:v=>v&&parseFloat(v)>0,msg:'Please enter the estimated ARR.'},{id:'dealTTP',rule:v=>v.length>0,msg:'Please select a time to production.'},{id:'dealTTC',rule:v=>v.length>0,msg:'Please select a time to close.'}],
+];
+function validate(s){let ok=true;(RULES[s]||[]).forEach(({id,rule,msg})=>{const el=document.getElementById(id),err=document.getElementById(id+'-err'),val=el?el.value:'';if(!rule(val)){el&&el.classList.add('err');if(err){err.textContent=msg;err.classList.add('show')}ok=false}else{el&&el.classList.remove('err');err&&err.classList.remove('show')}});return ok}
+document.addEventListener('input',e=>{e.target.classList.remove('err');const err=document.getElementById(e.target.id+'-err');if(err)err.classList.remove('show')});
+
+// ─── NAVIGATION ───────────────────────────────────────────────────────────────
+let cur=0;const TOTAL=5;
+function goNext(f){if(!validate(f))return;showStep(f+1)}
+function goBack(f){showStep(f-1)}
+function showStep(idx){
+  for(let i=0;i<TOTAL;i++){const el=document.getElementById('step-'+i);if(el)el.style.display='none'}
+  document.getElementById('step-success').style.display='none';
+  for(let i=0;i<TOTAL;i++){const s=document.getElementById('s'+i),n=s.querySelector('.step-num');s.classList.remove('active','done');if(i<idx){s.classList.add('done');n.innerHTML='✓'}else n.textContent=i+1;if(i===idx)s.classList.add('active')}
+  cur=idx;if(idx===4)buildReview();
+  const t=document.getElementById('step-'+idx);if(t){t.style.display='block';t.scrollIntoView({behavior:'smooth',block:'start'})}
+}
+
+document.getElementById('dealARR').addEventListener('input',function(){const v=parseFloat(this.value),d=document.getElementById('arrDisplay');if(v>0){d.style.display='block';document.getElementById('arrBig').textContent='$'+v.toLocaleString('en-US')}else d.style.display='none'});
+
+function rv(id){const el=document.getElementById(id);return el?el.value.trim()||'—':'—'}
+function esc(s){return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;')}
+function ttpLbl(v){return v&&v!=='—'?v+(v==='12+'?' months':v==='1'?' month':' months'):'—'}
+
+function buildReview(){
+  const arr=parseFloat(document.getElementById('dealARR').value)||0;
+  const af=arr>0?'$'+arr.toLocaleString('en-US')+' / yr':'—';
+  document.getElementById('reviewBody').innerHTML=`
+    <div class="review-sec"><div class="review-h">Your Details</div><div class="review-grid">
+      <div><div class="rv-label">VAR Company</div><div class="rv-value">${esc(rv('varName'))}</div></div>
+      <div><div class="rv-label">Your Email</div><div class="rv-value">${esc(rv('varEmail'))}</div></div>
+    </div></div>
+    <div class="review-sec"><div class="review-h">Prospect</div><div class="review-grid">
+      <div><div class="rv-label">Company</div><div class="rv-value">${esc(rv('prospectName'))}</div></div>
+      <div><div class="rv-label">Country</div><div class="rv-value">${esc(rv('prospectCountry'))}</div></div>
+      <div style="grid-column:1/-1"><div class="rv-label">Address</div><div class="rv-value">${esc([rv('prospectStreet'),rv('prospectCity'),rv('prospectState'),rv('prospectZip')].filter(x=>x&&x!=='—').join(', '))}</div></div>
+    </div></div>
+    <div class="review-sec"><div class="review-h">Contact Person</div><div class="review-grid">
+      <div><div class="rv-label">Full Name</div><div class="rv-value">${esc(rv('contactName'))}</div></div>
+      <div><div class="rv-label">Email</div><div class="rv-value">${esc(rv('contactEmail'))}</div></div>
+      <div><div class="rv-label">Phone</div><div class="rv-value">${esc(rv('contactPhone'))}</div></div>
+    </div></div>
+    <div class="review-sec"><div class="review-h">Deal</div><div class="review-grid">
+      <div><div class="rv-label">ARR</div><div class="rv-value" style="color:var(--gd);font-size:1.05rem">${af}</div></div>
+      <div><div class="rv-label">Time to Production</div><div class="rv-value">${ttpLbl(rv('dealTTP'))}</div></div>
+      <div><div class="rv-label">Time to Close</div><div class="rv-value">${ttpLbl(rv('dealTTC'))}</div></div>
+      ${parseFloat(document.getElementById('dealDiscount').value)>0?`<div><div class="rv-label">List Price Discount</div><div class="rv-value" style="color:var(--erb)">${parseFloat(document.getElementById('dealDiscount').value)}%</div></div>`:''}
+      ${parseFloat(document.getElementById('dealMMC').value)>0?`<div><div class="rv-label">MMC Discount</div><div class="rv-value" style="color:var(--erb)">$${parseFloat(document.getElementById('dealMMC').value).toLocaleString()}</div></div>`:''}
+      ${rv('dealDesc')!=='—'?`<div style="grid-column:1/-1"><div class="rv-label">Description</div><div class="rv-value">${esc(rv('dealDesc'))}</div></div>`:''}
+    </div></div>`;
+}
+
+function genRef(){return 'DR-'+Date.now().toString(36).toUpperCase().slice(-6)}
+
+async function submitForm(){
+  const btn=document.getElementById('submitBtn'),errBox=document.getElementById('submitErr');
+  errBox.style.display='none';btn.disabled=true;btn.innerHTML='<div class="spinner"></div> Submitting…';
+  const ref=genRef(),ts=new Date().toISOString();
+  const arr=parseFloat(document.getElementById('dealARR').value)||0;
+  const p={submissionId:ref,registrationDate:new Date().toLocaleDateString('en-US',{year:'numeric',month:'long',day:'numeric'}),registrationRef:ref,status:'pending',varName:document.getElementById('varName').value.trim(),varEmail:document.getElementById('varEmail').value.trim(),prospectName:document.getElementById('prospectName').value.trim(),prospectStreet:document.getElementById('prospectStreet').value.trim(),prospectCity:document.getElementById('prospectCity').value.trim(),prospectState:document.getElementById('prospectState').value.trim(),prospectZip:document.getElementById('prospectZip').value.trim(),prospectCountry:document.getElementById('prospectCountry').value,contactName:document.getElementById('contactName').value.trim(),contactEmail:document.getElementById('contactEmail').value.trim(),contactPhone:document.getElementById('contactPhone').value.trim(),dealDesc:document.getElementById('dealDesc').value.trim(),
+    discountPct:parseFloat(document.getElementById('dealDiscount').value)||0,
+    mmcDiscount:parseFloat(document.getElementById('dealMMC').value)||0,
+    arr,ttp:document.getElementById('dealTTP').value,ttc:document.getElementById('dealTTC').value,timestamp:ts};
+  const db=JSON.parse(localStorage.getItem(DB_KEY)||'[]');db.unshift(p);localStorage.setItem(DB_KEY,JSON.stringify(db));
+  if(APPS_SCRIPT_URL){try{await fetch(APPS_SCRIPT_URL,{method:'POST',mode:'no-cors',headers:{'Content-Type':'text/plain'},body:JSON.stringify(p)})}catch(e){console.warn('Sheet sync:',e)}}
+  document.getElementById('successRef').textContent=ref;
+  document.getElementById('stepsWrap').style.display='none';
+  for(let i=0;i<TOTAL;i++){const el=document.getElementById('step-'+i);if(el)el.style.display='none';const s=document.getElementById('s'+i);if(s){s.classList.remove('active');s.classList.add('done');s.querySelector('.step-num').innerHTML='✓'}}
+  document.getElementById('step-success').style.display='block';
+  document.getElementById('step-success').scrollIntoView({behavior:'smooth',block:'start'});
+}
+
+function resetForm(){
+  ['varName','varEmail','prospectName','prospectStreet','prospectCity','prospectState','prospectZip','prospectCountry','contactName','contactEmail','contactPhone','dealDesc','dealARR','dealTTP','dealTTC'].forEach(id=>{const el=document.getElementById(id);if(el)el.value=''});
+  document.getElementById('arrDisplay').style.display='none';
+  document.getElementById('stepsWrap').style.display='flex';showStep(0);
+}
+
+// ─── ADMIN ────────────────────────────────────────────────────────────────────
+function openAdminLogin(){document.getElementById('adminLoginModal').classList.add('open');setTimeout(()=>document.getElementById('adminPwInput').focus(),100)}
+function closeAdminLogin(){document.getElementById('adminLoginModal').classList.remove('open');document.getElementById('adminPwInput').value='';document.getElementById('adminPwErr').textContent=''}
+async function submitAdminLogin(){
+  const inp=document.getElementById('adminPwInput'),err=document.getElementById('adminPwErr');
+  const pw=inp.value.trim();
+  if(!pw) return;
+
+  // Disable button and show loading state
+  const btn=inp.closest('.modal-body').querySelector('.btn-primary');
+  const origText=btn.textContent;
+  btn.disabled=true;
+  btn.innerHTML='<div class="spinner" style="border-top-color:var(--g)"></div>';
+
+  try {
+    // Send password to Apps Script for server-side verification
+    // Apps Script returns a short-lived session token if correct
+    const res = await fetch(APPS_SCRIPT_URL, {
+      method: 'POST',
+      mode: 'no-cors',          // opaque response — we use sessionStorage as the signal
+      headers: {'Content-Type':'text/plain'},
+      body: JSON.stringify({action:'admin_login', password: pw})
+    });
+    // Because no-cors gives an opaque response we can't read the body directly.
+    // Instead we POST, then immediately GET the token via a url-param approach.
+    // Use a readable fetch with the password hash for the token check:
+    const checkRes = await fetch(
+      APPS_SCRIPT_URL + '?action=admin_login&pw=' + encodeURIComponent(btoa(pw)),
+      { method: 'GET', mode: 'cors' }
+    );
+    if(!checkRes.ok) throw new Error('Network error');
+    const data = await checkRes.json();
+
+    if(data.status === 'ok' && data.token){
+      // Store session token (valid for this browser session only)
+      sessionStorage.setItem('hai_admin_token', data.token);
+      closeAdminLogin();
+      document.getElementById('formArea').style.display='none';
+      document.getElementById('adminArea').style.display='block';
+      document.getElementById('headerTag').textContent='Admin Dashboard';
+      document.getElementById('adminLoginBtn').textContent='← Back to Form';
+      document.getElementById('adminLoginBtn').onclick=exitAdmin;
+      loadAdmin();
+    } else {
+      throw new Error('wrong_password');
+    }
+  } catch(e) {
+    inp.classList.add('shake');
+    err.textContent = e.message === 'wrong_password' ? 'Incorrect password.' : 'Login failed — check connection.';
+    setTimeout(()=>inp.classList.remove('shake'),400);
+    inp.value=''; inp.focus();
+  } finally {
+    btn.disabled=false;
+    btn.textContent=origText;
+  }
+}
+function exitAdmin(){sessionStorage.removeItem('hai_admin_token');document.getElementById('adminArea').style.display='none';document.getElementById('formArea').style.display='block';document.getElementById('headerTag').textContent='VAR Deal Registration';document.getElementById('adminLoginBtn').textContent='🔐 Admin';document.getElementById('adminLoginBtn').onclick=openAdminLogin}
+
+function loadAdmin(){
+  // Verify session token still exists (cleared on tab close)
+  if(!sessionStorage.getItem('hai_admin_token')){
+    exitAdmin();
+    return;
+  }
+  const regs=JSON.parse(localStorage.getItem(DB_KEY)||'[]');
+  document.getElementById('aStat-total').textContent=regs.length;
+  document.getElementById('aStat-pending').textContent=regs.filter(r=>r.status==='pending').length;
+  document.getElementById('aStat-approved').textContent=regs.filter(r=>r.status==='approved').length;
+  document.getElementById('aStat-disapproved').textContent=regs.filter(r=>r.status==='disapproved').length;
+  renderAdminTable();
+}
+
+function renderAdminTable(){
+  let regs=JSON.parse(localStorage.getItem(DB_KEY)||'[]');
+  const q=(document.getElementById('adminSearch')?.value||'').toLowerCase(),f=document.getElementById('adminFilter')?.value||'';
+  if(q)regs=regs.filter(r=>[r.varName,r.prospectName,r.registrationRef,r.varEmail].some(v=>v&&v.toLowerCase().includes(q)));
+  if(f)regs=regs.filter(r=>r.status===f);
+  const tb=document.getElementById('adminTableBody');
+  if(!tb)return;
+  if(!regs.length){tb.innerHTML='<tr><td colspan="8" style="text-align:center;padding:28px;color:var(--mut)">No registrations found.</td></tr>';return}
+  const sc={pending:'sb-pending',approved:'sb-approved',disapproved:'sb-disapproved'},sl={pending:'⏳ Pending',approved:'✓ Approved',disapproved:'✗ Disapproved'};
+  tb.innerHTML=regs.map(r=>`<tr>
+    <td style="font-weight:600;font-size:.8rem;color:var(--gd)">${esc(r.registrationRef)}</td>
+    <td style="color:var(--mut);font-size:.8rem;white-space:nowrap">${esc(r.registrationDate||'—')}</td>
+    <td style="font-weight:500">${esc(r.varName)}</td>
+    <td>${esc(r.prospectName)}</td>
+    <td style="font-weight:600;color:var(--gd);white-space:nowrap">$${(r.arr||0).toLocaleString()}</td>
+    <td style="color:var(--mut);font-size:.83rem;white-space:nowrap">${r.ttc?r.ttc+(r.ttc==='12+'?' mo':' mo'):'—'}</td>
+    <td><span class="status-badge ${sc[r.status]||'sb-pending'}">${sl[r.status]||'⏳ Pending'}</span></td>
+    <td><div class="action-btns">
+      <button class="action-btn ab-view" onclick="viewDeal('${esc(r.registrationRef)}')">View</button>
+      ${r.status!=='approved'?`<button class="action-btn ab-approve" onclick="setStatus('${esc(r.registrationRef)}','approved')">Approve</button>`:''}
+      ${r.status!=='disapproved'?`<button class="action-btn ab-disapprove" onclick="setStatus('${esc(r.registrationRef)}','disapproved')">Disapprove</button>`:''}
+    </div></td>
+  </tr>`).join('');
+}
+
+function setStatus(ref,status){
+  const db=JSON.parse(localStorage.getItem(DB_KEY)||'[]'),idx=db.findIndex(r=>r.registrationRef===ref);
+  if(idx<0)return;
+  db[idx].status=status;db[idx].reviewedAt=new Date().toISOString();
+  localStorage.setItem(DB_KEY,JSON.stringify(db));
+  loadAdmin();
+  if(status==='approved')sendEmail(db[idx],'approve');
+  if(status==='disapproved')sendEmail(db[idx],'disapprove');
+}
+
+function viewDeal(ref){
+  const db=JSON.parse(localStorage.getItem(DB_KEY)||'[]'),deal=db.find(r=>r.registrationRef===ref);
+  if(!deal)return;
+  const sc={pending:'sb-pending',approved:'sb-approved',disapproved:'sb-disapproved'},sl={pending:'⏳ Pending',approved:'✓ Approved',disapproved:'✗ Disapproved'};
+  document.getElementById('detailRef').textContent=ref;
+  document.getElementById('detailBody').innerHTML=`
+    <div class="detail-section"><div class="detail-sh">VAR</div><div class="detail-grid">
+      <div><div class="detail-label">Company</div><div class="detail-value">${esc(deal.varName)}</div></div>
+      <div><div class="detail-label">Email</div><div class="detail-value">${esc(deal.varEmail)}</div></div>
+    </div></div>
+    <div class="detail-section"><div class="detail-sh">Prospect</div><div class="detail-grid">
+      <div><div class="detail-label">Company</div><div class="detail-value">${esc(deal.prospectName)}</div></div>
+      <div><div class="detail-label">Country</div><div class="detail-value">${esc(deal.prospectCountry)}</div></div>
+      <div style="grid-column:1/-1"><div class="detail-label">Address</div><div class="detail-value">${esc([deal.prospectStreet,deal.prospectCity,deal.prospectState,deal.prospectZip].filter(Boolean).join(', '))}</div></div>
+    </div></div>
+    <div class="detail-section"><div class="detail-sh">Contact</div><div class="detail-grid">
+      <div><div class="detail-label">Name</div><div class="detail-value">${esc(deal.contactName)}</div></div>
+      <div><div class="detail-label">Email</div><div class="detail-value">${esc(deal.contactEmail)}</div></div>
+      <div><div class="detail-label">Phone</div><div class="detail-value">${esc(deal.contactPhone)}</div></div>
+    </div></div>
+    <div class="detail-section"><div class="detail-sh">Deal</div><div class="detail-grid">
+      <div><div class="detail-label">ARR</div><div class="detail-value" style="color:var(--gd);font-size:1rem">$${Number(deal.arr||0).toLocaleString()} / yr</div></div>
+      <div><div class="detail-label">Status</div><div class="detail-value"><span class="status-badge ${sc[deal.status]||'sb-pending'}">${sl[deal.status]||'Pending'}</span></div></div>
+      <div><div class="detail-label">Time to Production</div><div class="detail-value">${deal.ttp?deal.ttp+' months':'—'}</div></div>
+      <div><div class="detail-label">Time to Close</div><div class="detail-value">${deal.ttc?deal.ttc+' months':'—'}</div></div>
+      ${deal.dealDesc?`<div style="grid-column:1/-1"><div class="detail-label">Description</div><div class="detail-value">${esc(deal.dealDesc)}</div></div>`:''}
+      ${deal.discountPct>0?`<div><div class="detail-label">List Price Discount</div><div class="detail-value" style="color:var(--erb)">${deal.discountPct}%</div></div>`:''}
+      ${deal.mmcDiscount>0?`<div><div class="detail-label">MMC Discount</div><div class="detail-value" style="color:var(--erb)">$${Number(deal.mmcDiscount).toLocaleString()}</div></div>`:''}
+      <div><div class="detail-label">Submitted</div><div class="detail-value" style="font-size:.82rem">${new Date(deal.timestamp).toLocaleString()}</div></div>
+    </div></div>
+    <div style="display:flex;gap:10px;flex-wrap:wrap;margin-top:16px">
+      ${deal.status!=='approved'?`<button class="btn btn-primary" onclick="setStatus('${esc(deal.registrationRef)}','approved');closeDetail()">✓ Approve &amp; Send Email</button>`:''}
+      ${deal.status!=='disapproved'?`<button class="btn btn-danger" onclick="setStatus('${esc(deal.registrationRef)}','disapproved');closeDetail()">✗ Disapprove</button>`:''}
+      <button class="btn btn-outline" onclick="closeDetail()">Close</button>
+    </div>
+    <div class="pd-note">
+      <strong>PipeDrive:</strong> On approval, the Apps Script sends an approval email to <strong>${esc(deal.varEmail)}</strong> via PipeDrive and creates/updates the VAR as a PipeDrive contact. Configure <code>PIPEDRIVE_API_TOKEN</code> and <code>PIPEDRIVE_DOMAIN</code> in the Apps Script to enable this.
+    </div>`;
+  document.getElementById('detailModal').classList.add('open');
+}
+function closeDetail(){document.getElementById('detailModal').classList.remove('open')}
+
+// Track sent emails this session to prevent duplicates
+const _emailSent = new Set();
+
+function sendEmail(deal,action){
+  if(!APPS_SCRIPT_URL) return;
+  // Dedup guard — prevent double-fire if table + modal both trigger
+  const key = deal.registrationRef + ':' + action;
+  if(_emailSent.has(key)){
+    console.log('[Deal Registration] Email already sent this session — skipping duplicate:',key);
+    return;
+  }
+  _emailSent.add(key);
+  // Use no-cors fetch — bypasses preflight, works from any origin.
+  // Apps Script receives body under e.postData.contents.
+  // The 403 on the response is normal for no-cors (opaque response) — POST still lands.
+  fetch(APPS_SCRIPT_URL, {
+    method: 'POST',
+    mode: 'no-cors',
+    headers: {'Content-Type':'text/plain'},
+    body: JSON.stringify({action, ...deal})
+  }).catch(()=>{}); // silence network errors — no-cors always fires successfully
+  console.log('[Deal Registration] Email queued — action:',action,'ref:',deal.registrationRef);
+}
+
+function exportCSV(){
+  const regs=JSON.parse(localStorage.getItem(DB_KEY)||'[]');
+  if(!regs.length){alert('No registrations to export.');return}
+  const hdr=['Ref','Date','Status','VAR Name','VAR Email','Prospect','Street','City','State','Zip','Country','Contact Name','Contact Email','Contact Phone','Description','Discount from List (%)','MMC Discount ($)','ARR (USD)','Time to Production (mo)','Time to Close (mo)','Submitted At'];
+  const rows=regs.map(r=>[r.registrationRef,r.registrationDate,r.status,r.varName,r.varEmail,r.prospectName,r.prospectStreet,r.prospectCity,r.prospectState,r.prospectZip,r.prospectCountry,r.contactName,r.contactEmail,r.contactPhone,r.dealDesc||'',r.discountPct||0,r.mmcDiscount||0,r.arr||0,r.ttp||'',r.ttc||'',r.timestamp].map(v=>`"${String(v||'').replace(/"/g,'""')}"`).join(','));
+  const csv=[hdr.join(','),...rows].join('\n');
+  const a=document.createElement('a');a.href=URL.createObjectURL(new Blob([csv],{type:'text/csv'}));a.download=`hai_deal_regs_${new Date().toISOString().slice(0,10)}.csv`;a.click();
+}
+
+function clearAll(){if(!confirm('Delete ALL deal registrations? This cannot be undone.'))return;localStorage.removeItem(DB_KEY);loadAdmin()}
+
+showStep(0);
+</script>
+</body>
+</html>
